@@ -1,0 +1,60 @@
+{
+  "name": "mobicharts",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "@types/jest": "^22.0.0",
+    "@types/react": "^16.0.38",
+    "@types/react-native": "^0.52.0",
+    "@types/react-navigation": "^1.2.3",
+    "@types/react-redux": "^5.0.15",
+    "@types/react-test-renderer": "^16.0.0",
+    "jest-expo": "25.0.0",
+    "react-native-scripts-ts": "1.11.4",
+    "react-native-typescript-transformer": "^1.2.3",
+    "react-test-renderer": "16.2.0",
+    "ts-jest": "^22.0.4",
+    "tslib": "^1.7.1",
+    "typescript": "^2.7.2"
+  },
+  "main": "./node_modules/react-native-scripts-ts/build/bin/crna-entry.js",
+  "scripts": {
+    "start": "react-native-scripts-ts start",
+    "eject": "react-native-scripts-ts eject",
+    "android": "react-native-scripts-ts android",
+    "ios": "react-native-scripts-ts ios",
+    "test": "node node_modules/jest/bin/jest.js"
+  },
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "useBabelrc": true
+      }
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "preset": "jest-expo",
+    "testMatch": [
+      "**/__tests__/**/*.[tj]s?(x)",
+      "**/?(*.)(spec|test).[tj]s?(x)"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
+  },
+  "dependencies": {
+    "expo": "^25.0.0",
+    "react": "16.2.0",
+    "react-native": "0.52.0",
+    "react-navigation": "^1.5.8",
+    "react-navigation-redux-helpers": "^1.0.3",
+    "react-redux": "^5.0.7",
+    "redux": "^3.7.2"
+  }
+}
