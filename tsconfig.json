@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "commonjs",
+    "module": "es2015",
     "outDir": "build/dist",
     "sourceMap": true,
     "experimentalDecorators": true,
@@ -10,12 +10,13 @@
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "noEmitHelpers": true,
-    "importHelpers": true,
+    // "importHelpers": true,
     "strict": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "skipLibCheck": true,
     "emitDecoratorMetadata": true,
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "strictFunctionTypes": false
   }
 }

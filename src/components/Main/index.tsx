@@ -6,27 +6,24 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF'
+    backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 25,
-    textAlign: 'center',
-    margin: 10
-  }
 })
 
-class HomeScreen extends React.Component<any, any> {
+class MainScreen extends React.Component<any, any> {
   static navigationOptions = {
-    title: 'Home'
+    title: 'Main Screen',
+    gesturesEnabled: false,
+    headerLeft: null
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Profile Screen</Text>
+        <Text>Main</Text>
       </View>
     )
   }
 }
 
-export default HomeScreen
+export default MainScreen
