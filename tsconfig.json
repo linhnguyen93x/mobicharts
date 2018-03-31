@@ -10,13 +10,14 @@
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "noEmitHelpers": true,
-    // "importHelpers": true,
+    "importHelpers": true,
     "strict": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "skipLibCheck": true,
     "emitDecoratorMetadata": true,
     "noEmitOnError": true,
-    "strictFunctionTypes": false
+    "strictFunctionTypes": false,
+    "baseUrl": "."
   }
 }

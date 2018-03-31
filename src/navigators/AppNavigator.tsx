@@ -2,32 +2,33 @@ import * as React from 'react'
 import { BackHandler } from 'react-native'
 import { addNavigationHelpers, NavigationActions, StackNavigator } from 'react-navigation'
 import { connect } from 'react-redux'
+
 import LoginScreen from '../components/Login'
 import MainScreen from '../components/Main'
 import { addListener } from '../shared/redux'
 
-const fade = (props: any) => {
-  const { position, scene } = props
+// const fade = (props: any) => {
+//   const { position, scene } = props
 
-  const index = scene.index
+//   const index = scene.index
 
-  const translateX = 0
-  const translateY = 0
+//   const translateX = 0
+//   const translateY = 0
 
-  const opacity = position.interpolate({
-    inputRange: [index - 0.7, index, index + 0.7],
-    outputRange: [0.3, 1, 0.3]
-  })
+//   const opacity = position.interpolate({
+//     inputRange: [index - 0.7, index, index + 0.7],
+//     outputRange: [0.3, 1, 0.3]
+//   })
 
-  return {
-    opacity,
-    transform: [{ translateX }, { translateY }]
-  }
-}
+//   return {
+//     opacity,
+//     transform: [{ translateX }, { translateY }]
+//   }
+// }
 
 export const AppNavigator = StackNavigator(
   {
-    // Login: { screen: LoginScreen },
+    Login: { screen: LoginScreen },
     Main: { screen: MainScreen }
   },
   {

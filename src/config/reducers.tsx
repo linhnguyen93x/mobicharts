@@ -1,5 +1,6 @@
 import { NavigationActions } from 'react-navigation'
 import { Action, combineReducers } from 'redux'
+
 import { AppNavigator } from '../navigators/AppNavigator'
 
 const ActionForLoggedOut = AppNavigator.router.getActionForPathAndParams(
@@ -16,7 +17,6 @@ const stateForLoggedIn = AppNavigator.router.getStateForAction(
 const initialNavState = { stateForLoggedOut, stateForLoggedIn }
 
 function nav(state = initialNavState, action: Action) {
-  console.log(action)
   switch (action.type) {
     case '@@redux/INIT':
       return {

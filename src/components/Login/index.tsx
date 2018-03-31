@@ -1,10 +1,5 @@
 import * as React from 'react'
-import {
-  Button,
-  StyleSheet,
-  Text,
-  View
-  } from 'react-native'
+import { Button, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 
 const styles = StyleSheet.create({
