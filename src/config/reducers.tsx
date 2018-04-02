@@ -1,5 +1,7 @@
 import { NavigationActions } from 'react-navigation'
-import { Action, combineReducers } from 'redux'
+import { Action, combineReducers, Reducer } from 'redux'
+import todos from 'src/modules/todos'
+import { State as TodoState } from 'src/modules/todos/model'
 
 import { AppNavigator } from '../navigators/AppNavigator'
 
@@ -69,9 +71,14 @@ function auth(state = initialAuthState, action: Action) {
   }
 }
 
-const AppReducer = combineReducers({
+export interface IApplicationState {
+  [todos.constants.NAME]: TodoState
+}
+
+const AppReducer: Reducer<IApplicationState> = combineReducers<IApplicationState>({
   nav,
-  auth
+  auth,
+  [todos.constants.NAME]: todos.reducer
 })
 
 export default AppReducer

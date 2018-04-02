@@ -2,9 +2,9 @@ import * as React from 'react'
 import { BackHandler } from 'react-native'
 import { addNavigationHelpers, NavigationActions, StackNavigator } from 'react-navigation'
 import { connect } from 'react-redux'
+import MainScreen from 'src/modules/Main'
+import todos from 'src/modules/todos'
 
-import LoginScreen from '../components/Login'
-import MainScreen from '../components/Main'
 import { addListener } from '../shared/redux'
 
 // const fade = (props: any) => {
@@ -28,7 +28,12 @@ import { addListener } from '../shared/redux'
 
 export const AppNavigator = StackNavigator(
   {
-    Login: { screen: LoginScreen },
+    Login: {
+       screen: todos.components.default,
+       navigationOptions: {
+        title: 'Todos'
+       }
+    },
     Main: { screen: MainScreen }
   },
   {
