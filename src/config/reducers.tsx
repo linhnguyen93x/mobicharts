@@ -1,14 +1,14 @@
 import { NavigationActions } from 'react-navigation'
 import { Action, combineReducers, Reducer } from 'redux'
-import todos from 'src/modules/todos'
-import { State as TodoState } from 'src/modules/todos/model'
+import ChartTab from 'src/modules/ChartTab'
+import { State as ChartState } from 'src/modules/ChartTab/model'
 
 import { AppNavigator } from '../navigators/AppNavigator'
 
 const ActionForLoggedOut = AppNavigator.router.getActionForPathAndParams(
   'Login'
 )
-const ActionForLoggedIn = AppNavigator.router.getActionForPathAndParams('Main')
+const ActionForLoggedIn = AppNavigator.router.getActionForPathAndParams('Main/Chart')
 
 const stateForLoggedOut = AppNavigator.router.getStateForAction(
   ActionForLoggedOut
@@ -19,6 +19,7 @@ const stateForLoggedIn = AppNavigator.router.getStateForAction(
 const initialNavState = { stateForLoggedOut, stateForLoggedIn }
 
 function nav(state = initialNavState, action: Action) {
+  console.log(action)
   switch (action.type) {
     case '@@redux/INIT':
       return {
@@ -72,13 +73,13 @@ function auth(state = initialAuthState, action: Action) {
 }
 
 export interface IApplicationState {
-  [todos.constants.NAME]: TodoState
+  [ChartTab.constants.NAME]: ChartState
 }
 
 const AppReducer: Reducer<IApplicationState> = combineReducers<IApplicationState>({
   nav,
   auth,
-  [todos.constants.NAME]: todos.reducer
+  [ChartTab.constants.NAME]: ChartTab.reducer
 })
 
 export default AppReducer

@@ -15,18 +15,18 @@ const styles = StyleSheet.create({
   }
 })
 
-class HomeScreen extends React.Component<any, any> {
+class NotificationTab extends React.Component<any, any> {
   static navigationOptions = {
-    title: 'Home'
+    title: 'Notification'
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Profile Screen</Text>
+        <Text style={styles.welcome}>Notification</Text>
       </View>
     )
   }
 }
 
-export default HomeScreen
+export default NotificationTab

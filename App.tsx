@@ -9,6 +9,7 @@ export default class App extends React.Component<any, any> {
   store = createStore(AppReducer, applyMiddleware(middleware))
 
   render() {
+
     return (
       <Provider store={this.store}>
         <AppWithNavigationState />

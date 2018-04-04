@@ -12,13 +12,12 @@ interface TodosProps extends ConnectedReduxProps<State> {
     todos: ITodo[]
 }
 
-const TodoList: React.SFC<TodosProps> = (props) => {
+const ChartTab: React.SFC<TodosProps> = (props) => {
   const { todos, dispatch } = props
-  console.log(todos)
 
   return (
     <View>
-      <Button title="hello" onPress={() => { dispatch(addTodo('Hello Bi')) }} />
+      <Button title="Add" onPress={() => { dispatch(addTodo('Hello Bi')) }} />
       {todos.map((t) => <Text key={t.id}>{t.text}</Text>)}
     </View>
   )
@@ -28,4 +27,4 @@ export default connect(
   createStructuredSelector({
     todos: getAll
   })
-)(TodoList)
+)(ChartTab)

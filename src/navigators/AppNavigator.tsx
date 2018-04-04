@@ -1,10 +1,14 @@
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'
 import * as React from 'react'
-import { BackHandler } from 'react-native'
-import { addNavigationHelpers, NavigationActions, StackNavigator } from 'react-navigation'
+import { BackHandler, View } from 'react-native'
+import { addNavigationHelpers, NavigationActions, StackNavigator, TabBarBottom, TabNavigator } from 'react-navigation'
 import { connect } from 'react-redux'
-import MainScreen from 'src/modules/Main'
-import todos from 'src/modules/todos'
+import Login from 'src/modules/Account/Login'
+import ChartTab from 'src/modules/ChartTab'
+import MapTab from 'src/modules/MapTab'
+import NotificationTab from 'src/modules/NotificationTab'
 
+import PersonalTab from '../modules/PersonalTab'
 import { addListener } from '../shared/redux'
 
 // const fade = (props: any) => {
@@ -26,20 +30,60 @@ import { addListener } from '../shared/redux'
 //   }
 // }
 
+const TabBar = TabNavigator(
+  {
+    Chart: {
+      screen: ChartTab.components.default,
+      navigationOptions: {
+        title: 'Báo cáo tổng hợp'
+      }
+    },
+    Notification: { screen: NotificationTab },
+    Map: { screen: MapTab },
+    Account: { screen: PersonalTab }
+  },
+  {
+    navigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ focused, tintColor }) => {
+        const { routeName } = navigation.state
+        let icon
+        if (routeName === 'Chart') {
+          const iconName = `bar-chart${focused ? '' : '-o'}`
+          icon = <FontAwesome name={iconName} size={25} color={tintColor} />
+        } else if (routeName === 'Notification') {
+          const iconName = `bell${focused ? '' : '-outline'}`
+          icon = <MaterialCommunityIcons name={iconName} size={25} color={tintColor} />
+        } else if (routeName === 'Map') {
+          const iconName = `map${focused ? '' : '-o'}`
+          icon = <FontAwesome  name={iconName} size={25} color={tintColor} />
+        } else if (routeName === 'Account') {
+          const iconName = `user${focused ? '' : '-o'}`
+          icon = <FontAwesome  name={iconName} size={25} color={tintColor} />
+        }
+
+        return <View>{icon}</View>
+      }
+    }),
+    tabBarOptions: {
+      activeTintColor: 'green',
+      inactiveTintColor: 'gray',
+      showLabel: false
+    },
+    animationEnabled: true,
+    tabBarComponent: TabBarBottom,
+    tabBarPosition: 'bottom'
+  }
+)
+
 export const AppNavigator = StackNavigator(
   {
-    Login: {
-       screen: todos.components.default,
-       navigationOptions: {
-        title: 'Todos'
-       }
-    },
-    Main: { screen: MainScreen }
+    Login: { screen: Login },
+    Main: { screen: TabBar }
   },
   {
     navigationOptions: (params: any) => ({
       gesturesEnabled: true,
-      gesturesDirection: 'inverted',
+      gesturesDirection: 'inverted'
     }),
     transitionConfig: () => ({
       screenInterpolator: (sceneProps) => {
@@ -50,14 +94,16 @@ export const AppNavigator = StackNavigator(
         return {
           opacity: position.interpolate({
             inputRange: [index - 1, index, index + 1],
-            outputRange: [ 0, 1, 0],
+            outputRange: [0, 1, 0]
           }),
-          transform: [{
-            translateX: position.interpolate({
-              inputRange: [index - 1, index, index + 1],
-              outputRange: [-width, 0, width],
-            }),
-          }]
+          transform: [
+            {
+              translateX: position.interpolate({
+                inputRange: [index - 1, index, index + 1],
+                outputRange: [-width, 0, width]
+              })
+            }
+          ]
         }
       },
       headerTitleInterpolator: (sceneProps: any) => {
@@ -67,14 +113,16 @@ export const AppNavigator = StackNavigator(
         return {
           opacity: position.interpolate({
             inputRange: [index - 1, index, index + 1],
-            outputRange: [ 0, 1, 0],
+            outputRange: [0, 1, 0]
           }),
-          transform: [{
-            translateX: position.interpolate({
-              inputRange: [index - 1, index, index + 1],
-              outputRange: [-50, 0, 50],
-            }),
-          }]
+          transform: [
+            {
+              translateX: position.interpolate({
+                inputRange: [index - 1, index, index + 1],
+                outputRange: [-50, 0, 50]
+              })
+            }
+          ]
         }
       }
     })
@@ -118,4 +166,5 @@ const mapStateToProps = (state: any) => ({
   isLoggedIn: state.auth.isLoggedIn
 })
 
+export { TabBar }
 export default connect(mapStateToProps)(ReduxNavigation)

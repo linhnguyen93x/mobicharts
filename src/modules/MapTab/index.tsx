@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
   },
 })
 
-class MainScreen extends React.Component<any, any> {
+class MapTab extends React.Component<any, any> {
   static navigationOptions = {
     title: 'Main Screen',
     gesturesEnabled: false,
@@ -20,10 +20,10 @@ class MainScreen extends React.Component<any, any> {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Main</Text>
+        <Text>Map</Text>
       </View>
     )
   }
 }
 
-export default MainScreen
+export default MapTab
