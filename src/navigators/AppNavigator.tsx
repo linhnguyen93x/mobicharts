@@ -84,7 +84,11 @@ export const AppNavigator = StackNavigator(
   {
     navigationOptions: (params: any) => ({
       gesturesEnabled: true,
-      gesturesDirection: 'inverted'
+      gesturesDirection: 'inverted',
+      headerStyle: {
+        backgroundColor: '#0165A9'
+      },
+      headerTintColor: 'white'
     }),
     transitionConfig: () => ({
       screenInterpolator: (sceneProps) => {

@@ -1,5 +1,6 @@
 import { NavigationActions } from 'react-navigation'
 import { Action, combineReducers, Reducer } from 'redux'
+import { loadingReducer } from 'src/+state/loadingReducer'
 import ChartTab from 'src/modules/ChartTab'
 import { State as ChartState } from 'src/modules/ChartTab/model'
 
@@ -71,6 +72,8 @@ function auth(state = initialAuthState, action: Action) {
   }
 }
 
+
+
 export interface IApplicationState {
   [ChartTab.constants.NAME]: ChartState
 }
@@ -78,6 +81,7 @@ export interface IApplicationState {
 const AppReducer: Reducer<IApplicationState> = combineReducers<IApplicationState>({
   nav,
   auth,
+  loading: loadingReducer,
   [ChartTab.constants.NAME]: ChartTab.reducer
 })
 
