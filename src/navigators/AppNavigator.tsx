@@ -71,7 +71,8 @@ const TabBar = TabNavigator(
     },
     animationEnabled: true,
     tabBarComponent: TabBarBottom,
-    tabBarPosition: 'bottom'
+    tabBarPosition: 'bottom',
+    swipeEnabled: false
   }
 )
 
