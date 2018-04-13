@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import { FilterTab } from 'src/components'
+import { TimePicker } from 'src/components/time-picker'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 
 import { ITodo, State } from '../model'
@@ -28,6 +29,7 @@ const ChartTab: React.SFC<TodosProps> = (props) => {
       <FilterTab
         data={[Filter.DAY, Filter.WEEK, Filter.MONTH, Filter.YEAR]}
         onItemSelected={(item) => console.log(item)} />
+      <TimePicker onDateChange={(date) => console.log(date)} />
 
       {/* <Button title="Add" onPress={() => { dispatch(addTodo('Hello Bi')) }} />
       {todos.map((t) => <Text key={t.id}>{t.text}</Text>)} */}

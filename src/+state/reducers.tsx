@@ -72,8 +72,6 @@ function auth(state = initialAuthState, action: Action) {
   }
 }
 
-
-
 export interface IApplicationState {
   [ChartTab.constants.NAME]: ChartState
 }

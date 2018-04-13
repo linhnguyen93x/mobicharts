@@ -36,7 +36,7 @@ export const LoadingComponent = (
 
     render() {
       const { loading } = this.props
-      const { loadingId, loadingIdArray } = this
+      const { loadingIdArray } = this
 
       let loadingObject: any
       loadingIdArray.forEach((id: any) => {
