@@ -1,8 +1,10 @@
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import * as React from 'react'
-import { Keyboard, LayoutAnimation, StyleSheet, Text, UIManager, View } from 'react-native'
-import { Button, Input } from 'react-native-elements'
+import { Alert, Keyboard, LayoutAnimation, StyleSheet, Text, UIManager, View } from 'react-native'
+import { Button, CheckBox, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
+import { SUBMIT_LOADER } from 'src/+state/constants'
+import { endLoading, startLoading } from 'src/+state/loadingActions'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 
 // Enable LayoutAnimation on Android
@@ -15,9 +17,12 @@ interface FormState {
   password: string
   usernameValid: boolean
   passwordValid: boolean
+  remembered: boolean
 }
 
-interface FormProps extends ConnectedReduxProps<any> {}
+interface FormProps extends ConnectedReduxProps<any> {
+  loading: any
+}
 
 class SubmitForm extends React.PureComponent<FormProps, FormState> {
   usernameInput: any
@@ -27,7 +32,24 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
     username: '',
     password: '',
     usernameValid: true,
-    passwordValid: true
+    passwordValid: true,
+    remembered: false
+  }
+
+  componentDidMount() {}
+
+  signup = () => {
+    LayoutAnimation.easeInEaseOut()
+    const usernameValid = this.validateUsername()
+    const passwordValid = this.validatePassword()
+    if (passwordValid && usernameValid) {
+      this.props.dispatch(startLoading(SUBMIT_LOADER, 'Đang tải', true))
+      setTimeout(() => {
+        LayoutAnimation.easeInEaseOut()
+        this.props.dispatch(endLoading(SUBMIT_LOADER))
+        Alert.alert('🎸', 'You rock')
+      }, 1500)
+    }
   }
 
   validateUsername = () => {
@@ -58,6 +80,8 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
 
   render() {
     const { username, password, usernameValid, passwordValid } = this.state
+    const { loading } = this.props
+    const isLoading = loading[SUBMIT_LOADER] && loading[SUBMIT_LOADER].isLoading
 
     return (
       <View style={styles.container}>
@@ -94,9 +118,14 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
             }}
           />
         </View>
-        <Text>Ghi nhớ</Text>
+        <CheckBox
+          title="Ghi nhớ"
+          checked={this.state.remembered}
+          containerStyle={{ alignSelf: 'flex-start', borderWidth: 0, backgroundColor: 'white' }}
+          onPress={() => this.setState({ remembered: !this.state.remembered })}
+        />
         <Button
-          loading={false}
+          loading={isLoading}
           title="ĐĂNG NHẬP"
           containerStyle={{ flex: -1, alignSelf: 'stretch' }}
           buttonStyle={styles.signUpButton}
@@ -106,8 +135,8 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
             end: [0.2, 0]
           }}
           // titleStyle={styles.signUpButtonText}
-          // onPress={this.signup}
-          disabled={false}
+          onPress={this.signup}
+          disabled={isLoading}
         />
         <Text>Quên mật khẩu</Text>
       </View>
@@ -168,8 +197,12 @@ const styles = StyleSheet.create({
   signUpButton: {
     width: '100%',
     borderRadius: 50,
-    height: 45,
+    height: 45
   }
 })
 
-export default connect()(SubmitForm)
+const mapStateToProps = (state: any) => {
+  return { loading: state.loading }
+}
+
+export default connect(mapStateToProps)(SubmitForm)

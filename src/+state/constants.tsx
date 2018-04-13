@@ -1,1 +1,2 @@
 export const MAIN_LOADER = 'MAIN_LOADER'
+export const SUBMIT_LOADER = 'SUBMIT_LOADER'

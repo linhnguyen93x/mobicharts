@@ -5,7 +5,8 @@ export const loadingReducer = (state = {}, action: any) => {
         ...state,
         [action.id]: {
           isLoading: true,
-          text: action.text
+          text: action.text,
+          hideSpinner: action.hideSpinner
         }
       }
 

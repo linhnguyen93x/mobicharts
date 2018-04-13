@@ -47,7 +47,7 @@ export const LoadingComponent = (
       })
 
       let isLoading = false
-      if (loadingObject && loadingObject.isLoading) {
+      if (loadingObject && loadingObject.isLoading && !loadingObject.hideSpinner) {
         isLoading = true
       }
 

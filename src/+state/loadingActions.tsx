@@ -1,8 +1,9 @@
-export const startLoading = (id: any, text: string) => {
+export const startLoading = (id: any, text: string, hideSpinner?: boolean) => {
   return {
     type: 'START_LOADING',
     id,
-    text
+    text,
+    hideSpinner: hideSpinner ? true : false
   }
 }
 
