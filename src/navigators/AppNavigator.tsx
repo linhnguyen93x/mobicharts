@@ -7,6 +7,7 @@ import Login from 'src/modules/Account/Login/components'
 import ChartTab from 'src/modules/ChartTab'
 import MapTab from 'src/modules/MapTab'
 import NotificationTab from 'src/modules/NotificationTab'
+import { LocalStorage } from 'src/shared/async-storage'
 
 import PersonalTab from '../modules/PersonalTab'
 import { addListener } from '../shared/redux'
@@ -52,13 +53,19 @@ const TabBar = TabNavigator(
           icon = <FontAwesome name={iconName} size={25} color={tintColor} />
         } else if (routeName === 'Notification') {
           const iconName = `bell${focused ? '' : '-outline'}`
-          icon = <MaterialCommunityIcons name={iconName} size={25} color={tintColor} />
+          icon = (
+            <MaterialCommunityIcons
+              name={iconName}
+              size={25}
+              color={tintColor}
+            />
+          )
         } else if (routeName === 'Map') {
           const iconName = `map${focused ? '' : '-o'}`
-          icon = <FontAwesome  name={iconName} size={25} color={tintColor} />
+          icon = <FontAwesome name={iconName} size={25} color={tintColor} />
         } else if (routeName === 'Account') {
           const iconName = `user${focused ? '' : '-o'}`
-          icon = <FontAwesome  name={iconName} size={25} color={tintColor} />
+          icon = <FontAwesome name={iconName} size={25} color={tintColor} />
         }
 
         return <View>{icon}</View>
@@ -135,6 +142,19 @@ export const AppNavigator = StackNavigator(
 )
 
 class ReduxNavigation extends React.Component<any, {}> {
+  async componentWillMount() {
+    const { dispatch } = this.props
+    const jwt = await LocalStorage.getItem('jwt')
+    console.log(jwt)
+
+    if (jwt) {
+      dispatch({ type: 'Login' })
+      LocalStorage.removeJwt()
+    } else {
+      dispatch({ type: 'Logout' })
+    }
+  }
+
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.onBackPress)
   }

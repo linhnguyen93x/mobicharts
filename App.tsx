@@ -9,10 +9,11 @@ import AppEpic from 'src/+state/epics'
 import AppReducer from 'src/+state/reducers'
 import api from 'src/api'
 import AppWithNavigationState from 'src/navigators/AppNavigator'
+import { LocalStorage } from 'src/shared/async-storage'
 import { LoadingComponent } from 'src/shared/HOC/LoadingComponent'
 import { middleware } from 'src/shared/redux'
 
-const epicMiddleware = createEpicMiddleware(AppEpic, { dependencies: api })
+const epicMiddleware = createEpicMiddleware(AppEpic, { dependencies: {...api, LocalStorage} })
 
 const MainComponent = LoadingComponent(AppWithNavigationState, [MAIN_LOADER, SUBMIT_LOADER])
 

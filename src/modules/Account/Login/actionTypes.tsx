@@ -1,4 +1,5 @@
 import { Action } from 'redux'
+import { UserProfile } from 'src/+model/profile'
 
 export interface TLoginAction extends Action {
   payload: {
@@ -8,5 +9,5 @@ export interface TLoginAction extends Action {
 }
 
 export interface TLoginActionSuccess extends Action {
-  payload: {}
+  payload: UserProfile
 }
