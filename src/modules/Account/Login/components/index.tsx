@@ -74,14 +74,13 @@ class LoginScreen extends React.Component<any, LoginState> {
             source={require('assets/images/login.png')}
           >
             <Image
-              style={{ width: width / 4 }}
+              style={{ width: width / 2 }}
               source={require('assets/images/logo.png')}
               resizeMode="contain"
             />
             <SubmitForm />
             <Text style={[globalStyle.styles.textAlignCenter, styles.title]}>
-              {'Chào mừng bạn đến với ứng dụng\nxem báo cáo của '}
-              <Text style={globalStyle.styles.fontWeightBold}>Mobifone</Text>
+              Quên mật khẩu
             </Text>
           </ImageBackground>
         </KeyboardAvoidingView>

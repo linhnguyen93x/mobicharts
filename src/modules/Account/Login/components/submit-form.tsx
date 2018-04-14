@@ -1,12 +1,13 @@
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import * as React from 'react'
-import { Alert, Keyboard, LayoutAnimation, StyleSheet, Text, UIManager, View } from 'react-native'
-import { Button, CheckBox, Input } from 'react-native-elements'
+import { Keyboard, LayoutAnimation, StyleSheet, Text, UIManager, View } from 'react-native'
+import { Button, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { SUBMIT_LOADER } from 'src/+state/constants'
-import { endLoading, startLoading } from 'src/+state/loadingActions'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 import { globalStyle } from 'src/style'
+
+import { loginAction } from '../actions'
 
 // Enable LayoutAnimation on Android
 // tslint:disable-next-line:no-unused-expression
@@ -30,8 +31,8 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
   passwordInput: any
 
   state: FormState = {
-    username: '',
-    password: '',
+    username: 'admin',
+    password: 'BV@F61528DNH',
     usernameValid: true,
     passwordValid: true,
     remembered: false
@@ -44,12 +45,15 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
     const usernameValid = this.validateUsername()
     const passwordValid = this.validatePassword()
     if (passwordValid && usernameValid) {
-      this.props.dispatch(startLoading(SUBMIT_LOADER, 'Đang tải', true))
-      setTimeout(() => {
-        LayoutAnimation.easeInEaseOut()
-        this.props.dispatch(endLoading(SUBMIT_LOADER))
-        Alert.alert('🎸', 'You rock')
-      }, 1500)
+      const { username, password } = this.state
+
+      this.props.dispatch(loginAction({ userName: username, password }))
+      // this.props.dispatch(startLoading(SUBMIT_LOADER, 'Đang tải', true))
+      // setTimeout(() => {
+      //   LayoutAnimation.easeInEaseOut()
+      //   this.props.dispatch(endLoading(SUBMIT_LOADER))
+      //   Alert.alert('🎸', 'You rock')
+      // }, 1500)
     }
   }
 
@@ -86,52 +90,49 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
 
     return (
       <View style={styles.container}>
-        <Text style={[globalStyle.styles.fontWeightBold, { fontSize: 18, marginBottom: 4 }]}>Đăng nhập</Text>
-        <View style={{ alignSelf: 'stretch' }}>
-          <FormInput
-            refInput={(input: any) => (this.usernameInput = input)}
-            icon={<MaterialIcons name="person" size={18} color="#777A7D" />}
-            value={username}
-            onChangeText={(username: string) => this.setState({ username })}
-            placeholder="Tên đăng nhập"
-            returnKeyType="next"
-            errorMessage={usernameValid ? null : 'Your username can\'t be blank'}
-            onSubmitEditing={() => {
-              this.validateUsername()
-              this.passwordInput.focus()
-            }}
-          />
-        </View>
-        <View style={{ alignSelf: 'stretch' }}>
-          <FormInput
-            refInput={(input: any) => (this.passwordInput = input)}
-            icon={<Ionicons name="md-key" size={18} color="#777A7D" />}
-            value={password}
-            onChangeText={(password: string) => this.setState({ password })}
-            placeholder="Mật khẩu"
-            returnKeyType="done"
-            secureTextEntry
-            errorMessage={passwordValid ? null : 'Your password can\'t be blank'}
-            onSubmitEditing={() => {
-              this.validatePassword()
-              // this.emailInput.focus()
-              Keyboard.dismiss()
-            }}
-          />
-        </View>
-        <CheckBox
-          title="Ghi nhớ đăng nhập"
-          checked={this.state.remembered}
-          containerStyle={{ alignSelf: 'flex-start', borderWidth: 0, backgroundColor: 'white' }}
-          onPress={() => this.setState({ remembered: !this.state.remembered })}
+        <Text
+          style={[
+            globalStyle.styles.fontWeightBold,
+            { fontSize: 18, marginBottom: 4, color: '#0E839D' }
+          ]}
+        >
+          Đăng nhập
+        </Text>
+        <FormInput
+          refInput={(input: any) => (this.usernameInput = input)}
+          icon={<MaterialIcons name="person" size={18} color="#777A7D" />}
+          value={username}
+          onChangeText={(username: string) => this.setState({ username })}
+          placeholder="Tên đăng nhập"
+          returnKeyType="next"
+          errorMessage={usernameValid ? null : 'Your username can\'t be blank'}
+          onSubmitEditing={() => {
+            this.validateUsername()
+            this.passwordInput.focus()
+          }}
+        />
+        <FormInput
+          refInput={(input: any) => (this.passwordInput = input)}
+          icon={<Ionicons name="md-key" size={18} color="#777A7D" />}
+          value={password}
+          onChangeText={(password: string) => this.setState({ password })}
+          placeholder="Mật khẩu"
+          returnKeyType="done"
+          secureTextEntry
+          errorMessage={passwordValid ? null : 'Your password can\'t be blank'}
+          onSubmitEditing={() => {
+            this.validatePassword()
+            // this.emailInput.focus()
+            Keyboard.dismiss()
+          }}
         />
         <Button
           loading={isLoading}
           title="ĐĂNG NHẬP"
-          containerStyle={{ flex: -1, alignSelf: 'stretch' }}
+          containerStyle={{ flex: -1, alignSelf: 'stretch', marginVertical: 32 }}
           buttonStyle={styles.signUpButton}
           linearGradientProps={{
-            colors: ['#1F92EA', '#0064B0'],
+            colors: ['#0BC4DE', '#1F92EA'],
             start: [1, 0],
             end: [0.2, 0]
           }}
@@ -139,7 +140,6 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
           onPress={this.signup}
           disabled={isLoading}
         />
-        <Text style={{ marginTop: 16, marginBottom: 4 }}>Quên mật khẩu</Text>
       </View>
     )
   }
@@ -170,19 +170,16 @@ export const FormInput = (props: any) => {
 const styles = StyleSheet.create({
   container: {
     alignSelf: 'center',
-    flex: -1,
+    flex: 0.9,
     alignItems: 'center',
     padding: 16,
     width: '80%',
-    borderRadius: 8,
-    backgroundColor: 'white'
   },
   inputContainer: {
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#EDEDED',
+    borderRadius: 23,
     height: 45,
-    marginVertical: 10
+    marginVertical: 10,
+    backgroundColor: 'white'
   },
   input: {
     flex: 1,
@@ -196,9 +193,10 @@ const styles = StyleSheet.create({
     color: '#F44336'
   },
   signUpButton: {
-    width: '100%',
+    width: '50%',
     borderRadius: 50,
-    height: 45
+    height: 45,
+    alignSelf: 'center',
   }
 })
 

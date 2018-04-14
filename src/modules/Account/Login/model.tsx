@@ -4,3 +4,8 @@ export interface LoginModel {
     title: string
     userId: number
 }
+
+export interface LoginRequest {
+    userName: string
+    password: string
+}

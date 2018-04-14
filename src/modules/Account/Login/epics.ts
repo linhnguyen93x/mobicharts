@@ -1,24 +1,46 @@
-import { Action } from 'redux'
+import { Alert } from 'react-native'
 import { ActionsObservable, ofType } from 'redux-observable'
 import { Observable } from 'rxjs/Observable'
-import { exhaustMap, mapTo, tap } from 'rxjs/operators'
+import { merge } from 'rxjs/observable/merge'
+import { of } from 'rxjs/observable/of'
+import { catchError, concat, concatMap, exhaustMap } from 'rxjs/operators'
+import { SUBMIT_LOADER } from 'src/+state/constants'
+import { endLoading, startLoading } from 'src/+state/loadingActions'
 
-import { LoginModel } from './model'
+import { loginSuccess, navigateToUser } from './actions'
+import { TLoginAction } from './actionTypes'
+import { LOGIN_REQUEST } from './constants'
+import { LoginModel, LoginRequest } from './model'
 
-interface IGetUserProfile {
-    getUserProfile: (url: string) => Observable<LoginModel>
+interface ILogin {
+  login: (body: LoginRequest) => Observable<LoginModel>
 }
 
 export const accountEpic = (
-  action$: ActionsObservable<Action>,
+  action$: ActionsObservable<TLoginAction>,
   store: any,
-  { getUserProfile }: IGetUserProfile
-): Observable<Action> => {
+  { login }: ILogin
+) => {
   return action$.pipe(
-    ofType('START_LOADING'),
-    exhaustMap((a) => getUserProfile('posts/1').pipe(
-        tap((result) => console.log('response', result.body))
-    )),
-    mapTo({type: 'NOTHING'})
+    ofType(LOGIN_REQUEST),
+    exhaustMap((a) =>
+      merge(
+        of(startLoading(SUBMIT_LOADER, 'Đang tải', true)),
+        login(a.payload).delay(300).pipe(
+          concatMap((info) => of(loginSuccess(info))),
+          concat(
+            of(endLoading(SUBMIT_LOADER)),
+            of(navigateToUser())
+          ),
+          // map((info) => loginSuccess(info)),
+          // mapTo(endLoading(SUBMIT_LOADER)),
+          // mapTo(navigateToUser()),
+          catchError((e) => {
+            Alert.alert('Thông báo', 'Lỗi đăng nhập')
+            return of(endLoading(SUBMIT_LOADER))
+          })
+        )
+      )
+    )
   )
 }
