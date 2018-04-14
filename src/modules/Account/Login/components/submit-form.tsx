@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import { SUBMIT_LOADER } from 'src/+state/constants'
 import { endLoading, startLoading } from 'src/+state/loadingActions'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
+import { globalStyle } from 'src/style'
 
 // Enable LayoutAnimation on Android
 // tslint:disable-next-line:no-unused-expression
@@ -85,7 +86,7 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
 
     return (
       <View style={styles.container}>
-        <Text style={{ fontSize: 18, marginBottom: 4 }}>Đăng nhập</Text>
+        <Text style={[globalStyle.styles.fontWeightBold, { fontSize: 18, marginBottom: 4 }]}>Đăng nhập</Text>
         <View style={{ alignSelf: 'stretch' }}>
           <FormInput
             refInput={(input: any) => (this.usernameInput = input)}
@@ -119,7 +120,7 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
           />
         </View>
         <CheckBox
-          title="Ghi nhớ"
+          title="Ghi nhớ đăng nhập"
           checked={this.state.remembered}
           containerStyle={{ alignSelf: 'flex-start', borderWidth: 0, backgroundColor: 'white' }}
           onPress={() => this.setState({ remembered: !this.state.remembered })}
@@ -138,7 +139,7 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
           onPress={this.signup}
           disabled={isLoading}
         />
-        <Text>Quên mật khẩu</Text>
+        <Text style={{ marginTop: 16, marginBottom: 4 }}>Quên mật khẩu</Text>
       </View>
     )
   }
