@@ -1,0 +1,1 @@
+fix chart: scalesPageToFit={Platform.OS !== 'ios'} ==> native-charts/index

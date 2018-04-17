@@ -1,5 +1,7 @@
+import Echarts from 'native-echarts'
 import * as React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { ListItem } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import { FilterTab } from 'src/components'
@@ -10,7 +12,7 @@ import { ITodo, State } from '../model'
 import { getAll } from '../selectors'
 
 interface TodosProps extends ConnectedReduxProps<State> {
-    todos: ITodo[]
+  todos: ITodo[]
 }
 
 enum Filter {
@@ -20,17 +22,234 @@ enum Filter {
   YEAR = 'NĂM'
 }
 
+const list: List[] = [
+  {
+    code: '1',
+    name: 'DTTT THEO LOẠI KHÁCH HÀNG',
+    price: 2309
+  },
+  {
+    code: '2',
+    name: 'DTTT THEO CÂU THÀNH',
+    price: 239
+  },
+  {
+    code: '3',
+    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
+    price: 2309
+  },
+  {
+    code: '4',
+    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
+    price: 2309
+  },
+  {
+    code: '5',
+    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
+    price: 2309
+  },
+  {
+    code: '6',
+    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
+    price: 2309
+  },
+  {
+    code: '7',
+    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
+    price: 2309
+  },
+  {
+    code: '8',
+    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
+    price: 2309
+  },
+  {
+    code: '9',
+    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
+    price: 2309
+  },
+  {
+    code: '10',
+    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
+    price: 2309
+  },
+  {
+    code: '11',
+    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
+    price: 2309
+  },
+  {
+    code: '12',
+    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
+    price: 2309
+  },
+  {
+    code: '13',
+    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
+    price: 2309
+  },
+  {
+    code: '14',
+    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
+    price: 2309
+  },
+  {
+    code: '15',
+    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
+    price: 2309
+  }
+]
+
+interface List {
+  code: string
+  name: string
+  price: number
+}
+
 const ChartTab: React.SFC<TodosProps> = (props) => {
   const { todos, dispatch } = props
 
+  const keyExtractor = (item: List, index: number) => {
+    return item.code
+  }
+
+  const optionBarChart = {
+    grid: {
+      borderWidth: 0,
+      y: 0,
+      y2: 0,
+      x: 0,
+      x2: 0
+    },
+    xAxis: [
+      {
+        type: 'category',
+        show: false,
+        data: ['', '', '', '', '', '', '', '', '', '', '']
+      }
+    ],
+    yAxis: [
+      {
+        type: 'value',
+        show: false
+      }
+    ],
+    series: [
+      {
+        name: 'ECharts例子个数统计',
+        type: 'bar',
+        itemStyle: {
+          normal: {
+            color(params: any) {
+              // build a color map as your need.
+              const colorList = [
+                '#C1232B',
+                '#B5C334',
+                '#FCCE10',
+                '#E87C25',
+                '#27727B',
+                '#FE8463',
+                '#9BCA63',
+                '#FAD860',
+                '#F3A43B',
+                '#60C0DD',
+                '#D7504B',
+                '#C6E579',
+                '#F4E001',
+                '#F0805A',
+                '#26C0C0'
+              ]
+              return colorList[params.dataIndex]
+            }
+          }
+        },
+        data: [12, 21, 10, 4, 12, 5, 6, 5, 25, 23, 7]
+      }
+    ]
+  }
+
+  const optionChart = {
+    grid: {
+      borderWidth: 0,
+      y: 0,
+      y2: 0,
+      x: 0,
+      x2: 0
+    },
+    series: [
+      {
+        itemStyle: {
+          normal: {
+            label: {
+              show: false
+            },
+            labelLine: {
+              show: false
+            }
+          }
+        },
+        name: 'Reference Page',
+        type: 'pie',
+        radius : ['50%', '70%'],
+        data: [
+          { value: 400, name: 'Searching Engine' },
+          { value: 335, name: 'Direct' },
+          { value: 310, name: 'Email' },
+          { value: 274, name: 'Alliance Advertisement' },
+          { value: 235, name: 'Video Advertisement' }
+        ]
+      }
+    ]
+  }
+
+  const renderItem = ({ item }: { item: List }) => {
+    return (
+      <ListItem
+      containerStyle={{ marginBottom: 10 }}
+        title={item.name}
+        titleStyle={{ fontSize: 14 }}
+        subtitle={
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}
+          >
+            <Text style={{ flex: 0.2, textAlign: 'center' }}>{item.price}</Text>
+            <View style={{ flex: 0.4 }}>
+              <Echarts option={optionChart} height={100} />
+            </View>
+            <View style={{ flex: 0.4 }}>
+              <Echarts option={optionBarChart} height={75} />
+            </View>
+          </View>
+          // <View style={{ flex: 1, flexDirection: 'row' }}>
+          //   {/* <Text>{item.price}</Text> */}
+          //   <Echarts option={optionChart} height={100} />
+          // </View>
+        }
+      />
+    )
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>{'Báo cáo ngày 22/04/2018'.toUpperCase()}</Text>
+      <Text style={styles.header}>
+        {'Báo cáo ngày 22/04/2018'.toUpperCase()}
+      </Text>
       <FilterTab
         data={[Filter.DAY, Filter.WEEK, Filter.MONTH, Filter.YEAR]}
-        onItemSelected={(item) => console.log(item)} />
+        onItemSelected={(item) => console.log(item)}
+      />
       <TimePicker onDateChange={(date) => console.log(date)} />
-
+      <FlatList
+        style={{ marginTop: 8 }}
+        keyExtractor={keyExtractor}
+        data={list}
+        renderItem={renderItem}
+      />
       {/* <Button title="Add" onPress={() => { dispatch(addTodo('Hello Bi')) }} />
       {todos.map((t) => <Text key={t.id}>{t.text}</Text>)} */}
     </View>
