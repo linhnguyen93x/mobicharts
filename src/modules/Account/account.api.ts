@@ -1,10 +1,12 @@
 import { api } from 'src/api'
 
-// Define api here
-const getUserProfile = (url: string) => {
-  return api.request(url)
+import { login } from './Login/api'
+
+const getUserProfile = () => {
+  return api.request('')
 }
 
 export const AccountApi = {
-    getUserProfile
+    getUserProfile,
+    login
 }

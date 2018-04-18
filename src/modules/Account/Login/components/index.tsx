@@ -10,10 +10,8 @@ import {
   StyleSheet,
   Text,
 } from 'react-native'
-import { appEpic$ } from 'src/+state/epics'
 import { globalStyle } from 'src/style'
 
-import { accountEpic } from '../epics'
 import SubmitForm from './submit-form'
 
 interface LoginState {
@@ -32,10 +30,6 @@ class LoginScreen extends React.Component<any, LoginState> {
   state: LoginState = {
     isReady: false,
     containerHeight: height
-  }
-
-  componentWillMount() {
-    appEpic$.next(accountEpic)
   }
 
   async _cacheResourcesAsync() {

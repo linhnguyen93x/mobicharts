@@ -3,10 +3,13 @@ import * as React from 'react'
 import { BackHandler, View } from 'react-native'
 import { addNavigationHelpers, NavigationActions, StackNavigator, TabBarBottom, TabNavigator } from 'react-navigation'
 import { connect } from 'react-redux'
+import { appEpic$ } from 'src/+state/epics'
+import { checkAuthEpic } from 'src/modules/Account/+state/epics'
 import Login from 'src/modules/Account/Login/components'
 import ChartTab from 'src/modules/ChartTab'
 import MapTab from 'src/modules/MapTab'
 import NotificationTab from 'src/modules/NotificationTab'
+import { LocalStorage } from 'src/shared/async-storage'
 
 import PersonalTab from '../modules/PersonalTab'
 import { addListener } from '../shared/redux'
@@ -135,6 +138,22 @@ export const AppNavigator = StackNavigator(
 )
 
 class ReduxNavigation extends React.Component<any, {}> {
+  async componentWillMount() {
+    const { dispatch } = this.props
+    const jwt = await LocalStorage.getItem('jwt')
+
+    if (jwt) {
+      const currentEpic = appEpic$.value
+      if (currentEpic !== checkAuthEpic) {
+        appEpic$.next(checkAuthEpic)
+      }
+      LocalStorage.removeJwt()
+      // dispatch(checkAuthAction(jwt))
+    } else {
+      dispatch({ type: 'Logout' })
+    }
+  }
+
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.onBackPress)
   }
@@ -155,7 +174,7 @@ class ReduxNavigation extends React.Component<any, {}> {
 
   render() {
     const { dispatch, nav, isLoggedIn } = this.props
-    const state = !isLoggedIn ? nav.stateForLoggedIn : nav.stateForLoggedOut
+    const state = isLoggedIn ? nav.stateForLoggedIn : nav.stateForLoggedOut
     const navigation = addNavigationHelpers({
       dispatch,
       state,

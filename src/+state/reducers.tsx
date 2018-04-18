@@ -1,8 +1,7 @@
 import { NavigationActions } from 'react-navigation'
 import { Action, combineReducers, Reducer } from 'redux'
 import { loadingReducer } from 'src/+state/loadingReducer'
-import ChartTab from 'src/modules/ChartTab'
-import { State as ChartState } from 'src/modules/ChartTab/model'
+import profile from 'src/modules/Account/+state/reducers'
 
 import { AppNavigator } from '../navigators/AppNavigator'
 
@@ -10,7 +9,6 @@ const ActionForLoggedOut = AppNavigator.router.getActionForPathAndParams(
   'Login'
 )
 const ActionForLoggedIn = AppNavigator.router.getActionForPathAndParams('Main/Chart')
-
 const stateForLoggedOut = AppNavigator.router.getStateForAction(
   ActionForLoggedOut
 )
@@ -18,8 +16,9 @@ const stateForLoggedIn = AppNavigator.router.getStateForAction(
   ActionForLoggedIn
 )
 const initialNavState = { stateForLoggedOut, stateForLoggedIn }
-
 function nav(state = initialNavState, action: Action) {
+  console.info('[ACTION]:', action.type)
+
   switch (action.type) {
     case '@@redux/INIT':
       return {
@@ -60,7 +59,6 @@ function nav(state = initialNavState, action: Action) {
 }
 
 const initialAuthState = { isLoggedIn: false }
-
 function auth(state = initialAuthState, action: Action) {
   switch (action.type) {
     case 'Login':
@@ -72,15 +70,15 @@ function auth(state = initialAuthState, action: Action) {
   }
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface IApplicationState {
-  [ChartTab.constants.NAME]: ChartState
 }
 
-const AppReducer: Reducer<IApplicationState> = combineReducers<IApplicationState>({
+const AppReducer: Reducer<any> = combineReducers<any>({
   nav,
   auth,
+  profile,
   loading: loadingReducer,
-  [ChartTab.constants.NAME]: ChartTab.reducer
 })
 
 export default AppReducer

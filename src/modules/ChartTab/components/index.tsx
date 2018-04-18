@@ -8,6 +8,7 @@ import { FilterTab } from 'src/components'
 import { TimePicker } from 'src/components/time-picker'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 
+import { globalStyle } from '../../../style'
 import { ITodo, State } from '../model'
 import { getAll } from '../selectors'
 
@@ -37,66 +38,6 @@ const list: List[] = [
     code: '3',
     name: 'THUÊ BAO PHÁT TRIỂN MỚI',
     price: 2309
-  },
-  {
-    code: '4',
-    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
-    price: 2309
-  },
-  {
-    code: '5',
-    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
-    price: 2309
-  },
-  {
-    code: '6',
-    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
-    price: 2309
-  },
-  {
-    code: '7',
-    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
-    price: 2309
-  },
-  {
-    code: '8',
-    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
-    price: 2309
-  },
-  {
-    code: '9',
-    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
-    price: 2309
-  },
-  {
-    code: '10',
-    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
-    price: 2309
-  },
-  {
-    code: '11',
-    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
-    price: 2309
-  },
-  {
-    code: '12',
-    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
-    price: 2309
-  },
-  {
-    code: '13',
-    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
-    price: 2309
-  },
-  {
-    code: '14',
-    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
-    price: 2309
-  },
-  {
-    code: '15',
-    name: 'THUÊ BAO PHÁT TRIỂN MỚI',
-    price: 2309
   }
 ]
 
@@ -118,8 +59,8 @@ const ChartTab: React.SFC<TodosProps> = (props) => {
       borderWidth: 0,
       y: 0,
       y2: 0,
-      x: 0,
-      x2: 0
+      x: 16,
+      x2: 4
     },
     xAxis: [
       {
@@ -173,8 +114,8 @@ const ChartTab: React.SFC<TodosProps> = (props) => {
       borderWidth: 0,
       y: 0,
       y2: 0,
-      x: 0,
-      x2: 0
+      x: 16,
+      x2: 4
     },
     series: [
       {
@@ -190,7 +131,7 @@ const ChartTab: React.SFC<TodosProps> = (props) => {
         },
         name: 'Reference Page',
         type: 'pie',
-        radius : ['50%', '70%'],
+        radius: ['50%', '70%'],
         data: [
           { value: 400, name: 'Searching Engine' },
           { value: 335, name: 'Direct' },
@@ -205,7 +146,7 @@ const ChartTab: React.SFC<TodosProps> = (props) => {
   const renderItem = ({ item }: { item: List }) => {
     return (
       <ListItem
-      containerStyle={{ marginBottom: 10 }}
+        containerStyle={{ marginBottom: 10 }}
         title={item.name}
         titleStyle={{ fontSize: 14 }}
         subtitle={
@@ -217,18 +158,17 @@ const ChartTab: React.SFC<TodosProps> = (props) => {
               justifyContent: 'space-between'
             }}
           >
-            <Text style={{ flex: 0.2, textAlign: 'center' }}>{item.price}</Text>
-            <View style={{ flex: 0.4 }}>
-              <Echarts option={optionChart} height={100} />
+            <View style={{ flex: 0.2, justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={[globalStyle.styles.fontWeightBold, { textAlign: 'center', fontSize: 26 }]}>{item.price}</Text>
+              <Text style={globalStyle.styles.fontWeightBold}>Tỷ đồng</Text>
             </View>
             <View style={{ flex: 0.4 }}>
               <Echarts option={optionBarChart} height={75} />
             </View>
+            <View style={{ flex: 0.3 }}>
+              <Echarts option={optionChart} height={100} />
+            </View>
           </View>
-          // <View style={{ flex: 1, flexDirection: 'row' }}>
-          //   {/* <Text>{item.price}</Text> */}
-          //   <Echarts option={optionChart} height={100} />
-          // </View>
         }
       />
     )

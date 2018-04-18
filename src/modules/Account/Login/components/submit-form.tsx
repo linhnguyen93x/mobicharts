@@ -1,12 +1,15 @@
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import * as React from 'react'
-import { Alert, Keyboard, LayoutAnimation, StyleSheet, Text, UIManager, View } from 'react-native'
+import { Keyboard, LayoutAnimation, StyleSheet, Text, UIManager, View } from 'react-native'
 import { Button, CheckBox, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { SUBMIT_LOADER } from 'src/+state/constants'
-import { endLoading, startLoading } from 'src/+state/loadingActions'
+import { appEpic$ } from 'src/+state/epics'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 import { globalStyle } from 'src/style'
+
+import { loginAction } from '../actions'
+import { accountEpic } from '../epics'
 
 // Enable LayoutAnimation on Android
 // tslint:disable-next-line:no-unused-expression
@@ -44,12 +47,14 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
     const usernameValid = this.validateUsername()
     const passwordValid = this.validatePassword()
     if (passwordValid && usernameValid) {
-      this.props.dispatch(startLoading(SUBMIT_LOADER, 'Đang tải', true))
-      setTimeout(() => {
-        LayoutAnimation.easeInEaseOut()
-        this.props.dispatch(endLoading(SUBMIT_LOADER))
-        Alert.alert('🎸', 'You rock')
-      }, 1500)
+      const { username, password } = this.state
+      const currentEpic = appEpic$.value
+
+      if (currentEpic !== accountEpic) {
+        appEpic$.next(accountEpic)
+      }
+
+      this.props.dispatch(loginAction({ userName: username, password }))
     }
   }
 
@@ -86,7 +91,14 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
 
     return (
       <View style={styles.container}>
-        <Text style={[globalStyle.styles.fontWeightBold, { fontSize: 18, marginBottom: 4 }]}>Đăng nhập</Text>
+        <Text
+          style={[
+            globalStyle.styles.fontWeightBold,
+            { fontSize: 18, marginBottom: 4 }
+          ]}
+        >
+          Đăng nhập
+        </Text>
         <View style={{ alignSelf: 'stretch' }}>
           <FormInput
             refInput={(input: any) => (this.usernameInput = input)}
@@ -122,7 +134,11 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
         <CheckBox
           title="Ghi nhớ đăng nhập"
           checked={this.state.remembered}
-          containerStyle={{ alignSelf: 'flex-start', borderWidth: 0, backgroundColor: 'white' }}
+          containerStyle={{
+            alignSelf: 'flex-start',
+            borderWidth: 0,
+            backgroundColor: 'white'
+          }}
           onPress={() => this.setState({ remembered: !this.state.remembered })}
         />
         <Button
