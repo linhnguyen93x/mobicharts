@@ -75,7 +75,8 @@ const TabBar = TabNavigator(
     animationEnabled: true,
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
-    swipeEnabled: false
+    swipeEnabled: false,
+    lazy: true
   }
 )
 
@@ -174,7 +175,7 @@ class ReduxNavigation extends React.Component<any, {}> {
 
   render() {
     const { dispatch, nav, isLoggedIn } = this.props
-    const state = isLoggedIn ? nav.stateForLoggedIn : nav.stateForLoggedOut
+    const state = !isLoggedIn ? nav.stateForLoggedIn : nav.stateForLoggedOut
     const navigation = addNavigationHelpers({
       dispatch,
       state,

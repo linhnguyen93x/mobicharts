@@ -6,7 +6,5 @@ import { LoginRequest } from './model'
 
 // Define api here
 export const login = (body: LoginRequest): Observable<UserProfile> => {
-  const params = `userName=${body.userName}&password=${body.password}`
-
-  return api.request('/mobile/export/auth.html', params)
+  return api.request('/mobile/export/auth.html', body)
 }

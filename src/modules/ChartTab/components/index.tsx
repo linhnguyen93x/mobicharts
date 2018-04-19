@@ -54,96 +54,83 @@ const ChartTab: React.SFC<TodosProps> = (props) => {
     return item.code
   }
 
-  const optionBarChart = {
-    grid: {
-      borderWidth: 0,
-      y: 0,
-      y2: 0,
-      x: 16,
-      x2: 4
-    },
-    xAxis: [
-      {
-        type: 'category',
-        show: false,
-        data: ['', '', '', '', '', '', '', '', '', '', '']
-      }
-    ],
-    yAxis: [
-      {
-        type: 'value',
-        show: false
-      }
-    ],
-    series: [
-      {
-        name: 'ECharts例子个数统计',
-        type: 'bar',
-        itemStyle: {
-          normal: {
-            color(params: any) {
-              // build a color map as your need.
-              const colorList = [
-                '#C1232B',
-                '#B5C334',
-                '#FCCE10',
-                '#E87C25',
-                '#27727B',
-                '#FE8463',
-                '#9BCA63',
-                '#FAD860',
-                '#F3A43B',
-                '#60C0DD',
-                '#D7504B',
-                '#C6E579',
-                '#F4E001',
-                '#F0805A',
-                '#26C0C0'
-              ]
-              return colorList[params.dataIndex]
+  const getBarOption = (item: List, color?: string) => {
+    return {
+      grid: {
+        borderWidth: 0,
+        y: 0,
+        y2: 0,
+        x: 16,
+        x2: 4
+      },
+      xAxis: [
+        {
+          type: 'category',
+          show: false,
+          data: ['', '', '', '', '', '', '', '', '', '', '']
+        }
+      ],
+      yAxis: [
+        {
+          type: 'value',
+          show: false
+        }
+      ],
+      series: [
+        {
+          name: 'ECharts例子个数统计',
+          type: 'bar',
+          itemStyle: {
+            normal: {
+              color: color ? color : '#26C0C0'
             }
-          }
-        },
-        data: [12, 21, 10, 4, 12, 5, 6, 5, 25, 23, 7]
-      }
-    ]
+          },
+          data: [12, 21, 10, 4, 12, 5, 6, 5, 25, 23, 7]
+        }
+      ]
+    }
   }
 
-  const optionChart = {
-    grid: {
-      borderWidth: 0,
-      y: 0,
-      y2: 0,
-      x: 16,
-      x2: 4
-    },
-    series: [
-      {
-        itemStyle: {
-          normal: {
-            label: {
-              show: false
-            },
-            labelLine: {
-              show: false
+  const getPieOption = (item: List) => {
+    return {
+      grid: {
+        borderWidth: 0,
+        y: 0,
+        y2: 0,
+        x: 16,
+        x2: 4
+      },
+      series: [
+        {
+          itemStyle: {
+            normal: {
+              label: {
+                show: false
+              },
+              labelLine: {
+                show: false
+              }
             }
-          }
-        },
-        name: 'Reference Page',
-        type: 'pie',
-        radius: ['50%', '70%'],
-        data: [
-          { value: 400, name: 'Searching Engine' },
-          { value: 335, name: 'Direct' },
-          { value: 310, name: 'Email' },
-          { value: 274, name: 'Alliance Advertisement' },
-          { value: 235, name: 'Video Advertisement' }
-        ]
-      }
-    ]
+          },
+          name: 'Reference Page',
+          type: 'pie',
+          radius: ['50%', '70%'],
+          data: [
+            { value: 400, name: 'Searching Engine' },
+            { value: 335, name: 'Direct' },
+            { value: 310, name: 'Email' },
+            { value: 274, name: 'Alliance Advertisement' },
+            { value: 235, name: 'Video Advertisement' }
+          ]
+        }
+      ]
+    }
   }
 
-  const renderItem = ({ item }: { item: List }) => {
+  const renderItem = ({ item, index }: { item: List, index: number }) => {
+    const barOption = getBarOption(item, index % 2 === 0 ? '#D3684F' : '#B7D243')
+    const pieOption = getPieOption(item)
+
     return (
       <ListItem
         containerStyle={{ marginBottom: 10 }}
@@ -163,10 +150,10 @@ const ChartTab: React.SFC<TodosProps> = (props) => {
               <Text style={globalStyle.styles.fontWeightBold}>Tỷ đồng</Text>
             </View>
             <View style={{ flex: 0.4 }}>
-              <Echarts option={optionBarChart} height={75} />
+              <Echarts option={barOption} height={75} />
             </View>
             <View style={{ flex: 0.3 }}>
-              <Echarts option={optionChart} height={100} />
+              <Echarts option={pieOption} height={100} />
             </View>
           </View>
         }

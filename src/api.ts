@@ -16,11 +16,11 @@ class ApiService {
   }
 
   request = <T>(prefix: string, body?: T, options?: any): Observable<any> => {
-    console.log(this.HOST_URL + prefix + `?${body}`)
 
     return ajax({
-      url: this.HOST_URL + prefix + `?${body}`,
-      method: 'GET',
+      url: this.HOST_URL + prefix,
+      method: 'POST',
+      body,
       headers: this.getHeaders()
     }).pipe(
       exhaustMap((res) => {
