@@ -33,8 +33,8 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
   passwordInput: any
 
   state: FormState = {
-    username: '',
-    password: '',
+    username: 'admin',
+    password: '123456',
     usernameValid: true,
     passwordValid: true,
     remembered: false

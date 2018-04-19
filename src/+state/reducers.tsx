@@ -2,6 +2,8 @@ import { NavigationActions } from 'react-navigation'
 import { Action, combineReducers, Reducer } from 'redux'
 import { loadingReducer } from 'src/+state/loadingReducer'
 import profile from 'src/modules/Account/+state/reducers'
+import SummaryChart from 'src/modules/ChartTab'
+import { SummaryChartState } from 'src/modules/ChartTab/model'
 
 import { AppNavigator } from '../navigators/AppNavigator'
 
@@ -72,13 +74,15 @@ function auth(state = initialAuthState, action: Action) {
 
 // tslint:disable-next-line:no-empty-interface
 export interface IApplicationState {
+  [SummaryChart.constants.NAME]: SummaryChartState
 }
 
-const AppReducer: Reducer<any> = combineReducers<any>({
+const AppReducer: Reducer<IApplicationState> = combineReducers<IApplicationState>({
   nav,
   auth,
   profile,
   loading: loadingReducer,
+  [SummaryChart.constants.NAME]: SummaryChart.reducer
 })
 
 export default AppReducer

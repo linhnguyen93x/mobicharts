@@ -4,6 +4,7 @@ import { of } from 'rxjs/observable/of'
 import { catchError, exhaustMap } from 'rxjs/operators'
 
 import { AccountApi } from './modules/Account/account.api'
+import { SummaryChartApi } from './modules/ChartTab/api'
 
 interface IHeaders {
   [x: string]: any
@@ -25,19 +26,19 @@ class ApiService {
     }).pipe(
       exhaustMap((res) => {
         if (res.response && res.response.formDataJson) {
-          return of(res.response)
+          return of(res.response.formDataJson)
         }
         return Observable.throw(res.response)
       }),
       catchError((err) => {
-        console.info('ERR:', err)
+        console.info('ERR:', JSON.stringify(err, null, 2))
         return Observable.throw(err)
       })
     )
   }
 
   public setHeaders(params: object) {
-    this.headers = {...this.headers, params}
+    this.headers = {...this.headers, ...params}
   }
 
   private getHeaders() {
@@ -49,5 +50,6 @@ class ApiService {
 export const api = new ApiService()
 
 export default {
-  ...AccountApi
+  ...AccountApi,
+  ...SummaryChartApi
 }

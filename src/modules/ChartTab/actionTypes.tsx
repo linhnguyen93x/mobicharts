@@ -1,10 +1,11 @@
 import { Action } from 'redux'
 
-export interface AddTodoAction extends Action {
-  type: '@@todos/ADD'
-  payload: {
-    text: string
-  }
+import { SummaryChartRequest, SummaryChartResponse } from './model'
+
+export interface TSummaryChart extends Action {
+  payload: SummaryChartRequest
 }
 
-export type TodoActions = AddTodoAction
+export interface TSummaryChartSuccess extends Action {
+  payload: SummaryChartResponse[]
+}

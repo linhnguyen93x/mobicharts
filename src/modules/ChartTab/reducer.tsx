@@ -1,27 +1,17 @@
 import { Reducer } from 'redux'
 
-import { TodoActions } from './actionTypes'
-import { State } from './model'
+import { TSummaryChartSuccess } from './actionTypes'
+import { GET_SUMMARY_CHART_REQUEST, GET_SUMMARY_CHART_SUCCESS } from './constants'
+import { SummaryChartState } from './model'
 
-const initialState: State = [
-  {
-    text: 'Use Redux',
-    completed: false,
-    id: 0
-  }
-]
+const initialState: SummaryChartState = []
 
-const reducer: Reducer<State> = (state: State = initialState, action: TodoActions) => {
+const reducer: Reducer<SummaryChartState> = (state: SummaryChartState = initialState, action: TSummaryChartSuccess) => {
   switch (action.type) {
-    case '@@todos/ADD':
-      return [
-        ...state,
-        {
-          text: action.payload.text,
-          completed: false,
-          id: 1
-        }
-      ]
+    case GET_SUMMARY_CHART_REQUEST:
+      return initialState
+    case GET_SUMMARY_CHART_SUCCESS:
+      return action.payload
     default:
       return state
   }

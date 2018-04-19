@@ -1,1 +1,3 @@
-export const NAME = 'todos'
+export const NAME = 'summaryChart'
+export const GET_SUMMARY_CHART_REQUEST = 'GET_SUMMARY_CHART_REQUEST'
+export const GET_SUMMARY_CHART_SUCCESS = 'GET_SUMMARY_CHART_SUCCESS'

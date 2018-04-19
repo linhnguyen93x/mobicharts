@@ -1,13 +1,20 @@
-export interface ITodo {
-  id?: number
-  text: string
-  completed: boolean
+export interface SummaryChartRequest {
+  p_issue_date: string
+  p_time_type: number
+  p_report_type: string
+}
+
+export interface Chart {
+  label: string
+  value: string
+}
+
+export interface SummaryChartResponse {
+  label: string
+  tongCong: number | null
+  bieuDoCot: Chart[] | null,
+  bieuDoCoCau: Chart[] | null
 }
 
 // This is the model of our module state (e.g. return type of the reducer)
-export type State = ITodo[]
-
-// Some utility functions that operates on our model
-export const filterCompleted = (todos: ITodo[]) => todos.filter((t) => t.completed)
-
-export const filterActive = (todos: ITodo[]) => todos.filter((t) => !t.completed)
+export type SummaryChartState = SummaryChartResponse[]

@@ -1,6 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons'
+import moment from 'moment'
 import * as React from 'react'
-import { View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 import DatePicker from 'react-native-datepicker'
 
 export interface TimeProps {
@@ -8,11 +9,11 @@ export interface TimeProps {
 }
 
 interface TimeState {
-  selectedTime: Date | string
+  selectedTime: string
 }
 
 export class TimePicker extends React.Component<TimeProps, TimeState> {
-  state = { selectedTime: new Date() }
+  state = { selectedTime: moment().format('DD/MM/YYYY') }
 
   render() {
     return (
@@ -23,7 +24,22 @@ export class TimePicker extends React.Component<TimeProps, TimeState> {
           backgroundColor: 'white'
         }}
       >
-        <MaterialIcons name="keyboard-arrow-left" size={25} color={'#75746F'} />
+        <TouchableOpacity
+          style={{ paddingHorizontal: 8 }}
+          onPress={() =>
+            this.setState({
+              selectedTime: moment(this.state.selectedTime, 'DD/MM/YYYY')
+                .subtract(1, 'days')
+                .format('DD/MM/YYYY')
+            }, () => this.props.onDateChange(this.state.selectedTime))
+          }
+        >
+          <MaterialIcons
+            name="keyboard-arrow-left"
+            size={25}
+            color={'#75746F'}
+          />
+        </TouchableOpacity>
         <DatePicker
           style={{ flex: 1, alignSelf: 'stretch' }}
           date={this.state.selectedTime}
@@ -52,11 +68,22 @@ export class TimePicker extends React.Component<TimeProps, TimeState> {
             })
           }}
         />
-        <MaterialIcons
-          name="keyboard-arrow-right"
-          size={25}
-          color={'#75746F'}
-        />
+        <TouchableOpacity
+          style={{ paddingHorizontal: 8 }}
+          onPress={() =>
+            this.setState({
+              selectedTime: moment(this.state.selectedTime, 'DD/MM/YYYY')
+                .add(1, 'days')
+                .format('DD/MM/YYYY')
+            }, () => this.props.onDateChange(this.state.selectedTime))
+          }
+        >
+          <MaterialIcons
+            name="keyboard-arrow-right"
+            size={25}
+            color={'#75746F'}
+          />
+        </TouchableOpacity>
       </View>
     )
   }
