@@ -4,6 +4,7 @@ import { BackHandler, View } from 'react-native'
 import { addNavigationHelpers, NavigationActions, StackNavigator, TabBarBottom, TabNavigator } from 'react-navigation'
 import { connect } from 'react-redux'
 import { appEpic$ } from 'src/+state/epics'
+import { checkAuthAction } from 'src/modules/Account/+state/actions'
 import { checkAuthEpic } from 'src/modules/Account/+state/epics'
 import Login from 'src/modules/Account/Login/components'
 import ChartTab from 'src/modules/ChartTab'
@@ -55,13 +56,19 @@ const TabBar = TabNavigator(
           icon = <FontAwesome name={iconName} size={25} color={tintColor} />
         } else if (routeName === 'Notification') {
           const iconName = `bell${focused ? '' : '-outline'}`
-          icon = <MaterialCommunityIcons name={iconName} size={25} color={tintColor} />
+          icon = (
+            <MaterialCommunityIcons
+              name={iconName}
+              size={25}
+              color={tintColor}
+            />
+          )
         } else if (routeName === 'Map') {
           const iconName = `map${focused ? '' : '-o'}`
-          icon = <FontAwesome  name={iconName} size={25} color={tintColor} />
+          icon = <FontAwesome name={iconName} size={25} color={tintColor} />
         } else if (routeName === 'Account') {
           const iconName = `user${focused ? '' : '-o'}`
-          icon = <FontAwesome  name={iconName} size={25} color={tintColor} />
+          icon = <FontAwesome name={iconName} size={25} color={tintColor} />
         }
 
         return <View>{icon}</View>
@@ -148,8 +155,7 @@ class ReduxNavigation extends React.Component<any, {}> {
       if (currentEpic !== checkAuthEpic) {
         appEpic$.next(checkAuthEpic)
       }
-      LocalStorage.removeJwt()
-      // dispatch(checkAuthAction(jwt))
+      dispatch(checkAuthAction(jwt))
     } else {
       dispatch({ type: 'Logout' })
     }
@@ -182,7 +188,7 @@ class ReduxNavigation extends React.Component<any, {}> {
       addListener
     })
 
-    return <AppNavigator navigation={navigation} />
+    return isLoggedIn === null ? null : <AppNavigator navigation={navigation} />
   }
 }
 

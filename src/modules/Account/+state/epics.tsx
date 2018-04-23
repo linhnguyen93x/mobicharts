@@ -1,13 +1,13 @@
 import { Alert } from 'react-native'
 import { ActionsObservable, ofType } from 'redux-observable'
 import { Observable } from 'rxjs/Observable'
-import { empty } from 'rxjs/observable/empty'
-import { catchError, exhaustMap, map, mapTo } from 'rxjs/operators'
+import { of } from 'rxjs/observable/of'
+import { catchError, concat, concatMap, exhaustMap } from 'rxjs/operators'
 import { api } from 'src/api'
 import { ILocalStorage } from 'src/shared/async-storage'
 
 import { UserProfile } from '../+model/profile'
-import { checkAuthSuccessAction } from './actions'
+import { checkAuthFailAction, checkAuthSuccessAction } from './actions'
 import { TCheckAuth } from './actionTypes'
 import { CHECK_AUTH_REQUEST } from './constants'
 
@@ -27,11 +27,13 @@ export const checkAuthEpic: any = (
       api.setHeaders({ Authorization: a.token })
 
       return getUserProfile().pipe(
-        map((user) => checkAuthSuccessAction(user)),
-        mapTo({ type: 'Login' }),
+        concatMap((user) => {
+          return of(checkAuthSuccessAction(user))
+        }),
+        concat(of({ type: 'Login' })),
         catchError((err: any) => {
           Alert.alert('Không thể lấy thông tin người dùng')
-          return empty()
+          return of(checkAuthFailAction())
         })
       )
     })

@@ -60,7 +60,7 @@ function nav(state = initialNavState, action: Action) {
   }
 }
 
-const initialAuthState = { isLoggedIn: false }
+const initialAuthState = { isLoggedIn: null }
 function auth(state = initialAuthState, action: Action) {
   switch (action.type) {
     case 'Login':
