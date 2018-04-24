@@ -7,6 +7,7 @@ import { api } from 'src/api'
 import { ILocalStorage } from 'src/shared/async-storage'
 
 import { UserProfile } from '../+model/profile'
+import { navigateToUser } from '../Login/actions'
 import { checkAuthFailAction, checkAuthSuccessAction } from './actions'
 import { TCheckAuth } from './actionTypes'
 import { CHECK_AUTH_REQUEST } from './constants'
@@ -30,7 +31,7 @@ export const checkAuthEpic: any = (
         concatMap((user) => {
           return of(checkAuthSuccessAction(user))
         }),
-        concat(of({ type: 'Login' })),
+        concat(of(navigateToUser())),
         catchError((err: any) => {
           Alert.alert('Không thể lấy thông tin người dùng')
           return of(checkAuthFailAction())

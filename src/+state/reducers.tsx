@@ -15,20 +15,15 @@ const stateForLoggedOut = AppNavigator.router.getStateForAction(
   ActionForLoggedOut
 )
 const stateForLoggedIn = AppNavigator.router.getStateForAction(
-  ActionForLoggedIn
+  {}
 )
 const initialNavState = { stateForLoggedOut, stateForLoggedIn }
 function nav(state = initialNavState, action: Action) {
-  console.info('[ACTION]:', action.type)
+  console.info('[ACTION]:', state)
 
   switch (action.type) {
     case '@@redux/INIT':
-      return {
-        ...state,
-        stateForLoggedIn: AppNavigator.router.getStateForAction(
-          ActionForLoggedIn
-        )
-      }
+      return initialNavState
 
     case 'Login':
       return {

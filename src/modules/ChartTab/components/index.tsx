@@ -62,6 +62,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
   }
 
   componentWillMount() {
+    console.log('Hello Chart')
     const currentEpic = appEpic$.value
 
     if (currentEpic !== summaryChartEpic) {
@@ -181,7 +182,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
           tension: 100,
           activeScale: 0.95
         }}
-        onPress={() => console.log('haha')}
+        onPress={() => this.props.navigation.navigate('ChartDetail')}
         containerStyle={{ marginBottom: 10 }}
         title={item.label}
         titleStyle={{ fontSize: 16 }}

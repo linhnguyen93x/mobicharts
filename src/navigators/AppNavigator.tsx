@@ -15,24 +15,28 @@ import { LocalStorage } from 'src/shared/async-storage'
 import PersonalTab from '../modules/PersonalTab'
 import { addListener } from '../shared/redux'
 
-// const fade = (props: any) => {
-//   const { position, scene } = props
-
-//   const index = scene.index
-
-//   const translateX = 0
-//   const translateY = 0
-
-//   const opacity = position.interpolate({
-//     inputRange: [index - 0.7, index, index + 0.7],
-//     outputRange: [0.3, 1, 0.3]
-//   })
-
-//   return {
-//     opacity,
-//     transform: [{ translateX }, { translateY }]
-//   }
-// }
+export const ChartStack = StackNavigator(
+  {
+    Chart: {
+      screen: ChartTab.components.default,
+      navigationOptions: {
+        title: 'Báo cáo tổng hợp'
+      }
+    },
+    ChartDetail: { screen: NotificationTab }
+  },
+  {
+    navigationOptions: (params: any) => ({
+      gesturesEnabled: true,
+      gesturesDirection: 'inverted',
+      headerStyle: {
+        backgroundColor: '#0165A9'
+      },
+      headerTintColor: 'white'
+    }),
+    headerMode: 'screen'
+  }
+)
 
 const TabBar = TabNavigator(
   {
@@ -47,6 +51,7 @@ const TabBar = TabNavigator(
     Account: { screen: PersonalTab }
   },
   {
+    initialRouteName: 'Chart',
     navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state
@@ -90,7 +95,8 @@ const TabBar = TabNavigator(
 export const AppNavigator = StackNavigator(
   {
     Login: { screen: Login },
-    Main: { screen: TabBar }
+    Main: { screen: TabBar },
+    ChartDetail: { screen: NotificationTab }
   },
   {
     navigationOptions: (params: any) => ({
@@ -100,48 +106,49 @@ export const AppNavigator = StackNavigator(
         backgroundColor: '#0165A9'
       },
       headerTintColor: 'white'
-    }),
-    transitionConfig: () => ({
-      screenInterpolator: (sceneProps) => {
-        const { layout, position, scene } = sceneProps
-        const { index } = scene
-        const width = layout.initWidth
-
-        return {
-          opacity: position.interpolate({
-            inputRange: [index - 1, index, index + 1],
-            outputRange: [0, 1, 0]
-          }),
-          transform: [
-            {
-              translateX: position.interpolate({
-                inputRange: [index - 1, index, index + 1],
-                outputRange: [-width, 0, width]
-              })
-            }
-          ]
-        }
-      },
-      headerTitleInterpolator: (sceneProps: any) => {
-        const { position, scene } = sceneProps
-        const { index } = scene
-
-        return {
-          opacity: position.interpolate({
-            inputRange: [index - 1, index, index + 1],
-            outputRange: [0, 1, 0]
-          }),
-          transform: [
-            {
-              translateX: position.interpolate({
-                inputRange: [index - 1, index, index + 1],
-                outputRange: [-50, 0, 50]
-              })
-            }
-          ]
-        }
-      }
     })
+  //   ,
+  //   transitionConfig: () => ({
+  //     screenInterpolator: (sceneProps) => {
+  //       const { layout, position, scene } = sceneProps
+  //       const { index } = scene
+  //       const width = layout.initWidth
+
+  //       return {
+  //         opacity: position.interpolate({
+  //           inputRange: [index - 1, index, index + 1],
+  //           outputRange: [0, 1, 0]
+  //         }),
+  //         transform: [
+  //           {
+  //             translateX: position.interpolate({
+  //               inputRange: [index - 1, index, index + 1],
+  //               outputRange: [-width, 0, width]
+  //             })
+  //           }
+  //         ]
+  //       }
+  //     },
+  //     headerTitleInterpolator: (sceneProps: any) => {
+  //       const { position, scene } = sceneProps
+  //       const { index } = scene
+
+  //       return {
+  //         opacity: position.interpolate({
+  //           inputRange: [index - 1, index, index + 1],
+  //           outputRange: [0, 1, 0]
+  //         }),
+  //         transform: [
+  //           {
+  //             translateX: position.interpolate({
+  //               inputRange: [index - 1, index, index + 1],
+  //               outputRange: [-50, 0, 50]
+  //             })
+  //           }
+  //         ]
+  //       }
+  //     }
+  //   })
   }
 )
 
@@ -171,7 +178,7 @@ class ReduxNavigation extends React.Component<any, {}> {
 
   onBackPress = () => {
     const { dispatch, nav } = this.props
-    if (nav.stateForLoggedIn.index <= 1) {
+    if (nav.stateForLoggedIn.index <= 0) {
       BackHandler.exitApp()
       return
     }
@@ -188,7 +195,7 @@ class ReduxNavigation extends React.Component<any, {}> {
       addListener
     })
 
-    return isLoggedIn === null ? null : <AppNavigator navigation={navigation} />
+    return <AppNavigator navigation={navigation} />
   }
 }
 
