@@ -1,10 +1,11 @@
 import { Entypo } from '@expo/vector-icons'
+import { Svg } from 'expo'
 import moment from 'moment'
-import Echarts from 'native-echarts'
 import * as React from 'react'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import { ListItem } from 'react-native-elements'
 import PieChart from 'react-native-pie-chart'
+import { BarChart } from 'react-native-svg-charts'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import { appEpic$ } from 'src/+state/epics'
@@ -15,8 +16,10 @@ import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 import { globalStyle } from '../../../style'
 import { getSummaryChartAction } from '../actions'
 import { summaryChartEpic } from '../epics'
-import { Chart, SummaryChartResponse } from '../model'
+import { SummaryChartResponse } from '../model'
 import { getAll } from '../selectors'
+
+const { LinearGradient, Stop, Defs } = Svg
 
 interface SummaryChartProps extends ConnectedReduxProps<SummaryChartState> {
   data: SummaryChartResponse[]
@@ -39,21 +42,7 @@ const pieColor = [
   '#32cd32',
   '#da70d6',
   '#6495ed',
-  '#ff69b4',
-  '#ba55d3',
-  '#cd5c5c',
-  '#ffa500',
-  '#40e0d0',
-  '#1e90ff',
-  '#ff6347',
-  '#7b68ee',
-  '#00fa9a',
-  '#ffd700',
-  '#6b8e23',
-  '#ff00ff',
-  '#3cb371',
-  '#b8860b',
-  '#30e0e0'
+  '#ff69b4'
 ]
 
 class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
@@ -85,80 +74,14 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     return item.label
   }
 
-  getBarOption = (item: Chart[], color?: string) => {
-    const data = item.map((item) => item.value)
-
-    return {
-      grid: {
-        borderWidth: 0,
-        y: 0,
-        y2: 0,
-        x: 0,
-        x2: 0
-      },
-      xAxis: [
-        {
-          type: 'category',
-          show: false,
-          data: []
-        }
-      ],
-      yAxis: [
-        {
-          type: 'value',
-          show: false
-        }
-      ],
-      series: [
-        {
-          name: '',
-          type: 'bar',
-          itemStyle: {
-            normal: {
-              color: color ? color : '#26C0C0'
-            }
-          },
-          data
-        }
-      ]
-    }
-  }
-
-  getPieOption = (item: Chart[]) => {
-    const data = item.map((i) => {
-      return { name: i.label, value: i.value }
-    })
-
-    return {
-      color: pieColor,
-      series: [
-        {
-          label: {
-            normal: {
-              show: false,
-              position: 'center'
-            },
-            emphasis: {
-              show: false,
-              textStyle: {
-                fontSize: '30',
-                fontWeight: 'bold'
-              }
-            }
-          },
-          labelLine: {
-            normal: {
-              show: false
-            }
-          },
-          name: 'Reference Page',
-          type: 'pie',
-          radius: ['30%', '50%'],
-          data
-        }
-      ]
-    }
-  }
+  Gradient = () => (
+    <Defs key={'gradient'}>
+      <LinearGradient id={'gradient'} x1={'0%'} y1={'0%'} x2={'0%'} y2={'100%'}>
+        <Stop offset={'0%'} stopColor={'rgba(183,210,67,1)'} />
+        <Stop offset={'100%'} stopColor={'rgb(163, 197, 46)'} />
+      </LinearGradient>
+    </Defs>
+  )
 
   renderItem = ({
     item,
@@ -167,10 +90,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     item: SummaryChartResponse
     index: number
   }) => {
-    const barOption = this.getBarOption(
-      item.bieuDoCot ? item.bieuDoCot : [],
-      index % 2 === 0 ? '#B7D243' : '#D3684F'
-    )
+    const barOption = item.bieuDoCot ? item.bieuDoCot.map((item) => item.value) : []
     const pieData = item.bieuDoCoCau ? item.bieuDoCoCau : []
     const pieOption = pieData.map((item) => item.value)
 
@@ -223,7 +143,18 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
                 />
               </View>
               <View style={{ flex: 0.3 }}>
-                <Echarts option={barOption} height={95} />
+                <BarChart
+                  style={{ height: 100 }}
+                  data={barOption}
+                  contentInset={{ top: 20, bottom: 20 }}
+                  svg={{
+                    strokeWidth: 2,
+                    fill: 'url(#gradient)'
+                  }}
+                >
+                  {/* <Grid /> */}
+                  <this.Gradient />
+                </BarChart>
               </View>
             </View>
             <View style={{ flex: 1, flexDirection: 'row' }}>

@@ -1,18 +1,7 @@
 import * as React from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { Card } from 'react-native-elements'
-
-
-
-
-
-
-
-
-
-
-
-
+import { Col, Row, Rows, Table, TableWrapper } from 'react-native-table-component'
 
 export interface TableReportState {
   tableHead: string[]
@@ -33,7 +22,7 @@ class TableReport extends React.PureComponent<any, any> {
   }
 
   render() {
-    const state = this.state;
+    const state = this.state
     return (
       <Card
         title="Bảng số liệu chi tiết:"
@@ -41,15 +30,15 @@ class TableReport extends React.PureComponent<any, any> {
         containerStyle={{ marginHorizontal: 0, flex: 1 }}
         dividerStyle={{ display: 'none' }}
       >
-        {/* <View style={styles.container}>
+        <View style={styles.container}>
         <Table>
           <Row data={state.tableHead} flexArr={[1, 2, 1, 1]} style={styles.head} textStyle={styles.text}/>
           <TableWrapper style={styles.wrapper}>
-            <Col data={state.tableTitle} style={styles.title} heightArr={[28,28]} textStyle={styles.text}/>
+            <Col data={state.tableTitle} style={styles.title} heightArr={[28, 28]} textStyle={styles.text}/>
             <Rows data={state.tableData} flexArr={[2, 1, 1]} style={styles.row} textStyle={styles.text}/>
           </TableWrapper>
         </Table>
-      </View> */}
+      </View>
       </Card>
     )
   }

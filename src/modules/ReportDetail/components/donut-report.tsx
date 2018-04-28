@@ -1,115 +1,127 @@
-import Echarts from 'native-echarts'
+import { Svg } from 'expo'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Card } from 'react-native-elements'
+import { PieChart } from 'react-native-svg-charts'
 
+const { Text, TSpan } = Svg
 export interface Props {
-  data: any[]
+  data: any[],
+  data2: any[]
 }
 
-const options = {
-  title: {
-    text: '7 ngày gần đây',
-    left: 'center'
-  },
-  legend: {
-    formatter: '{name}',
-    orient: 'horizontal',
-    y: 'bottom',
-    data: ['A', 'B', 'C', 'D', 'E']
-  },
-  tooltip: {
-    trigger: 'item',
-    formatter: '{b} : {c} ({d}%)'
-  },
-  calculable: true,
-  series: [
-    {
-      name: 'Pie chart',
-      type: 'pie',
-      radius: ['30%', '50%'],
-      avoidLabelOverlap: false,
-      // label: {
-      //   normal: {
-      //     show: false,
-      //     position: 'center'
-      //   },
-      //   emphasis: {
-      //     show: false,
-      //     textStyle: {
-      //       fontSize: '30',
-      //       fontWeight: 'bold'
-      //     }
-      //   }
-      // },
-      // labelLine: {
-      //   normal: {
-      //     show: false
-      //   }
-      // },
-      data: [
-        { value: 335, name: 'A' },
-        { value: 310, name: 'B' },
-        { value: 234, name: 'C' },
-        { value: 135, name: 'D' },
-        { value: 1548, name: 'E' }
-      ]
-    }
-  ]
+interface PieChartProperty {
+  svg: object
+  key: any
+  value: string | number
+  arc?: object
+}
+interface State {
+  pieData: PieChartProperty[]
+  pie2Data: PieChartProperty[],
+  selectedIndex: number | null
 }
 
-const options2 = {
-  title: {
-    text: 'Kế hoạch tháng',
-    left: 'center'
-  },
-  legend: {
-    formatter: '{name}',
-    orient: 'horizontal',
-    y: 'bottom',
-    data: ['A', 'B', 'C', 'D', 'E']
-  },
-  tooltip: {
-    trigger: 'item',
-    formatter: '{b} : {c} ({d}%)'
-  },
-  calculable: true,
-  series: [
-    {
-      name: 'Pie chart',
-      type: 'pie',
-      radius: ['30%', '50%'],
-      avoidLabelOverlap: false,
-      // label: {
-      //   normal: {
-      //     show: false,
-      //     position: 'center'
-      //   },
-      //   emphasis: {
-      //     show: false,
-      //     textStyle: {
-      //       fontSize: '30',
-      //       fontWeight: 'bold'
-      //     }
-      //   }
-      // },
-      // labelLine: {
-      //   normal: {
-      //     show: false
-      //   }
-      // },
-      data: [
-        { value: 335, name: 'A' },
-        { value: 310, name: 'B' },
-        { value: 234, name: 'C' },
-        { value: 135, name: 'D' },
-        { value: 1548, name: 'E' }
-      ]
-    }
-  ]
-}
+const pieColor = [
+  '#ff7f50',
+  '#87cefa',
+  '#32cd32',
+  '#da70d6',
+  '#6495ed',
+  '#ff69b4',
+  '#ba55d3',
+  '#cd5c5c',
+  '#ffa500',
+  '#40e0d0',
+  '#1e90ff',
+  '#ff6347',
+  '#7b68ee',
+  '#00fa9a',
+  '#ffd700',
+  '#6b8e23',
+  '#ff00ff',
+  '#3cb371',
+  '#b8860b',
+  '#30e0e0'
+]
 
-class DonutReport extends React.PureComponent<Props> {
+class DonutReport extends React.PureComponent<Props, State> {
+  state: State = {
+    pieData: [],
+    pie2Data: [],
+    selectedIndex: null
+  }
+
+  componentWillMount() {
+    const promiseChart = new Promise((resolve, reject) => {
+      resolve(this.mapDataToChart(this.props.data))
+    })
+
+    const promiseChart2 = new Promise((resolve, reject) => {
+      resolve(this.mapDataToChart(this.props.data2))
+    })
+
+    Promise.all([promiseChart, promiseChart2]).then((res: any) => {
+      this.setState({
+        pieData: res[0],
+        pie2Data: res[1]
+      })
+    })
+  }
+
+  mapDataToChart = (data: any[]) => {
+    return data.filter((value) => value > 0).map((value, index) => ({
+      value,
+      svg: {
+        fill: pieColor[index],
+        onPress: () => this.triggerEvent(index)
+      },
+      key: `pie-${index}`
+    }))
+  }
+
+  triggerEvent = (index: number) => {
+    const mapToSelected = (data: PieChartProperty[]) => data.map(
+      (item, pieIndex) =>
+        pieIndex === index && this.state.selectedIndex !== index
+          ? { ...item, arc: { outerRadius: '120%', cornerRadius: 5 } }
+          : { ...item, arc: {} }
+    )
+
+    const newPieState = mapToSelected(this.state.pieData)
+    const newPie2State = mapToSelected(this.state.pie2Data)
+
+    this.setState({
+      pieData: newPieState,
+      pie2Data: newPie2State,
+      selectedIndex: this.state.selectedIndex === index ? null : index
+    })
+  }
+
+  CenterText = ({ height, width, title, subTitle }: any) => {
+    const distanceLength = (
+      Math.abs(title.length - subTitle.length) * 5
+    ).toString()
+
+    return (
+      <Text x={0} y={-15} stroke={'black'} fill={'none'} textAnchor="middle">
+        <TSpan
+          x="0"
+          dx={title.length >= subTitle.length ? '0' : distanceLength}
+        >
+          {title}
+        </TSpan>
+        <TSpan
+          x="0"
+          dx={subTitle.length < title.length ? distanceLength : '0'}
+          dy="30"
+        >
+          {subTitle}
+        </TSpan>
+      </Text>
+    )
+  }
+
   render() {
     return (
       <Card
@@ -119,12 +131,27 @@ class DonutReport extends React.PureComponent<Props> {
         dividerStyle={{ display: 'none' }}
       >
         <View style={styles.chartContainer}>
-          <View>
-            <Echarts option={options} height={200} />
-          </View>
-          <View style={{ marginTop: 16 }}>
-            <Echarts option={options2} height={200} />
-          </View>
+          <PieChart
+            style={styles.chart}
+            data={this.state.pieData}
+            innerRadius={40}
+            outerRadius={'70%'}
+            labelRadius={90}
+            animate={true}
+          >
+            <this.CenterText title="7 ngày" subTitle="gần đây" />
+          </PieChart>
+          <PieChart
+            style={styles.chart}
+            data={this.state.pie2Data}
+            innerRadius={40}
+            outerRadius={'70%'}
+            labelRadius={90}
+            animate={true}
+            animationDuration={1000}
+          >
+            <this.CenterText title="Kế hoạch" subTitle="tháng" />
+          </PieChart>
         </View>
       </Card>
     )
@@ -133,7 +160,12 @@ class DonutReport extends React.PureComponent<Props> {
 
 const styles = StyleSheet.create({
   chartContainer: {
-    flex: 1
+    flex: 1,
+    flexDirection: 'row'
+  },
+  chart: {
+    flex: 0.5,
+    height: 200
   }
 })
 
