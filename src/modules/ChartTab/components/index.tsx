@@ -62,7 +62,6 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
   }
 
   componentWillMount() {
-    console.log('Hello Chart')
     const currentEpic = appEpic$.value
 
     if (currentEpic !== summaryChartEpic) {
@@ -101,7 +100,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
         {
           type: 'category',
           show: false,
-          data: ['', '', '', '', '', '', '', '', '', '', '']
+          data: []
         }
       ],
       yAxis: [
@@ -224,7 +223,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
                 />
               </View>
               <View style={{ flex: 0.3 }}>
-                <Echarts option={barOption} height={90} />
+                <Echarts option={barOption} height={95} />
               </View>
             </View>
             <View style={{ flex: 1, flexDirection: 'row' }}>

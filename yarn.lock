@@ -5390,6 +5390,10 @@ react-native-scripts-ts@1.11.4:
   dependencies:
     prop-types "^15.6.0"
 
+react-native-table-component@^1.1.8:
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/react-native-table-component/-/react-native-table-component-1.1.8.tgz#4d0846d077914e1c608769e55a1a9e76ea32a90f"
+
 react-native-touchable-scale@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/react-native-touchable-scale/-/react-native-touchable-scale-2.0.0.tgz#13a83a9423e46049cad3e3cc306eba2130883cb1"

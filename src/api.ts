@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs/Observable'
 import { ajax } from 'rxjs/observable/dom/ajax'
 import { of } from 'rxjs/observable/of'
+import { _throw } from 'rxjs/observable/throw'
 import { catchError, exhaustMap } from 'rxjs/operators'
 
 import { AccountApi } from './modules/Account/account.api'
@@ -25,14 +26,15 @@ class ApiService {
       headers: this.getHeaders()
     }).pipe(
       exhaustMap((res) => {
+        console.log(res.status)
         if (res.response && res.response.formDataJson) {
           return of(res.response.formDataJson)
         }
-        return Observable.throw(res.response)
+        return _throw(res.response)
       }),
       catchError((err) => {
         console.info('ERR:', JSON.stringify(err, null, 2))
-        return Observable.throw(err)
+        return _throw(err)
       })
     )
   }

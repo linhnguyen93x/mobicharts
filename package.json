@@ -68,6 +68,7 @@
     "react-native-datepicker": "^1.7.1",
     "react-native-elements": "^1.0.0-beta4",
     "react-native-loading-spinner-overlay": "^0.5.2",
+    "react-native-table-component": "^1.1.8",
     "react-navigation": "^1.5.11",
     "react-navigation-redux-helpers": "^1.0.3",
     "react-redux": "^5.0.7",

@@ -10,7 +10,6 @@ function profile(state = initialProfileState, action: TLoginActionSuccess | TChe
     case LOGIN_SUCCESS:
       return action.payload
     case CHECK_AUTH_SUCCESS:
-      console.log('Vooooo')
       return action.payload
     default:
       return state

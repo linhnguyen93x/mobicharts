@@ -3,40 +3,16 @@ import * as React from 'react'
 import { BackHandler, View } from 'react-native'
 import { addNavigationHelpers, NavigationActions, StackNavigator, TabBarBottom, TabNavigator } from 'react-navigation'
 import { connect } from 'react-redux'
-import { appEpic$ } from 'src/+state/epics'
 import { checkAuthAction } from 'src/modules/Account/+state/actions'
-import { checkAuthEpic } from 'src/modules/Account/+state/epics'
 import Login from 'src/modules/Account/Login/components'
 import ChartTab from 'src/modules/ChartTab'
 import MapTab from 'src/modules/MapTab'
 import NotificationTab from 'src/modules/NotificationTab'
+import ReportDetail from 'src/modules/ReportDetail'
 import { LocalStorage } from 'src/shared/async-storage'
 
 import PersonalTab from '../modules/PersonalTab'
 import { addListener } from '../shared/redux'
-
-export const ChartStack = StackNavigator(
-  {
-    Chart: {
-      screen: ChartTab.components.default,
-      navigationOptions: {
-        title: 'Báo cáo tổng hợp'
-      }
-    },
-    ChartDetail: { screen: NotificationTab }
-  },
-  {
-    navigationOptions: (params: any) => ({
-      gesturesEnabled: true,
-      gesturesDirection: 'inverted',
-      headerStyle: {
-        backgroundColor: '#0165A9'
-      },
-      headerTintColor: 'white'
-    }),
-    headerMode: 'screen'
-  }
-)
 
 const TabBar = TabNavigator(
   {
@@ -96,10 +72,10 @@ export const AppNavigator = StackNavigator(
   {
     Login: { screen: Login },
     Main: { screen: TabBar },
-    ChartDetail: { screen: NotificationTab }
+    ChartDetail: { screen: ReportDetail.components.default }
   },
   {
-    navigationOptions: (params: any) => ({
+    navigationOptions: (params) => ({
       gesturesEnabled: true,
       gesturesDirection: 'inverted',
       headerStyle: {
@@ -158,10 +134,10 @@ class ReduxNavigation extends React.Component<any, {}> {
     const jwt = await LocalStorage.getItem('jwt')
 
     if (jwt) {
-      const currentEpic = appEpic$.value
-      if (currentEpic !== checkAuthEpic) {
-        appEpic$.next(checkAuthEpic)
-      }
+      // const currentEpic = appEpic$.value
+      // if (currentEpic !== checkAuth$) {
+      //   appEpic$.next(checkAuth$)
+      // }
       dispatch(checkAuthAction(jwt))
     } else {
       dispatch({ type: 'Logout' })
@@ -195,7 +171,7 @@ class ReduxNavigation extends React.Component<any, {}> {
       addListener
     })
 
-    return <AppNavigator navigation={navigation} />
+    return isLoggedIn !== null && <AppNavigator navigation={navigation} />
   }
 }
 

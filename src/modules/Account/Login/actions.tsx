@@ -22,3 +22,9 @@ export const navigateToUser: ActionCreator<{}>  = () => {
     type: 'Login'
   }
 }
+
+export const navigateToGuest: ActionCreator<{}>  = () => {
+  return {
+    type: 'Logout'
+  }
+}

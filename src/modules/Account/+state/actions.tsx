@@ -1,7 +1,7 @@
 import { ActionCreator } from 'react-redux'
 
 import { TCheckAuth, TCheckAuthFail, TCheckAuthSuccess } from './actionTypes'
-import { CHECK_AUTH_REQUEST, CHECK_AUTH_SUCCESS } from './constants'
+import { CHECK_AUTH_FAIL, CHECK_AUTH_REQUEST, CHECK_AUTH_SUCCESS } from './constants'
 
 export const checkAuthAction: ActionCreator<TCheckAuth> = (token: string) => ({
     type: CHECK_AUTH_REQUEST,
@@ -14,5 +14,5 @@ export const checkAuthSuccessAction: ActionCreator<TCheckAuthSuccess> = (userPro
 })
 
 export const checkAuthFailAction: ActionCreator<TCheckAuthFail> = () => ({
-    type: CHECK_AUTH_SUCCESS
+    type: CHECK_AUTH_FAIL
 })
