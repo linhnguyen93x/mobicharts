@@ -65,6 +65,7 @@
     "moment": "^2.22.1",
     "react": "16.2.0",
     "react-native": "0.52.0",
+    "react-native-d3multiline-chart": "^1.0.18",
     "react-native-datepicker": "^1.7.1",
     "react-native-elements": "^1.0.0-beta4",
     "react-native-loading-spinner-overlay": "^0.5.2",

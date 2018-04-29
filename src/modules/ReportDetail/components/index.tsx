@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { FilterTab } from 'src/components'
 
 import DonutReport from './donut-report'
+import LineReport from './line-report'
 
 enum Filter {
   COMPANY = 'CÔNG TY',
@@ -29,9 +30,7 @@ class ReportDetail extends React.Component<{}, {}> {
         />
         <ScrollView>
           <DonutReport data={[50, 10, 40, 95, 85, 91]} data2={[5, 10, 30, 45, 115, 31]} />
-          {/* <LineReport /> */}
-          {/* <LineReport />
-          <DonutReport data={[]} /> */}
+          <LineReport />
           {/* <TableReport /> */}
         </ScrollView>
 

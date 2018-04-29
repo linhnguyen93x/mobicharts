@@ -1,12 +1,13 @@
+import { Entypo } from '@expo/vector-icons'
 import { Svg } from 'expo'
 import * as React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, Text as RText, TouchableOpacity, View } from 'react-native'
 import { Card } from 'react-native-elements'
 import { PieChart } from 'react-native-svg-charts'
 
 const { Text, TSpan } = Svg
 export interface Props {
-  data: any[],
+  data: any[]
   data2: any[]
 }
 
@@ -18,7 +19,7 @@ interface PieChartProperty {
 }
 interface State {
   pieData: PieChartProperty[]
-  pie2Data: PieChartProperty[],
+  pie2Data: PieChartProperty[]
   selectedIndex: number | null
 }
 
@@ -81,12 +82,13 @@ class DonutReport extends React.PureComponent<Props, State> {
   }
 
   triggerEvent = (index: number) => {
-    const mapToSelected = (data: PieChartProperty[]) => data.map(
-      (item, pieIndex) =>
-        pieIndex === index && this.state.selectedIndex !== index
-          ? { ...item, arc: { outerRadius: '120%', cornerRadius: 5 } }
-          : { ...item, arc: {} }
-    )
+    const mapToSelected = (data: PieChartProperty[]) =>
+      data.map(
+        (item, pieIndex) =>
+          pieIndex === index && this.state.selectedIndex !== index
+            ? { ...item, arc: { outerRadius: '120%', cornerRadius: 5 } }
+            : { ...item, arc: {} }
+      )
 
     const newPieState = mapToSelected(this.state.pieData)
     const newPie2State = mapToSelected(this.state.pie2Data)
@@ -130,7 +132,7 @@ class DonutReport extends React.PureComponent<Props, State> {
         containerStyle={{ marginHorizontal: 0 }}
         dividerStyle={{ display: 'none' }}
       >
-        <View style={styles.chartContainer}>
+        <View style={styles.rowContainer}>
           <PieChart
             style={styles.chart}
             data={this.state.pieData}
@@ -153,19 +155,76 @@ class DonutReport extends React.PureComponent<Props, State> {
             <this.CenterText title="Kế hoạch" subTitle="tháng" />
           </PieChart>
         </View>
+        <View
+          style={[
+            styles.rowContainer,
+            { justifyContent: 'space-between', marginHorizontal: 16 }
+          ]}
+        >
+          <RText>Chú thích:</RText>
+          <RText style={{ fontSize: 12, alignSelf: 'center' }}>
+            Đơn vị: Phần trăm (%)
+          </RText>
+        </View>
+        <View style={styles.legendContainer}>
+          {this.state.pieData.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={{
+                width: '33%'
+              }}
+              onPress={() => this.triggerEvent(index)}
+            >
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  opacity:
+                    this.state.selectedIndex === null
+                      ? 1
+                      : this.state.selectedIndex === index
+                        ? 1
+                        : 0.3
+                }}
+              >
+                <Entypo
+                  style={{
+                    alignSelf: 'flex-start'
+                  }}
+                  name="dot-single"
+                  size={40}
+                  color={pieColor[index]}
+                />
+                <RText
+                  style={{
+                    textAlign: 'center'
+                  }}
+                >
+                  RM: 25
+                </RText>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
       </Card>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  chartContainer: {
+  rowContainer: {
     flex: 1,
     flexDirection: 'row'
   },
   chart: {
     flex: 0.5,
     height: 200
+  },
+  legendContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginRight: 8
   }
 })
 

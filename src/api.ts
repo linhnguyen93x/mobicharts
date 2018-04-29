@@ -26,7 +26,6 @@ class ApiService {
       headers: this.getHeaders()
     }).pipe(
       exhaustMap((res) => {
-        console.log(res.status)
         if (res.response && res.response.formDataJson) {
           return of(res.response.formDataJson)
         }
