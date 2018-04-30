@@ -1,6 +1,11 @@
 import * as React from 'react'
+import { Dimensions } from 'react-native'
 import { MultiLineChart } from 'react-native-d3multiline-chart'
 import { Card } from 'react-native-elements'
+import Legend from 'src/components/legend'
+import { colors } from 'src/shared'
+
+const deviceWidth = Dimensions.get('window').width
 
 const data = [
   [
@@ -51,46 +56,73 @@ const data = [
       x: 2008
     },
     {
-      y: '150',
+      y: '176',
+      x: 2010
+    }
+  ],
+  [
+    {
+      y: '200',
+      x: 2000
+    },
+    {
+      y: '200',
+      x: 2001
+    },
+    {
+      y: '200',
+      x: 2002
+    },
+    {
+      y: '200',
+      x: 2003
+    },
+    {
+      y: '134',
+      x: 2003
+    },
+    {
+      y: '176',
       x: 2010
     }
   ]
 ]
+
 // default data is available
-const legendText = ['sales', 'year']
+const leftAxisData = [134, 144, 154, 164, 174, 184, 194, 204, 215]
+const bottomAxisData = [2000, 2002, 2004, 2006, 2008, 2010]
 const minX = 2000
 const maxX = 2010
 const minY = 134
 const maxY = 215
 
-// since there are only two lines
-const mainColor = [
-  '#ff7f50',
-  '#87cefa',
-  '#32cd32',
-  '#da70d6',
-  '#6495ed',
-  '#ff69b4',
-  '#ba55d3',
-  '#cd5c5c',
-  '#ffa500',
-  '#40e0d0',
-  '#1e90ff',
-  '#ff6347',
-  '#7b68ee',
-  '#00fa9a',
-  '#ffd700',
-  '#6b8e23',
-  '#ff00ff',
-  '#3cb371',
-  '#b8860b',
-  '#30e0e0'
+// general data to represent ticks in y-axis and it doesn't take part in calculation
+const bottomAxisDataToShow = [
+  'Jan 2017',
+  'Feb 2017',
+  'Mar 2017',
+  'Apr 2017',
+  'May 2017',
+  'Jun 2017',
+  'Jul 2017',
+  'Aug 2017'
+]
+// general data to represent ticks in y-axis and it doesn't take part in calculation
+const leftAxisDataToShow = [
+  '10%',
+  '20%',
+  '30%',
+  '40%',
+  '50%',
+  '60%',
+  '70%',
+  '80%',
+  '90%'
 ]
 
 class LineReport extends React.PureComponent<any, any> {
   render() {
-    const color = mainColor.splice(0, data.length)
-    console.log(color)
+    const color = colors.slice(0, 3)
 
     return (
       <Card
@@ -101,11 +133,8 @@ class LineReport extends React.PureComponent<any, any> {
       >
         <MultiLineChart
           data={data}
-          // leftAxisData={leftAxisData}
+          leftAxisData={leftAxisData}
           // bottomAxisData={bottomAxisData}
-          legendColor={color}
-          legendText={legendText}
-          showLegends={false}
           minX={minX}
           maxX={maxX}
           minY={minY}
@@ -113,23 +142,30 @@ class LineReport extends React.PureComponent<any, any> {
           scatterPlotEnable={false}
           dataPointsVisible={true}
           Color={color}
-          // axisColor={'transparent'}
-          axisLabelColor={'blue'}
-          chartHeight={200}
-          GraphHeight={250}
-          tickColorXAxis={'transparent'}
-          tickColorYAxis={'transparent'}
-          circleRadiusWidth={4}
-          circleRadius={2}
-          animation={true}
-          duration={500}
-          delay={0}
-          speed={5}
-          pointDataToShowOnGraph=""
+          // bottomAxisDataToShow={bottomAxisDataToShow}
           circleLegendType={true}
-          // GraphHeight={300}
-          // GraphWidth={100}
+          fillArea={true}
+          yAxisGrid={true}
+          xAxisGrid={false}
+          hideXAxis={false}
+          hideYAxis={false}
+          inclindTick={false}
+          pointDataToShowOnGraph=""
+          animation={true}
+          duration={1500}
+          delay={1000}
+          GraphHeight={250}
+          chartHeight={200}
+          GraphWidth={deviceWidth}
+          chartWidth={deviceWidth - 48}
+          staggerLength={220}
+          speed={50}
+          showTicks={true}
+          tickColorYAxis={'rgba(192,192,192,0.3)'}
+          tickColorXAxis={'transparent'}
+          axisColor={'rgba(192,192,192,0.3)'}
         />
+        <Legend data={data} />
       </Card>
     )
   }

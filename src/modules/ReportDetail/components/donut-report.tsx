@@ -1,9 +1,9 @@
-import { Entypo } from '@expo/vector-icons'
 import { Svg } from 'expo'
 import * as React from 'react'
-import { StyleSheet, Text as RText, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text as RText, View } from 'react-native'
 import { Card } from 'react-native-elements'
 import { PieChart } from 'react-native-svg-charts'
+import Legend from 'src/components/legend'
 
 const { Text, TSpan } = Svg
 export interface Props {
@@ -166,46 +166,11 @@ class DonutReport extends React.PureComponent<Props, State> {
             Đơn vị: Phần trăm (%)
           </RText>
         </View>
-        <View style={styles.legendContainer}>
-          {this.state.pieData.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={{
-                width: '33%'
-              }}
-              onPress={() => this.triggerEvent(index)}
-            >
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  opacity:
-                    this.state.selectedIndex === null
-                      ? 1
-                      : this.state.selectedIndex === index
-                        ? 1
-                        : 0.3
-                }}
-              >
-                <Entypo
-                  style={{
-                    alignSelf: 'flex-start'
-                  }}
-                  name="dot-single"
-                  size={40}
-                  color={pieColor[index]}
-                />
-                <RText
-                  style={{
-                    textAlign: 'center'
-                  }}
-                >
-                  RM: 25
-                </RText>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <Legend
+          data={this.state.pieData}
+          onPress={(index) => this.triggerEvent(index)}
+          selectedIndex={this.state.selectedIndex}
+          />
       </Card>
     )
   }

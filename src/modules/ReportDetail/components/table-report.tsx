@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import { Card } from 'react-native-elements'
-import { Col, Row, Rows, Table, TableWrapper } from 'react-native-table-component'
+import { Row, Table } from 'react-native-table-component'
 
 export interface TableReportState {
   tableHead: string[]
@@ -10,19 +10,31 @@ export interface TableReportState {
 
 class TableReport extends React.PureComponent<any, any> {
   state = {
-    tableHead: ['', 'Head1', 'Head2', 'Head3', 'Head3', 'Head3', 'Head3'],
-    tableTitle: ['Title', 'Title2', 'Title3', 'Title4', 'Title4', 'Title4'],
-    tableData: [
-      ['1', '2', '3', '3', '3', '3'],
-      ['1', '2', '3', '3', '3', '3'],
-      ['1', '2', '3', '3', '3', '3'],
-      ['1', '2', '3', '3', '3', '3'],
-      ['1', '2', '3', '3', '3', '3'],
-    ]
+    tableHead: [
+      'Head',
+      'Head2',
+      'Head3',
+      'Head4',
+      'Head5',
+      'Head6',
+      'Head7',
+      'Head8',
+      'Head9'
+    ],
+    widthArr: [40, 60, 80, 100, 120, 140, 160, 180, 200]
   }
 
   render() {
     const state = this.state
+    const tableData = []
+    for (let i = 0; i < 30; i += 1) {
+      const rowData = []
+      for (let j = 0; j < 9; j += 1) {
+        rowData.push(`${i}${j}`)
+      }
+      tableData.push(rowData)
+    }
+
     return (
       <Card
         title="Bảng số liệu chi tiết:"
@@ -31,26 +43,46 @@ class TableReport extends React.PureComponent<any, any> {
         dividerStyle={{ display: 'none' }}
       >
         <View style={styles.container}>
-        <Table>
-          <Row data={state.tableHead} flexArr={[1, 2, 1, 1]} style={styles.head} textStyle={styles.text}/>
-          <TableWrapper style={styles.wrapper}>
-            <Col data={state.tableTitle} style={styles.title} heightArr={[28, 28]} textStyle={styles.text}/>
-            <Rows data={state.tableData} flexArr={[2, 1, 1]} style={styles.row} textStyle={styles.text}/>
-          </TableWrapper>
-        </Table>
-      </View>
+          <ScrollView horizontal={true}>
+            <View>
+              <Table borderStyle={{ borderColor: '#C1C0B9' }}>
+                <Row
+                  data={state.tableHead}
+                  widthArr={state.widthArr}
+                  style={styles.header}
+                  textStyle={styles.text}
+                />
+              </Table>
+              <ScrollView style={styles.dataWrapper}>
+                <Table borderStyle={{ borderColor: '#C1C0B9' }}>
+                  {tableData.map((rowData, index) => (
+                    <Row
+                      key={index}
+                      data={rowData}
+                      widthArr={state.widthArr}
+                      style={[
+                        styles.row,
+                        index % 2 && { backgroundColor: '#F7F6E7' }
+                      ]}
+                      textStyle={styles.text}
+                    />
+                  ))}
+                </Table>
+              </ScrollView>
+            </View>
+          </ScrollView>
+        </View>
       </Card>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
-  head: {  height: 40,  backgroundColor: '#f1f8ff'  },
-  wrapper: { flexDirection: 'row' },
-  title: { flex: 1, backgroundColor: '#f6f8fa' },
-  row: {  height: 28  },
-  text: { textAlign: 'center' }
+  container: { flex: 1 },
+  header: { height: 50, backgroundColor: '#537791' },
+  text: { textAlign: 'center', fontWeight: '100' },
+  dataWrapper: { marginTop: -1 },
+  row: { height: 40, backgroundColor: '#E7E6E1' }
 })
 
 export default TableReport
