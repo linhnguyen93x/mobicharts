@@ -5,7 +5,6 @@ import { catchError, exhaustMap, map } from 'rxjs/operators'
 import { SUBMIT_LOADER } from 'src/+state/constants'
 import { endLoading } from 'src/+state/loadingActions'
 
-import { startLoader } from '../../shared/startLoader'
 import { getSummaryChartSuccessAction } from './actions'
 import { TSummaryChart } from './actionTypes'
 import { GET_SUMMARY_CHART_REQUEST } from './constants'
@@ -13,13 +12,13 @@ import { SummaryChartRequest, SummaryChartResponse } from './model'
 
 interface ISummaryChart {
   getSummaryChart: (body: SummaryChartRequest) => Observable<SummaryChartResponse[]>
-  startLoader: <T>(obs: Observable<T>, hideSpinner: boolean) => Observable<T>
+  startLoader: <T>(obs: Observable<T>, hideSpinner?: boolean) => Observable<T>
 }
 
 export const summaryChartEpic: any = (
   action$: ActionsObservable<TSummaryChart>,
   store: any,
-  { getSummaryChart }: ISummaryChart
+  { getSummaryChart, startLoader }: ISummaryChart
 ) => {
   return action$.pipe(
     ofType(GET_SUMMARY_CHART_REQUEST),

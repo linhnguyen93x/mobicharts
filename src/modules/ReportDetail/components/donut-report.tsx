@@ -150,7 +150,6 @@ class DonutReport extends React.PureComponent<Props, State> {
             outerRadius={'70%'}
             labelRadius={90}
             animate={true}
-            animationDuration={1000}
           >
             <this.CenterText title="Kế hoạch" subTitle="tháng" />
           </PieChart>

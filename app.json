@@ -9,6 +9,7 @@
       "transformer": "node_modules/react-native-typescript-transformer/index.js"
     },
     "slug": "mobicharts",
-    "name": "mobicharts"
+    "name": "mobicharts",
+    "orientation": "portrait"
   }
 }

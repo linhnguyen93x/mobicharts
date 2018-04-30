@@ -1,7 +1,9 @@
 import * as React from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { appEpic$ } from 'src/+state/epics'
 import { FilterTab } from 'src/components'
 
+import { reportDetail$ } from '../epic'
 import DonutReport from './donut-report'
 import LineReport from './line-report'
 import TableReport from './table-report'
@@ -16,6 +18,14 @@ enum Filter {
 class ReportDetail extends React.Component<{}, {}> {
   static navigationOptions = {
     title: 'Chi tiết báo cáo'
+  }
+
+  componentWillMount() {
+    const currentEpic = appEpic$.value
+
+    if (currentEpic !== reportDetail$) {
+      appEpic$.next(reportDetail$)
+    }
   }
 
   render() {
