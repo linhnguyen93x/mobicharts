@@ -1,16 +1,17 @@
 import { Entypo } from '@expo/vector-icons'
+import * as scale from 'd3-scale'
 import { Svg } from 'expo'
 import moment from 'moment'
 import * as React from 'react'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import { ListItem } from 'react-native-elements'
-import PieChart from 'react-native-pie-chart'
-import { BarChart } from 'react-native-svg-charts'
+import { BarChart, PieChart, XAxis } from 'react-native-svg-charts'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import { appEpic$ } from 'src/+state/epics'
 import { FilterTab } from 'src/components'
 import { TimePicker } from 'src/components/time-picker'
+import { colors } from 'src/shared'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 
 import { globalStyle } from '../../../style'
@@ -90,9 +91,17 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     item: SummaryChartResponse
     index: number
   }) => {
-    const barOption = item.bieuDoCot ? item.bieuDoCot.map((item) => item.value) : []
+    const barOption = item.bieuDoCot
+      ? item.bieuDoCot.map((item) => item.value)
+      : []
     const pieData = item.bieuDoCoCau ? item.bieuDoCoCau : []
-    const pieOption = pieData.map((item) => item.value)
+    const pieOption = pieData.map((item, index) => ({
+      value: item.value,
+      svg: { fill: colors[index] },
+      key: `pie-${index}`
+    }))
+
+    console.log(pieOption)
 
     return (
       <ListItem
@@ -119,7 +128,8 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
                 style={{
                   flex: 0.2,
                   justifyContent: 'center',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  marginBottom: 24
                 }}
               >
                 <Text
@@ -132,21 +142,59 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
                 </Text>
                 <Text style={globalStyle.styles.fontWeightBold}>Tỷ đồng</Text>
               </View>
-              <View style={{ flex: 0.3, alignItems: 'center' }}>
+              <View
+                style={{
+                  flex: 0.3,
+                  alignItems: 'center',
+                  alignSelf: 'flex-start'
+                }}
+              >
                 <PieChart
-                  chart_wh={90}
-                  series={pieOption}
-                  sliceColor={pieColor}
-                  doughnut={true}
-                  coverRadius={0.6}
-                  coverFill={'#FFF'}
+                  style={{ height: 89, width: '100%' }}
+                  data={pieOption}
+                  spacing={0}
+                  outerRadius={'90%'}
                 />
+                <View
+                  style={{
+                    flex: 0.5,
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    marginTop: 5
+                  }}
+                >
+                  {pieData.map((item, index) => {
+                    return (
+                      <View
+                        key={index}
+                        style={{ flexDirection: 'row', width: '50%', paddingHorizontal: 4 }}
+                      >
+                        <Entypo
+                          style={{
+                            alignSelf: 'flex-start'
+                          }}
+                          name="controller-record"
+                          size={16}
+                          color={colors[index]}
+                        />
+                        <Text
+                          style={{
+                            fontSize: 10,
+                            alignSelf: 'flex-start'
+                          }}
+                        >
+                          {' ' + item.label}
+                        </Text>
+                      </View>
+                    )
+                  })}
+                </View>
               </View>
-              <View style={{ flex: 0.3 }}>
+              <View style={{ flex: 0.3, alignSelf: 'flex-start' }}>
                 <BarChart
-                  style={{ height: 100 }}
+                  style={{ height: 85 }}
                   data={barOption}
-                  contentInset={{ top: 20, bottom: 20 }}
+                  contentInset={{ top: 5, bottom: 5 }}
                   svg={{
                     strokeWidth: 2,
                     fill: 'url(#gradient)'
@@ -155,46 +203,14 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
                   {/* <Grid /> */}
                   <this.Gradient />
                 </BarChart>
+                <XAxis
+                  style={{ marginTop: 11 }}
+                  data={[1, 2, 3, 4, 5, 6, 7, 8]}
+                  scale={scale.scaleBand}
+                  formatLabel={(value: any, index: number) => value}
+                  labelStyle={{ color: 'black'}}
+                />
               </View>
-            </View>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
-              <View style={{ flex: 0.2 }} />
-              <View
-                style={{
-                  flex: 0.5,
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  padding: 'auto'
-                }}
-              >
-                {pieData.map((item, index) => {
-                  return (
-                    <View
-                      key={index}
-                      style={{
-                        marginHorizontal: 6,
-                        flexDirection: 'row',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <Entypo
-                        style={{ alignSelf: 'flex-start' }}
-                        name="dot-single"
-                        size={40}
-                        color={pieColor[index]}
-                      />
-                      <Text
-                        style={{
-                          textAlign: 'center'
-                        }}
-                      >
-                        {item.label}
-                      </Text>
-                    </View>
-                  )
-                })}
-              </View>
-              <View style={{ flex: 0.2 }} />
             </View>
           </View>
         }

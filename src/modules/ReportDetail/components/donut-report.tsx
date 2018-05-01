@@ -7,8 +7,9 @@ import Legend from 'src/components/legend'
 
 const { Text, TSpan } = Svg
 export interface Props {
-  data: any[]
-  data2: any[]
+  legend: string[]
+  data: number[]
+  data2: number[]
 }
 
 interface PieChartProperty {
@@ -54,12 +55,15 @@ class DonutReport extends React.PureComponent<Props, State> {
   }
 
   componentWillMount() {
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
     const promiseChart = new Promise((resolve, reject) => {
-      resolve(this.mapDataToChart(this.props.data))
+      resolve(this.mapDataToChart(nextProps.data))
     })
 
     const promiseChart2 = new Promise((resolve, reject) => {
-      resolve(this.mapDataToChart(this.props.data2))
+      resolve(this.mapDataToChart(nextProps.data2))
     })
 
     Promise.all([promiseChart, promiseChart2]).then((res: any) => {
@@ -166,7 +170,7 @@ class DonutReport extends React.PureComponent<Props, State> {
           </RText>
         </View>
         <Legend
-          data={this.state.pieData}
+          data={this.props.legend}
           onPress={(index) => this.triggerEvent(index)}
           selectedIndex={this.state.selectedIndex}
           />

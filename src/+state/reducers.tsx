@@ -4,6 +4,8 @@ import { loadingReducer } from 'src/+state/loadingReducer'
 import profile from 'src/modules/Account/+state/reducers'
 import SummaryChart from 'src/modules/ChartTab'
 import { SummaryChartState } from 'src/modules/ChartTab/model'
+import ReportDetail from 'src/modules/ReportDetail'
+import { ReportDetailState } from 'src/modules/ReportDetail/model'
 
 import { AppNavigator } from '../navigators/AppNavigator'
 
@@ -70,6 +72,7 @@ function auth(state = initialAuthState, action: Action) {
 // tslint:disable-next-line:no-empty-interface
 export interface IApplicationState {
   [SummaryChart.constants.NAME]: SummaryChartState
+  [ReportDetail.constants.NAME]: ReportDetailState
 }
 
 const AppReducer: Reducer<IApplicationState> = combineReducers<IApplicationState>({
@@ -77,7 +80,8 @@ const AppReducer: Reducer<IApplicationState> = combineReducers<IApplicationState
   auth,
   profile,
   loading: loadingReducer,
-  [SummaryChart.constants.NAME]: SummaryChart.reducer
+  [SummaryChart.constants.NAME]: SummaryChart.reducer,
+  [ReportDetail.constants.NAME]: ReportDetail.reducer
 })
 
 export default AppReducer

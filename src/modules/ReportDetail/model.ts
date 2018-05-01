@@ -8,8 +8,8 @@ export interface ReportDetailResponse {
 export interface ReportDetailRequest {
   dateReport: string
   tab: number
-  provincecode: string
-  districtcode: string
+  provincecode?: string
+  districtcode?: string
 }
 
 export interface Donut {
@@ -22,4 +22,12 @@ export interface Line {
   time: string
 }
 
-export type ReportDetailState = ReportDetailResponse[]
+export interface ReportDetailClient {
+  legend: string[]
+  donutLeft: number[]
+  donutRight: number[]
+  line: Line[]
+  tableDetail: any
+}
+
+export type ReportDetailState = ReportDetailClient

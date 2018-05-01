@@ -45,7 +45,7 @@ class Legend extends React.PureComponent<LegendProps, {}> {
               textAlign: 'center'
             }}
           >
-            RM: 25
+            {item}
           </Text>
         </View>
       </TouchableOpacity>

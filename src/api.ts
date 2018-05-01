@@ -3,7 +3,7 @@ import { ajax } from 'rxjs/observable/dom/ajax'
 import { of } from 'rxjs/observable/of'
 import { _throw } from 'rxjs/observable/throw'
 import { catchError, exhaustMap } from 'rxjs/operators'
-import { ReportDetailApi } from 'src/modules/ReportDetail/epic'
+import { ReportDetailApi } from 'src/modules/ReportDetail/api'
 
 import { AccountApi } from './modules/Account/account.api'
 import { SummaryChartApi } from './modules/ChartTab/api'
