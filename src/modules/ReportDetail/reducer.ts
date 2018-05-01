@@ -6,14 +6,20 @@ import { create2DArray } from 'src/shared'
 
 import { TReportDetailSuccess } from './actionsTypes'
 import { GET_DETAIL_REPORT_SUCCESS, NAME } from './constants'
-import { Line, ReportDetailState } from './model'
+import { Line, ReportDetailState, Table } from './model'
 
 const initialState: ReportDetailState = {
   legend: [],
   donutLeft: [],
   donutRight: [],
   line: [],
-  tableDetail: null
+  tableDetail: {
+    total: null,
+    child: [],
+    detailType: [],
+    shopCode: null,
+    shopName: null
+  }
 }
 
 const reducer: Reducer<ReportDetailState> = (
@@ -36,23 +42,48 @@ export const getDonuts = createSelector(getAll, (all) => ({
 }))
 export const getLine = createSelector(getAll, (all) => {
   const lineData = _.sortBy(all.line, (el: Line) => el.time)
-  const test = lineData.length > 0 ? create2DArray(2) : []
+  const responseData = lineData.length > 0 ? create2DArray(lineData[0].data.length) : []
 
   let indexTime = 0
-  test.forEach((item, index) => {
+  responseData.forEach((item, index) => {
     indexTime = 0
     all.line.forEach((i, indexChild) => {
-      test[index][indexChild] = {y: i.data[index], x: indexTime}
+      responseData[index][indexChild] = {y: i.data[index], x: indexTime}
       indexTime++
     })
   })
 
-  // console.log(JSON.stringify(test, null, 2))
-
   return {
-    data: test,
+    data: responseData,
     times: all.line.map((item) => item.time)
   }
 })
+
+export const getTable = createSelector(
+  getAll,
+  (all) => {
+    const tableDetail = all.tableDetail
+    const response: any[][] = []
+    const hostDetailData = all.tableDetail.detailType.map((item) => item.value)
+    const index = 0
+
+    response.push([tableDetail.shopName, tableDetail.total, ...hostDetailData, index])
+    mapToTable(response, tableDetail, index)
+
+    return response
+  }
+)
+
+const mapToTable = (host: any[][], obj: Table, index: number) => {
+  if (obj.child.length > 0) {
+    index++
+    obj.child.forEach((item) => {
+      const hostDetailData = item.detailType.map((item) => item.value)
+      host.push([item.shopName, item.total, ...hostDetailData, index])
+
+      mapToTable(host, item, index)
+    })
+  }
+}
 
 export default reducer

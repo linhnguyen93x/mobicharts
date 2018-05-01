@@ -101,8 +101,6 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
       key: `pie-${index}`
     }))
 
-    console.log(pieOption)
-
     return (
       <ListItem
         scaleProps={{

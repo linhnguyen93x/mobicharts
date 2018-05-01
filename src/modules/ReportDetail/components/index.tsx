@@ -9,7 +9,7 @@ import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 import { getReportDetailAction } from '../actions'
 import { reportDetail$ } from '../epic'
 import { ReportDetailState } from '../model'
-import { getDonuts, getLegend, getLine } from '../reducer'
+import { getDonuts, getLegend, getLine, getTable } from '../reducer'
 import DonutReport from './donut-report'
 import LineReport from './line-report'
 import TableReport from './table-report'
@@ -31,6 +31,7 @@ interface Props extends ConnectedReduxProps<ReportDetailState> {
     data: number[][],
     times: string[]
   }
+  table: any
 }
 
 class ReportDetail extends React.Component<Props, {}> {
@@ -49,7 +50,6 @@ class ReportDetail extends React.Component<Props, {}> {
   }
 
   render() {
-    // console.log(this.props.line)
 
     return (
       <View style={styles.container}>
@@ -67,7 +67,7 @@ class ReportDetail extends React.Component<Props, {}> {
             data={this.props.donuts.left}
             data2={this.props.donuts.right} />
           <LineReport data={this.props.line.data} times={this.props.line.times} legend={this.props.legends} />
-          <TableReport />
+          <TableReport dynamicHeader={this.props.legends} data={this.props.table}/>
         </ScrollView>
 
         {/* <Button title="Add" onPress={() => { dispatch(addTodo('Hello Bi')) }} />
@@ -101,6 +101,7 @@ export default connect(
   createStructuredSelector({
     legends: getLegend,
     donuts: getDonuts,
-    line: getLine
+    line: getLine,
+    table: getTable
   })
 )(ReportDetail)
