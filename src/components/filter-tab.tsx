@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native'
 
 export interface TabProviderProps {
   data: string[]
-  onItemSelected: (selectedItem: string) => any
+  onItemSelected: (selectedItem: number) => any
 }
 
 interface TabProviderState {
@@ -19,7 +19,7 @@ export class FilterTab extends React.Component<
   tabChange = (index: number) => {
     if (this.state.selectedNumber !== index) {
       this.setState({ selectedNumber: index }, () => {
-        this.props.onItemSelected(this.props.data[index])
+        this.props.onItemSelected(index + 1)
       })
     }
   }

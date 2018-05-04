@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { Reducer } from 'redux'
 import { createSelector } from 'reselect'
 import { IApplicationState } from 'src/+state/reducers'
-import { create2DArray } from 'src/shared'
+import { create2DArray, formatCurrency } from 'src/shared'
 
 import { TReportDetailSuccess } from './actionsTypes'
 import { GET_DETAIL_REPORT_SUCCESS, NAME } from './constants'
@@ -44,18 +44,15 @@ export const getLine = createSelector(getAll, (all) => {
   const lineData = _.sortBy(all.line, (el: Line) => el.time)
   const responseData = lineData.length > 0 ? create2DArray(lineData[0].data.length) : []
 
-  let indexTime = 0
   responseData.forEach((item, index) => {
-    indexTime = 0
-    all.line.forEach((i, indexChild) => {
-      responseData[index][indexChild] = {y: i.data[index], x: indexTime}
-      indexTime++
+    lineData.forEach((i, indexChild) => {
+      responseData[index][indexChild] = {y: i.data[index], x: Number(i.time)}
     })
   })
 
   return {
     data: responseData,
-    times: all.line.map((item) => item.time)
+    times: lineData.map((item) => Number(item.time))
   }
 })
 
@@ -67,7 +64,7 @@ export const getTable = createSelector(
     const hostDetailData = all.tableDetail.detailType.map((item) => item.value)
     const index = 0
 
-    response.push([tableDetail.shopName, tableDetail.total, ...hostDetailData, index])
+    response.push([tableDetail.shopName, formatCurrency(tableDetail.total), ...hostDetailData, index])
     mapToTable(response, tableDetail, index)
 
     return response
@@ -78,8 +75,8 @@ const mapToTable = (host: any[][], obj: Table, index: number) => {
   if (obj.child.length > 0) {
     index++
     obj.child.forEach((item) => {
-      const hostDetailData = item.detailType.map((item) => item.value)
-      host.push([item.shopName, item.total, ...hostDetailData, index])
+      const hostDetailData = item.detailType.map((item) => formatCurrency(item.value))
+      host.push([item.shopName, formatCurrency(item.total), ...hostDetailData, index])
 
       mapToTable(host, item, index)
     })

@@ -4,14 +4,14 @@ import { Svg } from 'expo'
 import moment from 'moment'
 import * as React from 'react'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
-import { ListItem } from 'react-native-elements'
+import { Divider, ListItem } from 'react-native-elements'
 import { BarChart, PieChart, XAxis } from 'react-native-svg-charts'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import { appEpic$ } from 'src/+state/epics'
 import { FilterTab } from 'src/components'
 import { TimePicker } from 'src/components/time-picker'
-import { colors } from 'src/shared'
+import { formatCurrency, groupColors } from 'src/shared'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 
 import { globalStyle } from '../../../style'
@@ -28,6 +28,14 @@ interface SummaryChartProps extends ConnectedReduxProps<SummaryChartState> {
 
 interface SummaryChartState {
   reportDate: string
+  timeType: number
+}
+
+export interface SummaryChartParams {
+  codeReport: string
+  timeType: number
+  colors: string[]
+  selectedTime: string
 }
 
 enum Filter {
@@ -37,18 +45,12 @@ enum Filter {
   YEAR = 'NĂM'
 }
 
-const pieColor = [
-  '#ff7f50',
-  '#87cefa',
-  '#32cd32',
-  '#da70d6',
-  '#6495ed',
-  '#ff69b4'
-]
-
 class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
   state = {
-    reportDate: moment().format('DD/MM/YYYY')
+    reportDate: moment()
+      .subtract(7, 'days')
+      .format('DD/MM/YYYY'),
+    timeType: 1
   }
 
   componentWillMount() {
@@ -64,9 +66,8 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
   getData = () => {
     this.props.dispatch(
       getSummaryChartAction({
-        p_issue_date: '19/03/2018',
-        p_time_type: 1,
-        p_report_type: 'PTM'
+        datereport: this.state.reportDate,
+        tab: this.state.timeType
       })
     )
   }
@@ -91,13 +92,19 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     item: SummaryChartResponse
     index: number
   }) => {
+    const groupColor = groupColors[index % groupColors.length]
+    const barColor = groupColor[0]
     const barOption = item.bieuDoCot
       ? item.bieuDoCot.map((item) => item.value)
       : []
+    const barLegend = item.bieuDoCot
+      ? item.bieuDoCot.map((item) => item.label)
+      : []
+
     const pieData = item.bieuDoCoCau ? item.bieuDoCoCau : []
     const pieOption = pieData.map((item, index) => ({
       value: item.value,
-      svg: { fill: colors[index] },
+      svg: { fill: groupColor[index % groupColor.length] },
       key: `pie-${index}`
     }))
 
@@ -108,107 +115,140 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
           tension: 100,
           activeScale: 0.95
         }}
-        onPress={() => this.props.navigation.navigate('ChartDetail')}
-        containerStyle={{ marginBottom: 10 }}
-        title={item.label}
-        titleStyle={{ fontSize: 16 }}
+        onPress={() => {
+          const params: SummaryChartParams = {
+            codeReport: item.codeReport,
+            timeType: this.state.timeType,
+            colors: groupColor,
+            selectedTime: this.state.reportDate
+          }
+          return this.props.navigation.navigate('ChartDetail', params)
+        }}
+        title={
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              marginBottom: 16,
+              alignItems: 'center'
+            }}
+          >
+            <Text style={{ fontSize: 13, marginRight: 4, fontWeight: '500' }}>
+              {item.label}
+            </Text>
+            <Divider style={{ flex: 1 }} />
+          </View>
+        }
         subtitle={
-          <View>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-around'
+            }}
+          >
             <View
               style={{
-                flex: 1,
-                flexDirection: 'row',
+                flex: 0.2,
+                justifyContent: 'center',
                 alignItems: 'center',
-                justifyContent: 'space-around'
+                marginBottom: 24
               }}
             >
+              <Text
+                style={[
+                  globalStyle.styles.fontWeightBold,
+                  { textAlign: 'center', fontSize: 18 }
+                ]}
+              >
+                {item.tongCong ? formatCurrency(item.tongCong) : '-'}
+              </Text>
+              <Text
+                style={[
+                  globalStyle.styles.fontWeightBold,
+                  globalStyle.styles.textAlignCenter,
+                  { fontSize: 12 }
+                ]}
+              >
+                {item.unit}
+              </Text>
+            </View>
+            <View
+              style={{
+                flex: 0.3,
+                alignItems: 'center',
+                alignSelf: 'flex-start'
+              }}
+            >
+              <PieChart
+                style={{ height: 89, width: '100%' }}
+                data={pieOption}
+                spacing={0}
+                outerRadius={'90%'}
+                padAngle={0}
+              />
               <View
                 style={{
-                  flex: 0.2,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginBottom: 24
+                  flex: 0.5,
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  marginTop: 5
                 }}
               >
-                <Text
-                  style={[
-                    globalStyle.styles.fontWeightBold,
-                    { textAlign: 'center', fontSize: 22 }
-                  ]}
-                >
-                  {item.tongCong}
-                </Text>
-                <Text style={globalStyle.styles.fontWeightBold}>Tỷ đồng</Text>
-              </View>
-              <View
-                style={{
-                  flex: 0.3,
-                  alignItems: 'center',
-                  alignSelf: 'flex-start'
-                }}
-              >
-                <PieChart
-                  style={{ height: 89, width: '100%' }}
-                  data={pieOption}
-                  spacing={0}
-                  outerRadius={'90%'}
-                />
-                <View
-                  style={{
-                    flex: 0.5,
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
-                    marginTop: 5
-                  }}
-                >
-                  {pieData.map((item, index) => {
-                    return (
-                      <View
-                        key={index}
-                        style={{ flexDirection: 'row', width: '50%', paddingHorizontal: 4 }}
+                {pieData.map((item, index) => {
+                  return (
+                    <View
+                      key={index}
+                      style={{
+                        flexDirection: 'row',
+                        width: '50%',
+                        paddingHorizontal: 4
+                      }}
+                    >
+                      <Entypo
+                        style={{
+                          alignSelf: 'flex-start'
+                        }}
+                        name="controller-record"
+                        size={16}
+                        color={groupColor[index % groupColor.length]}
+                      />
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          alignSelf: 'flex-start'
+                        }}
                       >
-                        <Entypo
-                          style={{
-                            alignSelf: 'flex-start'
-                          }}
-                          name="controller-record"
-                          size={16}
-                          color={colors[index]}
-                        />
-                        <Text
-                          style={{
-                            fontSize: 10,
-                            alignSelf: 'flex-start'
-                          }}
-                        >
-                          {' ' + item.label}
-                        </Text>
-                      </View>
-                    )
-                  })}
-                </View>
+                        {' ' + item.label}
+                      </Text>
+                    </View>
+                  )
+                })}
               </View>
-              <View style={{ flex: 0.3, alignSelf: 'flex-start' }}>
-                <BarChart
-                  style={{ height: 85 }}
-                  data={barOption}
-                  contentInset={{ top: 5, bottom: 5 }}
-                  svg={{
-                    strokeWidth: 2,
-                    fill: 'url(#gradient)'
-                  }}
-                >
-                  {/* <Grid /> */}
-                  <this.Gradient />
-                </BarChart>
-                <XAxis
-                  style={{ marginTop: 11 }}
-                  data={[1, 2, 3, 4, 5, 6, 7, 8]}
-                  scale={scale.scaleBand}
-                  formatLabel={(value: any, index: number) => value}
-                  labelStyle={{ color: 'black'}}
-                />
-              </View>
+            </View>
+            <View style={{ flex: 0.3, alignSelf: 'flex-start' }}>
+              <BarChart
+                style={{ height: 85 }}
+                data={barOption}
+                contentInset={{ top: 5, bottom: 5 }}
+                spacingInner={0.25}
+                svg={{
+                  strokeWidth: 2,
+                  // fill: 'url(#gradient)'
+                  fill: barColor
+                }}
+              >
+                <this.Gradient />
+              </BarChart>
+              <XAxis
+                style={{ marginTop: 11 }}
+                data={barOption}
+                scale={scale.scaleBand}
+                spacingInner={0.25}
+                formatLabel={(value: any, index: number) => barLegend[index]}
+                labelStyle={{ color: 'black' }}
+              />
             </View>
           </View>
         }
@@ -226,9 +266,12 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
         </Text>
         <FilterTab
           data={[Filter.DAY, Filter.WEEK, Filter.MONTH, Filter.YEAR]}
-          onItemSelected={(item) => console.log(item)}
+          onItemSelected={(item) =>
+            this.setState({ timeType: item }, () => this.getData())
+          }
         />
         <TimePicker
+          defaultValue={this.state.reportDate}
           onDateChange={(reportDate) => {
             this.setState({ reportDate }, () => this.getData())
           }}

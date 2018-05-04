@@ -19,13 +19,17 @@ class LineReport extends React.PureComponent<Props, any> {
     const color = colors.slice(0, 3)
     const dataFlattern = _.flatten(this.props.data)
 
-    const bottomAxisData = [0, 1, 2, 3, 4, 5, 6, 7]
-    const bottomAxisDataToShow = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
-    const minX = _.min(dataFlattern.map((rec: any) => rec.x))
-    const maxX = _.max(dataFlattern.map((rec: any) => rec.x))
-    const minY = _.min(dataFlattern.map((rec: any) => rec.y))
-    const maxY = _.max(dataFlattern.map((rec: any) => rec.y))
-    const leftAxisData = _.range(minY, maxY + (minY + maxY) / 5, (minY + maxY) / 5)
+    console.log(this.props.times)
+
+    const bottomAxisData = this.props.times
+    const bottomAxisDataToShow = this.props.times
+    const minX = Math.floor(_.min(dataFlattern.map((rec: any) => rec.x)))
+    const maxX = Math.ceil(_.max(dataFlattern.map((rec: any) => rec.x)))
+    const minY = Math.floor(_.min(dataFlattern.map((rec: any) => rec.y)))
+    const maxY = Math.ceil(_.max(dataFlattern.map((rec: any) => rec.y)))
+    const leftAxisData = _.range(minY, maxY + Math.ceil((minY + maxY) / 5), Math.ceil((minY + maxY) / 5))
+
+    console.log(leftAxisData)
 
     return (
       <Card
@@ -51,10 +55,10 @@ class LineReport extends React.PureComponent<Props, any> {
           fillArea={false}
           yAxisGrid={true}
           xAxisGrid={false}
-          hideXAxis={false}
-          hideYAxis={false}
+          hideXAxis={true}
+          hideYAxis={true}
           inclindTick={false}
-          pointDataToShowOnGraph=""
+          pointDataToShowOnGraph="Y"
           animation={false}
           duration={1500}
           delay={1000}

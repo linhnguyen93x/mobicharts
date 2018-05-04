@@ -8,6 +8,7 @@ export interface ReportDetailResponse {
 export interface ReportDetailRequest {
   dateReport: string
   tab: number
+  reporttype: string
   provincecode?: string
   districtcode?: string
 }

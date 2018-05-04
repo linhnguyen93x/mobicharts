@@ -1,7 +1,6 @@
 export interface SummaryChartRequest {
-  p_issue_date: string
-  p_time_type: number
-  p_report_type: string
+  datereport: string
+  tab: number
 }
 
 export interface Chart {
@@ -12,7 +11,9 @@ export interface Chart {
 export interface SummaryChartResponse {
   label: string
   tongCong: number | null
-  bieuDoCot: Chart[] | null,
+  unit: string
+  codeReport: string
+  bieuDoCot: Chart[] | null
   bieuDoCoCau: Chart[] | null
 }
 

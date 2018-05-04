@@ -1,6 +1,6 @@
 import { Svg } from 'expo'
 import * as React from 'react'
-import { StyleSheet, Text as RText, View } from 'react-native'
+import { PixelRatio, StyleSheet, Text as RText, View } from 'react-native'
 import { Card } from 'react-native-elements'
 import { PieChart } from 'react-native-svg-charts'
 import Legend from 'src/components/legend'
@@ -106,7 +106,7 @@ class DonutReport extends React.PureComponent<Props, State> {
 
   CenterText = ({ height, width, title, subTitle }: any) => {
     const distanceLength = (
-      Math.abs(title.length - subTitle.length) * 5
+      Math.abs(title.length - subTitle.length) * PixelRatio.getFontScale() * 10
     ).toString()
 
     return (
@@ -120,7 +120,7 @@ class DonutReport extends React.PureComponent<Props, State> {
         <TSpan
           x="0"
           dx={subTitle.length < title.length ? distanceLength : '0'}
-          dy="30"
+          dy={(15 * PixelRatio.get()).toString()}
         >
           {subTitle}
         </TSpan>

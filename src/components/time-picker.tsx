@@ -5,6 +5,7 @@ import { TouchableOpacity, View } from 'react-native'
 import DatePicker from 'react-native-datepicker'
 
 export interface TimeProps {
+  defaultValue: string
   onDateChange: (date: string) => any
 }
 
@@ -13,7 +14,7 @@ interface TimeState {
 }
 
 export class TimePicker extends React.Component<TimeProps, TimeState> {
-  state = { selectedTime: moment().format('DD/MM/YYYY') }
+  state = { selectedTime: this.props.defaultValue }
 
   render() {
     return (

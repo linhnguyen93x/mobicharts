@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import { appEpic$ } from 'src/+state/epics'
 import { FilterTab } from 'src/components'
+import { SummaryChartParams } from 'src/modules/ChartTab/components'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 
 import { getReportDetailAction } from '../actions'
@@ -40,22 +41,24 @@ class ReportDetail extends React.Component<Props, {}> {
   }
 
   componentWillMount() {
+    const { params }: { params: SummaryChartParams } = this.props.navigation.state
     const currentEpic = appEpic$.value
 
     if (currentEpic !== reportDetail$) {
       appEpic$.next(reportDetail$)
     }
 
-    this.props.dispatch(getReportDetailAction({datereport: '20/04/2018', tab: 1}))
+    this.props.dispatch(getReportDetailAction({datereport: params.selectedTime, tab: params.timeType, reporttype: params.codeReport}))
   }
 
   render() {
+    const { params }: { params: SummaryChartParams } = this.props.navigation.state
 
     return (
       <View style={styles.container}>
         <Text style={styles.header}>
           {`Báo cáo\n ${'DTTT'} theo loại khách hàng\n`.toUpperCase()}
-          <Text style={styles.day}>Ngày {'22/04/2018'}</Text>
+          <Text style={styles.day}>Ngày { params.selectedTime }</Text>
         </Text>
         <FilterTab
           data={[Filter.COMPANY, Filter.BRANCH, Filter.UD, Filter.DISTRICT]}
