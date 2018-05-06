@@ -175,84 +175,96 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
                 {item.unit}
               </Text>
             </View>
-            <View
-              style={{
-                flex: 0.3,
-                alignItems: 'center',
-                alignSelf: 'flex-start'
-              }}
-            >
-              <PieChart
-                style={{ height: 89, width: '100%' }}
-                data={pieOption}
-                spacing={0}
-                outerRadius={'90%'}
-                padAngle={0}
-              />
+            {pieOption.length > 0 ? (
               <View
                 style={{
-                  flex: 0.5,
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  marginTop: 5
+                  flex: 0.3,
+                  alignItems: 'center',
+                  alignSelf: 'flex-start'
                 }}
               >
-                {pieData.map((item, index) => {
-                  return (
-                    <View
-                      key={index}
-                      style={{
-                        flexDirection: 'row',
-                        width: '50%',
-                        paddingHorizontal: 4
-                      }}
-                    >
-                      <Entypo
+                <PieChart
+                  style={{ height: 89, width: '100%' }}
+                  data={pieOption}
+                  spacing={0}
+                  outerRadius={'90%'}
+                  padAngle={0}
+                />
+                <View
+                  style={{
+                    flex: 0.5,
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    marginTop: 5
+                  }}
+                >
+                  {pieData.map((item, index) => {
+                    return (
+                      <View
+                        key={index}
                         style={{
-                          alignSelf: 'flex-start'
-                        }}
-                        name="controller-record"
-                        size={16}
-                        color={groupColor[index % groupColor.length]}
-                      />
-                      <Text
-                        style={{
-                          fontSize: 10,
-                          alignSelf: 'flex-start'
+                          flexDirection: 'row',
+                          width: '50%',
+                          paddingHorizontal: 4
                         }}
                       >
-                        {' ' + item.label}
-                      </Text>
-                    </View>
-                  )
-                })}
+                        <Entypo
+                          style={{
+                            alignSelf: 'flex-start'
+                          }}
+                          name="controller-record"
+                          size={16}
+                          color={groupColor[index % groupColor.length]}
+                        />
+                        <Text
+                          style={{
+                            fontSize: 10,
+                            alignSelf: 'flex-start'
+                          }}
+                        >
+                          {' ' + item.label}
+                        </Text>
+                      </View>
+                    )
+                  })}
+                </View>
               </View>
-            </View>
-            <View style={{ flex: 0.3, alignSelf: 'flex-start' }}>
-              <BarChart
-                style={{ height: 85 }}
-                data={barOption}
-                contentInset={{ top: 5, bottom: 5 }}
-                spacingInner={0.25}
-                svg={{
-                  strokeWidth: 2,
-                  fill: barColor
+            ) : (
+              <View
+                style={{
+                  flex: 0.3
                 }}
-              >
-                <this.Gradient />
-              </BarChart>
-              <XAxis
-                style={{ marginTop: 11 }}
-                data={barOption}
-                scale={scale.scaleBand}
-                spacingInner={0.25}
-                formatLabel={(value: any, index: number) => barLegend[index]}
-                labelStyle={{ color: 'black' }}
-                svg={{
-                  fontSize: normalize(8)
-              }}
               />
-            </View>
+            )}
+            {barOption.length > 0 ? (
+              <View style={{ flex: 0.3, alignSelf: 'flex-start' }}>
+                <BarChart
+                  style={{ height: 85 }}
+                  data={barOption}
+                  contentInset={{ top: 5, bottom: 5 }}
+                  spacingInner={0.25}
+                  svg={{
+                    strokeWidth: 2,
+                    fill: barColor
+                  }}
+                >
+                  <this.Gradient />
+                </BarChart>
+                <XAxis
+                  style={{ marginTop: 11 }}
+                  data={barOption}
+                  scale={scale.scaleBand}
+                  spacingInner={0.25}
+                  formatLabel={(value: any, index: number) => barLegend[index]}
+                  labelStyle={{ color: 'black' }}
+                  svg={{
+                    fontSize: normalize(8)
+                  }}
+                />
+              </View>
+            ) : (
+              <View style={{ flex: 0.3 }} />
+            )}
           </View>
         }
       />
@@ -262,8 +274,6 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
   render() {
     const { data } = this.props
     const renderData = data[`${this.state.reportDate}_${this.state.timeType}`]
-
-    // console.log(renderData)
 
     return (
       <View style={styles.container}>
