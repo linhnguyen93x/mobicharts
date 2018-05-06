@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 export interface TabProviderProps {
   data: string[]
@@ -28,12 +28,23 @@ export class FilterTab extends React.Component<
     return (
       <View style={styles.container}>
         {this.props.data.map((item, index) => {
-          const itemStyle = this.state.selectedNumber === index ? styles.itemSelected : styles.item
+          const itemStyle =
+            this.state.selectedNumber === index
+              ? styles.itemSelected
+              : styles.item
+          const textSelected =
+            this.state.selectedNumber === index
+              ? styles.textSelected
+              : styles.text
 
           return (
-            <Text style={itemStyle} key={index} onPress={() => this.tabChange(index)}>
-              {item}
-            </Text>
+            <TouchableOpacity
+              style={itemStyle}
+              key={index}
+              onPress={() => this.tabChange(index)}
+            >
+              <Text style={textSelected}>{item}</Text>
+            </TouchableOpacity>
           )
         })}
       </View>
@@ -46,19 +57,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 2,
     backgroundColor: 'white',
+    // height: 40,
+    alignItems: 'center'
   },
   item: {
     flex: 1,
-    textAlign: 'center',
-    padding: 8,
-    color: '#75746F'
+    paddingHorizontal: 8,
+    paddingVertical: 12,
   },
   itemSelected: {
     flex: 1,
-    textAlign: 'center',
-    padding: 8,
-    borderBottomWidth: 2,
-    borderBottomColor: '#0165A9',
-    color: '#0165A9'
+    paddingHorizontal: 8,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#0165A9'
+  },
+  text: {
+    color: '#75746F',
+    fontSize: 12,
+    textAlign: 'center'
+  },
+  textSelected: {
+    color: '#0165A9',
+    fontSize: 12,
+    textAlign: 'center'
   }
 })

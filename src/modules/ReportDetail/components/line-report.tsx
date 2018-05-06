@@ -9,6 +9,7 @@ import { colors } from 'src/shared'
 const deviceWidth = Dimensions.get('window').width
 
 interface Props {
+  color: string[]
   data: number[][]
   times: string[]
   legend: string[]
@@ -19,8 +20,6 @@ class LineReport extends React.PureComponent<Props, any> {
     const color = colors.slice(0, 3)
     const dataFlattern = _.flatten(this.props.data)
 
-    console.log(this.props.times)
-
     const bottomAxisData = this.props.times
     const bottomAxisDataToShow = this.props.times
     const minX = Math.floor(_.min(dataFlattern.map((rec: any) => rec.x)))
@@ -28,8 +27,6 @@ class LineReport extends React.PureComponent<Props, any> {
     const minY = Math.floor(_.min(dataFlattern.map((rec: any) => rec.y)))
     const maxY = Math.ceil(_.max(dataFlattern.map((rec: any) => rec.y)))
     const leftAxisData = _.range(minY, maxY + Math.ceil((minY + maxY) / 5), Math.ceil((minY + maxY) / 5))
-
-    console.log(leftAxisData)
 
     return (
       <Card
@@ -84,7 +81,7 @@ class LineReport extends React.PureComponent<Props, any> {
             Đơn vị: Tỷ VND
           </Text>
         </View>
-        <Legend data={this.props.legend} />
+        <Legend data={this.props.legend} color={color}/>
       </Card>
     )
   }

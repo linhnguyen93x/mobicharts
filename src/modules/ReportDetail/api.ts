@@ -4,7 +4,6 @@ import { api } from 'src/api'
 import { ReportDetailRequest, ReportDetailResponse } from './model'
 
 const getReportDetail = (body: ReportDetailRequest): Observable<ReportDetailResponse> => {
-  console.log(body)
   return api.request('/mobile/export/report.html', body)
 }
 

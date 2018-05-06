@@ -66,10 +66,11 @@ class ReportDetail extends React.Component<Props, {}> {
         />
         <ScrollView>
           <DonutReport
+            color={params.colors}
             legend={this.props.legends}
             data={this.props.donuts.left}
             data2={this.props.donuts.right} />
-          <LineReport data={this.props.line.data} times={this.props.line.times} legend={this.props.legends} />
+          <LineReport color={params.colors} data={this.props.line.data} times={this.props.line.times} legend={this.props.legends} />
           <TableReport dynamicHeader={this.props.legends} data={this.props.table}/>
         </ScrollView>
 

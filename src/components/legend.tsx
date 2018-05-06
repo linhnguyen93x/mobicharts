@@ -1,10 +1,10 @@
 import { Entypo } from '@expo/vector-icons'
 import * as React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { colors } from 'src/shared'
 
 interface LegendProps {
   data: any[]
+  color: string[]
   selectedIndex?: number | null
   onPress?: (index: number) => void
 }
@@ -38,7 +38,7 @@ class Legend extends React.PureComponent<LegendProps, {}> {
             }}
             name="dot-single"
             size={40}
-            color={colors[index]}
+            color={this.props.color[index]}
           />
           <Text
             style={{

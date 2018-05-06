@@ -1,12 +1,14 @@
 import { Svg } from 'expo'
 import * as React from 'react'
-import { PixelRatio, StyleSheet, Text as RText, View } from 'react-native'
+import { StyleSheet, Text as RText, View } from 'react-native'
 import { Card } from 'react-native-elements'
 import { PieChart } from 'react-native-svg-charts'
 import Legend from 'src/components/legend'
+import { scale } from 'src/shared'
 
 const { Text, TSpan } = Svg
 export interface Props {
+  color: string[]
   legend: string[]
   data: number[]
   data2: number[]
@@ -23,29 +25,6 @@ interface State {
   pie2Data: PieChartProperty[]
   selectedIndex: number | null
 }
-
-const pieColor = [
-  '#ff7f50',
-  '#87cefa',
-  '#32cd32',
-  '#da70d6',
-  '#6495ed',
-  '#ff69b4',
-  '#ba55d3',
-  '#cd5c5c',
-  '#ffa500',
-  '#40e0d0',
-  '#1e90ff',
-  '#ff6347',
-  '#7b68ee',
-  '#00fa9a',
-  '#ffd700',
-  '#6b8e23',
-  '#ff00ff',
-  '#3cb371',
-  '#b8860b',
-  '#30e0e0'
-]
 
 class DonutReport extends React.PureComponent<Props, State> {
   state: State = {
@@ -78,7 +57,7 @@ class DonutReport extends React.PureComponent<Props, State> {
     return data.filter((value) => value > 0).map((value, index) => ({
       value,
       svg: {
-        fill: pieColor[index],
+        fill: this.props.color[index],
         onPress: () => this.triggerEvent(index)
       },
       key: `pie-${index}`
@@ -105,12 +84,12 @@ class DonutReport extends React.PureComponent<Props, State> {
   }
 
   CenterText = ({ height, width, title, subTitle }: any) => {
-    const distanceLength = (
-      Math.abs(title.length - subTitle.length) * PixelRatio.getFontScale() * 10
+    const distanceLength = scale(
+      Math.abs(title.length - subTitle.length) * 10
     ).toString()
 
     return (
-      <Text x={0} y={-15} stroke={'black'} fill={'none'} textAnchor="middle">
+      <Text x={0} y={-15} fontSize={12} stroke={'black'} fill={'none'} textAnchor="middle">
         <TSpan
           x="0"
           dx={title.length >= subTitle.length ? '0' : distanceLength}
@@ -120,7 +99,7 @@ class DonutReport extends React.PureComponent<Props, State> {
         <TSpan
           x="0"
           dx={subTitle.length < title.length ? distanceLength : '0'}
-          dy={(15 * PixelRatio.get()).toString()}
+          dy={scale(34).toString()}
         >
           {subTitle}
         </TSpan>
@@ -171,6 +150,7 @@ class DonutReport extends React.PureComponent<Props, State> {
         </View>
         <Legend
           data={this.props.legend}
+          color={this.props.color}
           onPress={(index) => this.triggerEvent(index)}
           selectedIndex={this.state.selectedIndex}
           />

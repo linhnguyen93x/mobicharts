@@ -1,10 +1,11 @@
 import { Entypo } from '@expo/vector-icons'
 import * as scale from 'd3-scale'
 import { Svg } from 'expo'
+import { Dictionary } from 'lodash'
 import moment from 'moment'
 import * as React from 'react'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
-import { Divider, ListItem } from 'react-native-elements'
+import { Divider, ListItem, normalize } from 'react-native-elements'
 import { BarChart, PieChart, XAxis } from 'react-native-svg-charts'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
@@ -23,7 +24,7 @@ import { getAll } from '../selectors'
 const { LinearGradient, Stop, Defs } = Svg
 
 interface SummaryChartProps extends ConnectedReduxProps<SummaryChartState> {
-  data: SummaryChartResponse[]
+  data: Dictionary<SummaryChartResponse[]>
 }
 
 interface SummaryChartState {
@@ -235,7 +236,6 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
                 spacingInner={0.25}
                 svg={{
                   strokeWidth: 2,
-                  // fill: 'url(#gradient)'
                   fill: barColor
                 }}
               >
@@ -248,6 +248,9 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
                 spacingInner={0.25}
                 formatLabel={(value: any, index: number) => barLegend[index]}
                 labelStyle={{ color: 'black' }}
+                svg={{
+                  fontSize: normalize(8)
+              }}
               />
             </View>
           </View>
@@ -258,6 +261,9 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
 
   render() {
     const { data } = this.props
+    const renderData = data[`${this.state.reportDate}_${this.state.timeType}`]
+
+    // console.log(renderData)
 
     return (
       <View style={styles.container}>
@@ -279,7 +285,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
         <FlatList
           style={{ marginTop: 8 }}
           keyExtractor={this.keyExtractor}
-          data={data}
+          data={renderData}
           renderItem={this.renderItem}
         />
         {/* <Button title="Add" onPress={() => { dispatch(addTodo('Hello Bi')) }} />

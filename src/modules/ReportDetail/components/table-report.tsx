@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import { Card } from 'react-native-elements'
-import { Row, Table } from 'react-native-table-component'
+import { Cell, Row, Table, TableWrapper } from 'react-native-table-component'
 
 export interface TableReportState {
   tableHead: string[]
@@ -27,22 +27,19 @@ const textStyle = [
   { paddingLeft: 16, textAlign: 'left' }
 ]
 
-class TableReport extends React.PureComponent<TableReportProps, TableReportState> {
+class TableReport extends React.PureComponent<
+  TableReportProps,
+  TableReportState
+> {
   state = {
-    tableHead: [
-      'Địa bàn',
-      'Tổng cộng'
-    ],
+    tableHead: ['Địa bàn', 'Tổng cộng'],
     widthArr: [180, 120]
   }
 
   componentWillReceiveProps(nextProps: TableReportProps) {
     this.setState({
       ...this.state,
-      tableHead: [
-        ...this.state.tableHead,
-        ...nextProps.dynamicHeader
-      ],
+      tableHead: [...this.state.tableHead, ...nextProps.dynamicHeader],
       widthArr: [
         ...this.state.widthArr,
         ...nextProps.dynamicHeader.map((item) => 120)
@@ -52,16 +49,6 @@ class TableReport extends React.PureComponent<TableReportProps, TableReportState
 
   render() {
     const state = this.state
-    // const tableData = []
-    // for (let i = 0; i < 30; i += 1) {
-    //   const rowData = []
-    //   for (let j = 0; j < this.state.tableHead.length; j += 1) {
-    //     rowData.push(`${i}${j}`)
-    //   }
-    //   tableData.push(rowData)
-    // }
-
-    // console.log(tableData)
 
     return (
       <Card
@@ -71,33 +58,83 @@ class TableReport extends React.PureComponent<TableReportProps, TableReportState
         dividerStyle={{ display: 'none' }}
       >
         <View style={styles.container}>
-          <ScrollView horizontal={true}>
+          <ScrollView horizontal={true} directionalLockEnabled={false}>
             <View>
               <Table borderStyle={{ borderColor: '#C1C0B9' }}>
                 <Row
                   data={state.tableHead}
                   widthArr={state.widthArr}
                   style={styles.header}
-                  textStyle={[styles.text, { textAlign: 'center', fontWeight: 'bold' }]}
+                  textStyle={[
+                    styles.text,
+                    { textAlign: 'center', fontWeight: 'bold' }
+                  ]}
                 />
               </Table>
-              <ScrollView style={styles.dataWrapper}>
-                <Table borderStyle={{ borderColor: '#C1C0B9' }}>
-                  {this.props.data.map((rowData, index) => (
-                    <Row
-                      key={index}
-                      data={rowData}
-                      widthArr={state.widthArr}
-                      style={[
-                        tableStyle[rowData[rowData.length - 1]]
-                      ]}
-                      textStyle={[styles.text, textStyle[rowData[rowData.length - 1]]]}
-                    />
-                  ))}
-                </Table>
-              </ScrollView>
+              <Table
+                style={styles.dataWrapper}
+                borderStyle={{ borderColor: '#C1C0B9' }}
+              >
+                {this.props.data.map((rowData, index) => (
+                  <TableWrapper
+                    key={index}
+                    style={[
+                      styles.row,
+                      tableStyle[rowData[rowData.length - 1]]
+                    ]}
+                  >
+                    {rowData
+                      .slice(0, rowData.length - 1)
+                      .map(
+                        (cellData, cellIndex) =>
+                          cellIndex !== rowData.length - 1 && (
+                            <Cell
+                              key={cellIndex}
+                              data={cellData}
+                              style={{ width: state.widthArr[cellIndex] }}
+                              textStyle={[
+                                styles.text,
+                                textStyle[rowData[rowData.length - 1]],
+                                cellIndex !== 0 ? { textAlign: 'right' } : {}
+                              ]}
+                            />
+                          )
+                      )}
+                  </TableWrapper>
+                ))}
+              </Table>
             </View>
           </ScrollView>
+          <View
+            pointerEvents="none"
+            style={{ position: 'absolute', left: 0, top: 0 }}
+          >
+            <Table borderStyle={{ borderWidth: 0 }}>
+              <Row
+                data={[state.tableHead[0]]}
+                widthArr={[state.widthArr[0]]}
+                style={styles.header}
+                textStyle={[
+                  styles.text,
+                  { textAlign: 'center', fontWeight: 'bold' }
+                ]}
+              />
+            </Table>
+            <Table borderStyle={{ borderColor: '#C1C0B9' }}>
+              {this.props.data.map((rowData, index) => (
+                <Row
+                  key={index}
+                  data={[rowData[0]]}
+                  widthArr={[state.widthArr[0]]}
+                  style={[tableStyle[rowData[rowData.length - 1]]]}
+                  textStyle={[
+                    styles.text,
+                    textStyle[rowData[rowData.length - 1]]
+                  ]}
+                />
+              ))}
+            </Table>
+          </View>
         </View>
       </Card>
     )
@@ -109,6 +146,7 @@ const styles = StyleSheet.create({
   header: { height: 50, backgroundColor: '#CBCED3' },
   text: { padding: 8 },
   dataWrapper: { marginTop: -1 },
+  row: { flexDirection: 'row' }
 })
 
 export default TableReport
