@@ -31,17 +31,20 @@ class TableReport extends React.PureComponent<
   TableReportProps,
   TableReportState
 > {
+  TABLE_HEAD = ['Địa bàn', 'Tổng cộng']
+  WIDTH_ARR = [180, 120]
+
   state = {
-    tableHead: ['Địa bàn', 'Tổng cộng'],
-    widthArr: [180, 120]
+    tableHead: [],
+    widthArr: []
   }
 
   componentWillReceiveProps(nextProps: TableReportProps) {
     this.setState({
       ...this.state,
-      tableHead: [...this.state.tableHead, ...nextProps.dynamicHeader],
+      tableHead: [...this.TABLE_HEAD, ...nextProps.dynamicHeader],
       widthArr: [
-        ...this.state.widthArr,
+        ...this.WIDTH_ARR,
         ...nextProps.dynamicHeader.map((item) => 120)
       ]
     })

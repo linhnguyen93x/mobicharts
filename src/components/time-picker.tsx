@@ -28,11 +28,14 @@ export class TimePicker extends React.Component<TimeProps, TimeState> {
         <TouchableOpacity
           style={{ paddingHorizontal: 8 }}
           onPress={() =>
-            this.setState({
-              selectedTime: moment(this.state.selectedTime, 'DD/MM/YYYY')
-                .subtract(1, 'days')
-                .format('DD/MM/YYYY')
-            }, () => this.props.onDateChange(this.state.selectedTime))
+            this.setState(
+              {
+                selectedTime: moment(this.state.selectedTime, 'DD/MM/YYYY')
+                  .subtract(1, 'days')
+                  .format('DD/MM/YYYY')
+              },
+              () => this.props.onDateChange(this.state.selectedTime)
+            )
           }
         >
           <MaterialIcons
@@ -64,19 +67,24 @@ export class TimePicker extends React.Component<TimeProps, TimeState> {
           }}
           showIcon={false}
           onDateChange={(date) => {
-            this.setState({ selectedTime: date }, () => {
-              this.props.onDateChange(date)
-            })
+            setTimeout(() => {
+              this.setState({ selectedTime: date }, () => {
+                this.props.onDateChange(date)
+              })
+            }, 500)
           }}
         />
         <TouchableOpacity
           style={{ paddingHorizontal: 8 }}
           onPress={() =>
-            this.setState({
-              selectedTime: moment(this.state.selectedTime, 'DD/MM/YYYY')
-                .add(1, 'days')
-                .format('DD/MM/YYYY')
-            }, () => this.props.onDateChange(this.state.selectedTime))
+            this.setState(
+              {
+                selectedTime: moment(this.state.selectedTime, 'DD/MM/YYYY')
+                  .add(1, 'days')
+                  .format('DD/MM/YYYY')
+              },
+              () => this.props.onDateChange(this.state.selectedTime)
+            )
           }
         >
           <MaterialIcons

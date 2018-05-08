@@ -1,7 +1,7 @@
 import { Entypo } from '@expo/vector-icons'
 import * as scale from 'd3-scale'
 import { Svg } from 'expo'
-import { Dictionary } from 'lodash'
+import _, { Dictionary } from 'lodash'
 import moment from 'moment'
 import * as React from 'react'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
@@ -49,7 +49,7 @@ enum Filter {
 class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
   state = {
     reportDate: moment()
-      .subtract(7, 'days')
+      .subtract(1, 'days')
       .format('DD/MM/YYYY'),
     timeType: 1
   }
@@ -93,14 +93,15 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     item: SummaryChartResponse
     index: number
   }) => {
-    const groupColor = groupColors[index % groupColors.length]
-    const barColor = groupColor[0]
+    const maxBarValue: any = item.bieuDoCot ? _.max(item.bieuDoCot.map((rec) => rec.value)) : 0
     const barOption = item.bieuDoCot
-      ? item.bieuDoCot.map((item) => item.value)
+      ? item.bieuDoCot.map((item) => Math.floor((item.value / maxBarValue) * 100))
       : []
     const barLegend = item.bieuDoCot
       ? item.bieuDoCot.map((item) => item.label)
       : []
+    const groupColor = groupColors[index % groupColors.length]
+    const barColor = groupColor[0]
 
     const pieData = item.bieuDoCoCau ? item.bieuDoCoCau : []
     const pieOption = pieData.map((item, index) => ({
@@ -237,12 +238,13 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
               />
             )}
             {barOption.length > 0 ? (
-              <View style={{ flex: 0.3, alignSelf: 'flex-start' }}>
+              <View style={{ flex: .3, alignSelf: 'flex-start' }}>
                 <BarChart
                   style={{ height: 85 }}
                   data={barOption}
-                  contentInset={{ top: 5, bottom: 5 }}
+                  contentInset={{ top: 10, bottom: 0 }}
                   spacingInner={0.25}
+                  gridMin={0}
                   svg={{
                     strokeWidth: 2,
                     fill: barColor
@@ -263,7 +265,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
                 />
               </View>
             ) : (
-              <View style={{ flex: 0.3 }} />
+              <View style={{ flex: .3 }} />
             )}
           </View>
         }
@@ -298,8 +300,6 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
           data={renderData}
           renderItem={this.renderItem}
         />
-        {/* <Button title="Add" onPress={() => { dispatch(addTodo('Hello Bi')) }} />
-        {todos.map((t) => <Text key={t.id}>{t.text}</Text>)} */}
       </View>
     )
   }

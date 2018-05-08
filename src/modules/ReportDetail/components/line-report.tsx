@@ -11,7 +11,7 @@ const deviceWidth = Dimensions.get('window').width
 interface Props {
   color: string[]
   data: number[][]
-  times: string[]
+  times: number[]
   legend: string[]
 }
 
@@ -20,7 +20,7 @@ class LineReport extends React.PureComponent<Props, any> {
     const color = colors.slice(0, 3)
     const dataFlattern = _.flatten(this.props.data)
 
-    const bottomAxisData = this.props.times
+    const bottomAxisData = _.range(0, this.props.times.length , 1)
     const bottomAxisDataToShow = this.props.times
     const minX = Math.floor(_.min(dataFlattern.map((rec: any) => rec.x)))
     const maxX = Math.ceil(_.max(dataFlattern.map((rec: any) => rec.x)))

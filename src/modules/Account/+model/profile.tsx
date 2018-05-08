@@ -14,4 +14,6 @@ export interface UserProfile {
   newCycleId: number
   announcement: string
   jwt: string
+  levelReport: string
+  showTabReport: string[]
 }

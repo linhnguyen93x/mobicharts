@@ -2,13 +2,14 @@ export interface ReportDetailResponse {
   donutLeft: Donut[]
   donutRight: Donut[]
   line: Line[]
-  tableDetail: any
+  tableDetail: Table[]
 }
 
 export interface ReportDetailRequest {
   dateReport: string
   tab: number
   reporttype: string
+  viewtab: string
   provincecode?: string
   districtcode?: string
 }
@@ -41,7 +42,7 @@ export interface ReportDetailClient {
   donutLeft: number[]
   donutRight: number[]
   line: Line[]
-  tableDetail: Table
+  tableDetail: Table[]
 }
 
 export type ReportDetailState = ReportDetailClient

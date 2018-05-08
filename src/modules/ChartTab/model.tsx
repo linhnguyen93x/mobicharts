@@ -7,7 +7,7 @@ export interface SummaryChartRequest {
 
 export interface Chart {
   label: string
-  value: string
+  value: number
 }
 
 export interface SummaryChartResponse {
