@@ -4,14 +4,18 @@ import { of } from 'rxjs/observable/of'
 import { catchError, exhaustMap, map } from 'rxjs/operators'
 import { SUBMIT_LOADER } from 'src/+state/constants'
 import { endLoading } from 'src/+state/loadingActions'
+import { hashJoin } from 'src/shared'
 
 import { getReportDetailSuccessAction } from './actions'
 import { TReportDetail } from './actionsTypes'
 import { GET_DETAIL_REPORT } from './constants'
 import { ReportDetailClient, ReportDetailRequest, ReportDetailResponse } from './model'
+import { getAll } from './reducer'
 
 interface IReportDetail {
-  getReportDetail: (body: ReportDetailRequest) => Observable<ReportDetailResponse>
+  getReportDetail: (
+    body: ReportDetailRequest
+  ) => Observable<ReportDetailResponse>
   startLoader: <T>(obs: Observable<T>, hideSpinner?: boolean) => Observable<T>
 }
 
@@ -19,26 +23,42 @@ export const reportDetail$: any = (
   action$: ActionsObservable<TReportDetail>,
   store: any,
   { getReportDetail, startLoader }: IReportDetail
-) => action$.pipe(
-  ofType(GET_DETAIL_REPORT),
-  exhaustMap((a) => startLoader(
-    getReportDetail(a.payload).pipe(
-      map((res) => {
-        const mapToClient: ReportDetailClient = {
-          legend: res.donutLeft.map((i) => i.type),
-          donutLeft: res.donutLeft.map((i) => i.total),
-          donutRight: res.donutRight.map((i) => i.total),
-          line: res.line,
-          tableDetail: res.tableDetail
-        }
+) =>
+  action$.pipe(
+    ofType(GET_DETAIL_REPORT),
+    exhaustMap((a) => {
+      const cacheData = getAll(store.getState())[
+        hashJoin(
+          a.payload.reporttype,
+          a.payload.datereport,
+          a.payload.tab,
+          a.payload.viewtab
+        )
+      ]
 
-        return mapToClient
-      }),
-      map((res) => getReportDetailSuccessAction(res))
-    )
-  ).pipe(
-    catchError((e) => {
-      return of(endLoading(SUBMIT_LOADER))
+      if (cacheData) {
+        return of(getReportDetailSuccessAction(a.payload, cacheData))
+      }
+
+      return startLoader(
+        getReportDetail(a.payload).pipe(
+          map((res) => {
+            const mapToClient: ReportDetailClient = {
+              legend: res.donutLeft.map((i) => i.type),
+              donutLeft: res.donutLeft.map((i) => i.total),
+              donutRight: res.donutRight.map((i) => i.total),
+              line: res.line,
+              tableDetail: res.tableDetail
+            }
+
+            return mapToClient
+          }),
+          map((res) => getReportDetailSuccessAction(a.payload, res))
+        )
+      ).pipe(
+        catchError((e) => {
+          return of(endLoading(SUBMIT_LOADER))
+        })
+      )
     })
-  ))
-)
+  )

@@ -1,3 +1,5 @@
+import { Dictionary } from 'lodash'
+
 export interface ReportDetailResponse {
   donutLeft: Donut[]
   donutRight: Donut[]
@@ -6,7 +8,7 @@ export interface ReportDetailResponse {
 }
 
 export interface ReportDetailRequest {
-  dateReport: string
+  datereport: string
   tab: number
   reporttype: string
   viewtab: string
@@ -45,4 +47,11 @@ export interface ReportDetailClient {
   tableDetail: Table[]
 }
 
-export type ReportDetailState = ReportDetailClient
+export interface ActionParams {
+  datereport: string
+  tab: number
+  reporttype: string
+  viewtab: string
+}
+
+export type ReportDetailState = Dictionary<ReportDetailClient>

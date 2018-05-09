@@ -1,3 +1,4 @@
+import { Dictionary } from 'lodash'
 import * as React from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
@@ -5,12 +6,13 @@ import { createStructuredSelector } from 'reselect'
 import { appEpic$ } from 'src/+state/epics'
 import { FilterTab } from 'src/components'
 import { SummaryChartParams } from 'src/modules/ChartTab/components'
+import { create2DArray, formatCurrency, hashJoin } from 'src/shared'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 
 import { getReportDetailAction } from '../actions'
 import { reportDetail$ } from '../epic'
-import { ReportDetailState } from '../model'
-import { getDonuts, getLegend, getLine, getTable } from '../reducer'
+import { ReportDetailClient, ReportDetailState, Table } from '../model'
+import { getAll } from '../reducer'
 import DonutReport from './donut-report'
 import LineReport from './line-report'
 import TableReport from './table-report'
@@ -30,16 +32,7 @@ const Filter: IFilter = {
 }
 
 interface Props extends ConnectedReduxProps<ReportDetailState> {
-  legends: string[]
-  donuts: {
-    left: number[]
-    right: number[]
-  }
-  line: {
-    data: number[][]
-    times: number[]
-  }
-  table: any
+  all: Dictionary<ReportDetailClient>
 }
 
 interface State {
@@ -81,10 +74,103 @@ class ReportDetail extends React.Component<Props, State> {
     )
   }
 
+  getLegend = (hashParams: string) =>
+    this.props.all[hashParams] ? this.props.all[hashParams].legend : []
+
+  getDonuts = (hashParams: string) => ({
+    left:
+      this.props.all[hashParams] && this.props.all[hashParams].donutLeft
+        ? this.props.all[hashParams].donutLeft
+        : [],
+    right:
+      this.props.all[hashParams] && this.props.all[hashParams].donutRight
+        ? this.props.all[hashParams].donutRight
+        : []
+  })
+
+  getLine = (hashParams: string) => {
+    if (!this.props.all[hashParams] || !this.props.all[hashParams].line) {
+      return {
+        data: [],
+        times: []
+      }
+    }
+
+    const lineData = this.props.all[hashParams].line
+    const responseData =
+      lineData.length > 0 ? create2DArray(lineData[0].data.length) : []
+
+    responseData.forEach((item, index) => {
+      lineData.forEach((i, indexChild) => {
+        responseData[index][indexChild] = { y: i.data[index], x: indexChild }
+      })
+    })
+
+    return {
+      data: responseData,
+      times: lineData.map((item) => Number(item.time))
+    }
+  }
+
+  mapToTable = (host: any[][], obj: Table, index: number) => {
+    if (obj.hasOwnProperty('child') && obj.child.length > 0) {
+      index++
+      obj.child.forEach((item) => {
+        const hostDetailData = item.detailType.map((item) =>
+          formatCurrency(item.value)
+        )
+        host.push([
+          item.shopName,
+          formatCurrency(item.total),
+          ...hostDetailData,
+          index
+        ])
+
+        this.mapToTable(host, item, index)
+      })
+    }
+  }
+
+  getTable = (hashParams: string) => {
+    if (
+      !this.props.all[hashParams] ||
+      !this.props.all[hashParams].tableDetail
+    ) {
+      return []
+    }
+    const tableDetail = this.props.all[hashParams].tableDetail
+
+    if (tableDetail.length <= 0) {
+      return []
+    }
+    const response: any[][] = []
+
+    tableDetail.forEach((item) => {
+      // console.log(JSON.stringify(item, null, 2))
+      const index = 0
+      const hostDetailData = item.detailType.map((item) => item.value)
+      response.push([
+        item.shopName,
+        formatCurrency(item.total),
+        ...hostDetailData,
+        index
+      ])
+      this.mapToTable(response, item, index)
+    })
+
+    return response
+  }
+
   render() {
     const {
       params
     }: { params: SummaryChartParams } = this.props.navigation.state
+    const hashParams = hashJoin(
+      params.codeReport,
+      params.selectedTime,
+      params.timeType,
+      this.state.selectedTab
+    )
 
     return (
       <View style={styles.container}>
@@ -103,19 +189,19 @@ class ReportDetail extends React.Component<Props, State> {
         <ScrollView>
           <DonutReport
             color={params.colors}
-            legend={this.props.legends}
-            data={this.props.donuts.left}
-            data2={this.props.donuts.right}
+            legend={this.getLegend(hashParams)}
+            data={this.getDonuts(hashParams).left}
+            data2={this.getDonuts(hashParams).right}
           />
           <LineReport
             color={params.colors}
-            data={this.props.line.data}
-            times={this.props.line.times}
-            legend={this.props.legends}
+            data={this.getLine(hashParams).data}
+            times={this.getLine(hashParams).times}
+            legend={this.getLegend(hashParams)}
           />
           <TableReport
-            dynamicHeader={this.props.legends}
-            data={this.props.table}
+            dynamicHeader={this.getLegend(hashParams)}
+            data={this.getTable(hashParams)}
           />
         </ScrollView>
       </View>
@@ -145,9 +231,6 @@ const styles = StyleSheet.create({
 
 export default connect(
   createStructuredSelector({
-    legends: getLegend,
-    donuts: getDonuts,
-    line: getLine,
-    table: getTable
+    all: getAll
   })
 )(ReportDetail)
