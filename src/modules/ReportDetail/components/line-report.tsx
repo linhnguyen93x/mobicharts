@@ -21,16 +21,16 @@ class LineReport extends React.PureComponent<Props, any> {
     const dataFlattern = _.flatten(this.props.data)
 
     const bottomAxisData = _.range(0, this.props.times.length , 1)
-    const bottomAxisDataToShow = this.props.times
+    const bottomAxisDataToShow = this.props.times.map((item) => item < 10 ? '0' + item : item)
     const minX = Math.floor(_.min(dataFlattern.map((rec: any) => rec.x)))
     const maxX = Math.ceil(_.max(dataFlattern.map((rec: any) => rec.x)))
-    const minY = Math.floor(_.min(dataFlattern.map((rec: any) => rec.y)))
+    const minY = 0
     const maxY = Math.ceil(_.max(dataFlattern.map((rec: any) => rec.y)))
     const leftAxisData = _.range(minY, maxY + Math.ceil((minY + maxY) / 5), Math.ceil((minY + maxY) / 5))
 
     return (
       <Card
-        title="Biểu đồ đường DTTT theo cấu thành trong 7 ngày gần đây:"
+        title="Biểu đồ đường:"
         titleStyle={{ textAlign: 'left' }}
         containerStyle={{ marginHorizontal: 0 }}
         dividerStyle={{ display: 'none' }}

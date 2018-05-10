@@ -1,6 +1,7 @@
 import { NavigationActions } from 'react-navigation'
 import { Action, combineReducers, Reducer } from 'redux'
 import { loadingReducer } from 'src/+state/loadingReducer'
+import { UserProfile } from 'src/modules/Account/+model'
 import profile from 'src/modules/Account/+state/reducers'
 import SummaryChart from 'src/modules/ChartTab'
 import { SummaryChartState } from 'src/modules/ChartTab/model'
@@ -71,6 +72,7 @@ function auth(state = initialAuthState, action: Action) {
 
 // tslint:disable-next-line:no-empty-interface
 export interface IApplicationState {
+  profile: UserProfile | null
   [SummaryChart.constants.NAME]: SummaryChartState
   [ReportDetail.constants.NAME]: ReportDetailState
 }

@@ -17,10 +17,7 @@ import { addListener } from '../shared/redux'
 const TabBar = TabNavigator(
   {
     Chart: {
-      screen: ChartTab.components.default,
-      navigationOptions: {
-        title: 'Báo cáo tổng hợp'
-      }
+      screen: ChartTab.components.default
     },
     Notification: { screen: NotificationTab },
     Map: { screen: MapTab },

@@ -46,9 +46,12 @@ export const reportDetail$: any = (
             const mapToClient: ReportDetailClient = {
               legend: res.donutLeft.map((i) => i.type),
               donutLeft: res.donutLeft.map((i) => i.total),
-              donutRight: res.donutRight.map((i) => i.total),
+              donutRight: res.percentChart,
               line: res.line,
-              tableDetail: res.tableDetail
+              tableDetail: res.tableDetail,
+              label: res.label,
+              listCodeColumn: res.listCodeColumn,
+              labellistCodeColumn: res.labellistCodeColumn,
             }
 
             return mapToClient

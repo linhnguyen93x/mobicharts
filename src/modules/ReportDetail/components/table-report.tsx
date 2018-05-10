@@ -31,8 +31,8 @@ class TableReport extends React.PureComponent<
   TableReportProps,
   TableReportState
 > {
-  TABLE_HEAD = ['Địa bàn', 'Tổng cộng']
-  WIDTH_ARR = [180, 120]
+  TABLE_HEAD = ['Địa bàn']
+  WIDTH_ARR = [180]
 
   state = {
     tableHead: [],

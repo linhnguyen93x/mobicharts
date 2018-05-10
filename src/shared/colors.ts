@@ -22,9 +22,10 @@ export const colors = [
 ]
 
 export const groupColors = [
-  ['#edf8e9', '#c7e9c0', '#a1d99b', '#74c476', '#31a354', '#006d2c'].reverse(),
-  ['#eff3ff', '#c6dbef', '#9ecae1', '#6baed6', '#3182bd', '#08519c'].reverse(),
-  ['#fee5d9', '#fcbba1', '#fc9272', '#fb6a4a', '#de2d26', '#a50f15'].reverse(),
-  ['#f2f0f7', '#dadaeb', '#bcbddc', '#9e9ac8', '#756bb1', '#54278f'].reverse(),
-  ['#feedde', '#fdd0a2', '#fdae6b', '#fd8d3c', '#e6550d', '#a63603'].reverse()
+  ['#B8DA26', '#7A9212', '#61740E', '#51610B'],
+  ['#FCCB04', '#fea203', '#DE8400', '#B96E00'],
+  ['#20B4F9', '#188BC1', '#1374A2', '#105F85'],
+  ['#FF414F', '#D03743', '#A72A34', '#7E1E26'],
+  ['#2775F5', '#185CCB', '#164EA8', '#11408B'],
+  ['#2EE778', '#25BD62', '#1D904B', '#146E38']
 ]

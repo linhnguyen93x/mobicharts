@@ -1,10 +1,30 @@
 import { Dictionary } from 'lodash'
 
+export interface PercentChart {
+  total: number
+  using: number
+  percent: number
+}
 export interface ReportDetailResponse {
   donutLeft: Donut[]
   donutRight: Donut[]
   line: Line[]
   tableDetail: Table[]
+  label: string
+  listCodeColumn: string[]
+  labellistCodeColumn: string[]
+  percentChart: PercentChart
+}
+
+export interface ReportDetailClient {
+  legend: string[]
+  donutLeft: number[]
+  donutRight: PercentChart
+  line: Line[]
+  tableDetail: Table[]
+  label: string
+  listCodeColumn: string[]
+  labellistCodeColumn: string[]
 }
 
 export interface ReportDetailRequest {
@@ -32,6 +52,7 @@ export interface Table {
   shopCode: string | null
   shopName: string | null
   detailType: DetailType[]
+  detailColumn: DetailColumn[]
 }
 
 export interface DetailType {
@@ -39,12 +60,9 @@ export interface DetailType {
   type: string
 }
 
-export interface ReportDetailClient {
-  legend: string[]
-  donutLeft: number[]
-  donutRight: number[]
-  line: Line[]
-  tableDetail: Table[]
+export interface DetailColumn {
+  value: number
+  code: string
 }
 
 export interface ActionParams {

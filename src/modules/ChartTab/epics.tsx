@@ -1,3 +1,4 @@
+import { Alert } from 'react-native'
 import { ActionsObservable, ofType } from 'redux-observable'
 import { Observable } from 'rxjs/Observable'
 import { of } from 'rxjs/observable/of'
@@ -36,6 +37,15 @@ export const summaryChartEpic: any = (
         )
       ).pipe(
         catchError((e) => {
+          Alert.alert(
+            'Thông báo',
+            'Không thể kết nối đến máy chủ.',
+            [
+              {text: 'OK', onPress: () => console.info('OK Pressed')}
+            ],
+            { cancelable: false }
+          )
+
           return of(endLoading(SUBMIT_LOADER))
         })
       )

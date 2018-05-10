@@ -12,7 +12,7 @@ import { createStructuredSelector } from 'reselect'
 import { appEpic$ } from 'src/+state/epics'
 import { FilterTab } from 'src/components'
 import { TimePicker } from 'src/components/time-picker'
-import { formatCurrency, groupColors } from 'src/shared'
+import { DateMap, formatCurrency, groupColors } from 'src/shared'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 
 import { globalStyle } from '../../../style'
@@ -32,6 +32,7 @@ interface SummaryChartState {
   timeType: number
 }
 
+const DOUBLE_PRESS_DELAY = 300
 export interface SummaryChartParams {
   codeReport: string
   timeType: number
@@ -47,6 +48,25 @@ enum Filter {
 }
 
 class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
+  static navigationOptions = {
+    // headerTitle instead of title
+    headerTitle: (
+      <View style={{ flex: 1 }}>
+        <Text
+          style={{
+            color: 'white',
+            textAlign: 'center',
+            marginLeft: 16,
+            fontSize: 20,
+            fontWeight: 'bold'
+          }}
+        >
+          ONE<Text style={{ color: 'red', fontSize: 20 }}>REPORT</Text>
+        </Text>
+      </View>
+    )
+  }
+
   state = {
     reportDate: moment()
       .subtract(1, 'days')
@@ -54,6 +74,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     timeType: 1
   }
 
+  lastImagePress: number | undefined
   componentWillMount() {
     const currentEpic = appEpic$.value
 
@@ -77,14 +98,22 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     return item.label
   }
 
-  Gradient = () => (
-    <Defs key={'gradient'}>
-      <LinearGradient id={'gradient'} x1={'0%'} y1={'0%'} x2={'0%'} y2={'100%'}>
-        <Stop offset={'0%'} stopColor={'rgba(183,210,67,1)'} />
-        <Stop offset={'100%'} stopColor={'rgb(163, 197, 46)'} />
-      </LinearGradient>
-    </Defs>
-  )
+  Gradient = (props: any) => {
+    return (
+      <Defs key={'gradient'}>
+        <LinearGradient
+          id={'gradient'}
+          x1={'0%'}
+          y1={'0%'}
+          x2={'0%'}
+          y2={'100%'}
+        >
+          <Stop offset={'0%'} stopColor={props.startColor} />
+          <Stop offset={'100%'} stopColor={props.stopColor} />
+        </LinearGradient>
+      </Defs>
+    )
+  }
 
   renderItem = ({
     item,
@@ -93,15 +122,16 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     item: SummaryChartResponse
     index: number
   }) => {
-    const maxBarValue: any = item.bieuDoCot ? _.max(item.bieuDoCot.map((rec) => rec.value)) : 0
+    const maxBarValue: any = item.bieuDoCot
+      ? _.max(item.bieuDoCot.map((rec) => rec.value))
+      : 0
     const barOption = item.bieuDoCot
-      ? item.bieuDoCot.map((item) => Math.floor((item.value / maxBarValue) * 100))
+      ? item.bieuDoCot.map((item) => Math.floor(item.value / maxBarValue * 100))
       : []
     const barLegend = item.bieuDoCot
       ? item.bieuDoCot.map((item) => item.label)
       : []
     const groupColor = groupColors[index % groupColors.length]
-    const barColor = groupColor[0]
 
     const pieData = item.bieuDoCoCau ? item.bieuDoCoCau : []
     const pieOption = pieData.map((item, index) => ({
@@ -110,6 +140,34 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
       key: `pie-${index}`
     }))
 
+    const itemDoublePress = (e: any) => {
+      const now = new Date().getTime()
+
+      if (
+        this.lastImagePress &&
+        now - this.lastImagePress < DOUBLE_PRESS_DELAY
+      ) {
+        delete this.lastImagePress
+        const params: SummaryChartParams = {
+          codeReport: item.codeReport,
+          timeType: this.state.timeType,
+          colors: groupColor,
+          selectedTime: this.state.reportDate
+        }
+        const title = `${params.codeReport} ${DateMap[
+          params.timeType - 1
+        ].toUpperCase()} ${params.selectedTime}`
+
+        return this.props.navigation.navigate({
+          routeName: 'ChartDetail',
+          params: { ...params, title },
+          key: params.codeReport
+        })
+      } else {
+        this.lastImagePress = now
+      }
+    }
+
     return (
       <ListItem
         scaleProps={{
@@ -117,15 +175,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
           tension: 100,
           activeScale: 0.95
         }}
-        onPress={() => {
-          const params: SummaryChartParams = {
-            codeReport: item.codeReport,
-            timeType: this.state.timeType,
-            colors: groupColor,
-            selectedTime: this.state.reportDate
-          }
-          return this.props.navigation.navigate('ChartDetail', params)
-        }}
+        onPress={itemDoublePress.bind(this)}
         title={
           <View
             style={{
@@ -238,7 +288,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
               />
             )}
             {barOption.length > 0 ? (
-              <View style={{ flex: .3, alignSelf: 'flex-start' }}>
+              <View style={{ flex: 0.3, alignSelf: 'flex-start' }}>
                 <BarChart
                   style={{ height: 85 }}
                   data={barOption}
@@ -247,10 +297,13 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
                   gridMin={0}
                   svg={{
                     strokeWidth: 2,
-                    fill: barColor
+                    fill: 'url(#gradient)'
                   }}
                 >
-                  <this.Gradient />
+                  <this.Gradient
+                    startColor={groupColor[0]}
+                    stopColor={groupColor[1]}
+                  />
                 </BarChart>
                 <XAxis
                   style={{ marginTop: 11 }}
@@ -265,7 +318,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
                 />
               </View>
             ) : (
-              <View style={{ flex: .3 }} />
+              <View style={{ flex: 0.3 }} />
             )}
           </View>
         }
@@ -279,9 +332,6 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
 
     return (
       <View style={styles.container}>
-        <Text style={styles.header}>
-          {`Báo cáo ngày ${this.state.reportDate}`.toUpperCase()}
-        </Text>
         <FilterTab
           data={[Filter.DAY, Filter.WEEK, Filter.MONTH, Filter.YEAR]}
           onItemSelected={(item) =>

@@ -1,10 +1,11 @@
 import { Dictionary } from 'lodash'
 import * as React from 'react'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import { appEpic$ } from 'src/+state/epics'
 import { FilterTab } from 'src/components'
+import { getCompanyTab } from 'src/modules/Account/+state/reducers'
 import { SummaryChartParams } from 'src/modules/ChartTab/components'
 import { create2DArray, formatCurrency, hashJoin } from 'src/shared'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
@@ -33,6 +34,7 @@ const Filter: IFilter = {
 
 interface Props extends ConnectedReduxProps<ReportDetailState> {
   all: Dictionary<ReportDetailClient>
+  companyTab: string[]
 }
 
 interface State {
@@ -40,13 +42,15 @@ interface State {
 }
 
 class ReportDetail extends React.Component<Props, State> {
-  static navigationOptions = {
-    title: 'Chi tiết báo cáo'
+  static navigationOptions = ({ navigation }: any) => {
+    const { state } = navigation
+    return {
+      title: state.params.title ? `${state.params.title}` : null
+    }
   }
-  tab = ['CN', 'LQ', 'Q']
 
   state: State = {
-    selectedTab: this.tab[0]
+    selectedTab: this.props.companyTab[0]
   }
 
   componentWillMount() {
@@ -57,6 +61,11 @@ class ReportDetail extends React.Component<Props, State> {
     }
 
     this.getData()
+  }
+
+  changeHeaderTitle = (titleText: string) => {
+    const { setParams } = this.props.navigation
+    setParams({ title: titleText })
   }
 
   getData = () => {
@@ -85,7 +94,7 @@ class ReportDetail extends React.Component<Props, State> {
     right:
       this.props.all[hashParams] && this.props.all[hashParams].donutRight
         ? this.props.all[hashParams].donutRight
-        : []
+        : null
   })
 
   getLine = (hashParams: string) => {
@@ -116,12 +125,12 @@ class ReportDetail extends React.Component<Props, State> {
     if (obj.hasOwnProperty('child') && obj.child.length > 0) {
       index++
       obj.child.forEach((item) => {
-        const hostDetailData = item.detailType.map((item) =>
+        const hostDetailData = item.detailColumn.map((item) =>
           formatCurrency(item.value)
         )
         host.push([
           item.shopName,
-          formatCurrency(item.total),
+          // formatCurrency(item.total),
           ...hostDetailData,
           index
         ])
@@ -146,12 +155,11 @@ class ReportDetail extends React.Component<Props, State> {
     const response: any[][] = []
 
     tableDetail.forEach((item) => {
-      // console.log(JSON.stringify(item, null, 2))
       const index = 0
-      const hostDetailData = item.detailType.map((item) => item.value)
+      const hostDetailData = item.detailColumn.map((item) => formatCurrency(item.value))
       response.push([
         item.shopName,
-        formatCurrency(item.total),
+        // formatCurrency(item.total),
         ...hostDetailData,
         index
       ])
@@ -161,7 +169,19 @@ class ReportDetail extends React.Component<Props, State> {
     return response
   }
 
+  getTableHeader = (hashParams: string) => {
+    if (
+      !this.props.all[hashParams] ||
+      !this.props.all[hashParams].labellistCodeColumn
+    ) {
+      return []
+    }
+
+    return this.props.all[hashParams].labellistCodeColumn
+  }
+
   render() {
+
     const {
       params
     }: { params: SummaryChartParams } = this.props.navigation.state
@@ -174,14 +194,10 @@ class ReportDetail extends React.Component<Props, State> {
 
     return (
       <View style={styles.container}>
-        <Text style={styles.header}>
-          {`Báo cáo\n ${'DTTT'} theo loại khách hàng\n`.toUpperCase()}
-          <Text style={styles.day}>Ngày {params.selectedTime}</Text>
-        </Text>
         <FilterTab
-          data={this.tab.map((item: keyof IFilter, index) => Filter[item])}
+          data={this.props.companyTab.map((item: keyof IFilter, index) => Filter[item])}
           onItemSelected={(index) =>
-            this.setState({ selectedTab: this.tab[index - 1] }, () =>
+            this.setState({ selectedTab: this.props.companyTab[index - 1] }, () =>
               this.getData()
             )
           } // Start from 1
@@ -200,7 +216,7 @@ class ReportDetail extends React.Component<Props, State> {
             legend={this.getLegend(hashParams)}
           />
           <TableReport
-            dynamicHeader={this.getLegend(hashParams)}
+            dynamicHeader={this.getTableHeader(hashParams)}
             data={this.getTable(hashParams)}
           />
         </ScrollView>
@@ -231,6 +247,7 @@ const styles = StyleSheet.create({
 
 export default connect(
   createStructuredSelector({
-    all: getAll
+    all: getAll,
+    companyTab: getCompanyTab
   })
 )(ReportDetail)
