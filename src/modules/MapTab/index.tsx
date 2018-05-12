@@ -33,7 +33,7 @@ class MapTab extends React.Component<{}, State> {
     errorMessage: null
   }
 
-  componentWillMount() {
+  componentDidMount() {
     if (Platform.OS === 'android' && !Constants.isDevice) {
       this.setState({
         errorMessage:

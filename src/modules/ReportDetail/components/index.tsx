@@ -62,7 +62,9 @@ class ReportDetail extends React.Component<Props, State> {
     if (currentEpic !== reportDetail$) {
       appEpic$.next(reportDetail$)
     }
+  }
 
+  componentDidMount() {
     this.getData()
   }
 

@@ -81,7 +81,9 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     if (currentEpic !== summaryChartEpic) {
       appEpic$.next(summaryChartEpic)
     }
+  }
 
+  componentDidMount() {
     this.getData()
   }
 
