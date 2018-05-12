@@ -14,6 +14,7 @@ export interface SummaryChartResponse {
   label: string
   tongCong: number | null
   unit: string
+  valueUnit: string | null
   codeReport: string
   bieuDoCot: Chart[] | null
   bieuDoCoCau: Chart[] | null

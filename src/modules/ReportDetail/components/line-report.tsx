@@ -9,6 +9,7 @@ import { colors } from 'src/shared'
 const deviceWidth = Dimensions.get('window').width
 
 interface Props {
+  title: string
   color: string[]
   data: number[][]
   times: number[]
@@ -30,7 +31,7 @@ class LineReport extends React.PureComponent<Props, any> {
 
     return (
       <Card
-        title="Biểu đồ đường:"
+        title={`Biểu đồ ${this.props.title}:`}
         titleStyle={{ textAlign: 'left' }}
         containerStyle={{ marginHorizontal: 0 }}
         dividerStyle={{ display: 'none' }}

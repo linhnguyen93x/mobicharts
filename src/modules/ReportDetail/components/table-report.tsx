@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import * as React from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import { Card } from 'react-native-elements'
@@ -32,19 +33,40 @@ class TableReport extends React.PureComponent<
   TableReportState
 > {
   TABLE_HEAD = ['Địa bàn']
-  WIDTH_ARR = [180]
+  WIDTH_ARR = []
 
   state = {
     tableHead: [],
     widthArr: []
   }
 
+  componentWillMount() {
+    const cols0 = _.map(this.props.data, (item, index) => {
+      return item[0]
+    })
+    const maxLength = Math.max(...(cols0.map((item) => item.length)))
+
+    this.setState({
+      ...this.state,
+      tableHead: [...this.TABLE_HEAD, ...this.props.dynamicHeader],
+      widthArr: [
+        maxLength * 11,
+        ...this.props.dynamicHeader.map((item) => 120)
+      ]
+    })
+  }
+
   componentWillReceiveProps(nextProps: TableReportProps) {
+    const cols0 = _.map(this.props.data, (item, index) => {
+      return item[0]
+    })
+    const maxLength = Math.max(...(cols0.map((item) => item.length)))
+
     this.setState({
       ...this.state,
       tableHead: [...this.TABLE_HEAD, ...nextProps.dynamicHeader],
       widthArr: [
-        ...this.WIDTH_ARR,
+        maxLength * 11,
         ...nextProps.dynamicHeader.map((item) => 120)
       ]
     })

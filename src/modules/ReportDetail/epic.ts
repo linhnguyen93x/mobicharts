@@ -9,7 +9,7 @@ import { hashJoin } from 'src/shared'
 import { getReportDetailSuccessAction } from './actions'
 import { TReportDetail } from './actionsTypes'
 import { GET_DETAIL_REPORT } from './constants'
-import { ReportDetailClient, ReportDetailRequest, ReportDetailResponse } from './model'
+import { DonutPartClient, ReportDetailClient, ReportDetailRequest, ReportDetailResponse } from './model'
 import { getAll } from './reducer'
 
 interface IReportDetail {
@@ -43,15 +43,23 @@ export const reportDetail$: any = (
       return startLoader(
         getReportDetail(a.payload).pipe(
           map((res) => {
+            const donutParts: DonutPartClient[] = []
+            res.donutParts.forEach((item) => {
+              const legend: string[] = []
+              const pie = item.donut.map((i) => {
+                legend.push(i.type)
+                return i.total
+              })
+
+              donutParts.push({ title: item.title, legend, pie, percent: item.percentChart })
+            })
+
             const mapToClient: ReportDetailClient = {
-              legend: res.donutLeft.map((i) => i.type),
-              donutLeft: res.donutLeft.map((i) => i.total),
-              donutRight: res.percentChart,
-              line: res.line,
+              donutParts,
+              lineParts: res.lineParts,
               tableDetail: res.tableDetail,
-              label: res.label,
-              listCodeColumn: res.listCodeColumn,
-              labellistCodeColumn: res.labellistCodeColumn,
+              listCodeColumn: res.listCodeColumn ? res.listCodeColumn : [],
+              labellistCodeColumn: res.labellistCodeColumn ? res.labellistCodeColumn : [],
             }
 
             return mapToClient

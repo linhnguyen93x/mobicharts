@@ -1,8 +1,8 @@
 import { Svg } from 'expo'
+import _ from 'lodash'
 import * as React from 'react'
 import { StyleSheet, Text as RText, View } from 'react-native'
 import { Card } from 'react-native-elements'
-import { G } from 'react-native-svg'
 import { PieChart, ProgressCircle } from 'react-native-svg-charts'
 import Legend from 'src/components/legend'
 import { scale } from 'src/shared'
@@ -11,6 +11,7 @@ import { PercentChart } from '../model'
 
 const { Text, TSpan } = Svg
 export interface Props {
+  title: string
   color: string[]
   legend: string[]
   data: number[]
@@ -34,17 +35,19 @@ class DonutReport extends React.PureComponent<Props, State> {
     selectedIndex: null
   }
 
-  componentWillMount() {}
+  componentWillMount() {
+    const maxValue: any = _.sum(this.props.data)
+
+    this.setState({
+      pieData: this.mapDataToChart(this.props.data.map((value) => _.round((value / maxValue) * 100), 2))
+    })
+  }
 
   componentWillReceiveProps(nextProps: Props) {
-    const promiseChart = new Promise((resolve, reject) => {
-      resolve(this.mapDataToChart(nextProps.data))
-    })
+    const maxValue: any = _.sum(this.props.data)
 
-    Promise.all([promiseChart]).then((res: any) => {
-      this.setState({
-        pieData: res[0]
-      })
+    this.setState({
+      pieData: this.mapDataToChart(nextProps.data.map((value) => _.round((value / maxValue) * 100), 2))
     })
   }
 
@@ -126,8 +129,8 @@ class DonutReport extends React.PureComponent<Props, State> {
     return slices.map((slice: any, index: number) => {
       const { labelCentroid, data } = slice
       return (
-        <G key={index}>
             <Text
+            key={index}
             x={labelCentroid[0]}
             y={labelCentroid[1]}
             fontSize={12}
@@ -137,7 +140,6 @@ class DonutReport extends React.PureComponent<Props, State> {
           >
             {data.value}
           </Text>
-        </G>
       )
     })
   }
@@ -145,7 +147,7 @@ class DonutReport extends React.PureComponent<Props, State> {
   render() {
     return (
       <Card
-        title="Biểu đồ tỉ lệ:"
+        title={`Biểu đồ ${this.props.title}:`}
         titleStyle={{ textAlign: 'left' }}
         containerStyle={{ marginHorizontal: 0 }}
         dividerStyle={{ display: 'none' }}
@@ -163,11 +165,11 @@ class DonutReport extends React.PureComponent<Props, State> {
           </PieChart>
           {this.props.data2 ? <ProgressCircle
             style={[styles.chart, { height: 130, marginTop: 5 }]}
-            progress={this.props.data2 ? this.props.data2.percent : 0}
+            progress={this.props.data2.percent ? this.props.data2.percent : 1}
             progressColor={this.props.color[0]}
             strokeWidth={10}
           >
-            <this.CenterText title="70%" />
+            <this.CenterText title={`${this.props.data2.percent ? this.props.data2.percent * 100 : 100}%`} />
           </ProgressCircle> : null}
         </View>
         <View
@@ -176,9 +178,9 @@ class DonutReport extends React.PureComponent<Props, State> {
             { justifyContent: 'space-between', marginHorizontal: 16 }
           ]}
         >
-          <RText>Chú thích:</RText>
-          <RText style={{ fontSize: 12, alignSelf: 'center' }}>
-            Đơn vị: Phần trăm (%)
+          <RText style={{ flex: .5 }}>Chú thích:</RText>
+          <RText style={{ flex: .5, fontSize: 12, alignSelf: 'center', textAlign: 'center' }}>
+            {this.props.data2 ? this.props.data2.using : ''}
           </RText>
         </View>
         <Legend

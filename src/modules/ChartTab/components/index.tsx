@@ -216,6 +216,15 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
               >
                 {item.tongCong ? formatCurrency(item.tongCong) : '-'}
               </Text>
+              {item.valueUnit ? <Text
+                style={[
+                  globalStyle.styles.fontWeightBold,
+                  globalStyle.styles.textAlignCenter,
+                  { fontSize: 12 }
+                ]}
+              >
+                {item.valueUnit}
+              </Text> : null}
               <Text
                 style={[
                   globalStyle.styles.fontWeightBold,
@@ -223,7 +232,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
                   { fontSize: 12 }
                 ]}
               >
-                {item.unit}
+                ({item.unit.toLowerCase()})
               </Text>
             </View>
             {pieOption.length > 0 ? (

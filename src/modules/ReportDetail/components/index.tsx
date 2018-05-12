@@ -12,7 +12,7 @@ import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 
 import { getReportDetailAction } from '../actions'
 import { reportDetail$ } from '../epic'
-import { ReportDetailClient, ReportDetailState, Table } from '../model'
+import { Line, ReportDetailClient, ReportDetailState, Table } from '../model'
 import { getAll } from '../reducer'
 import DonutReport from './donut-report'
 import LineReport from './line-report'
@@ -45,12 +45,15 @@ class ReportDetail extends React.Component<Props, State> {
   static navigationOptions = ({ navigation }: any) => {
     const { state } = navigation
     return {
-      title: state.params.title ? `${state.params.title}` : null
+      title: state.params.title ? `${state.params.title}` : null,
+      // headerRight: (<Text>Menu</Text>)
     }
   }
 
+  tab = ['CT', 'CN', 'LQ', 'Q']
+
   state: State = {
-    selectedTab: this.props.companyTab[0]
+    selectedTab: this.tab[0]
   }
 
   componentWillMount() {
@@ -83,29 +86,14 @@ class ReportDetail extends React.Component<Props, State> {
     )
   }
 
-  getLegend = (hashParams: string) =>
-    this.props.all[hashParams] ? this.props.all[hashParams].legend : []
-
-  getDonuts = (hashParams: string) => ({
-    left:
-      this.props.all[hashParams] && this.props.all[hashParams].donutLeft
-        ? this.props.all[hashParams].donutLeft
-        : [],
-    right:
-      this.props.all[hashParams] && this.props.all[hashParams].donutRight
-        ? this.props.all[hashParams].donutRight
-        : null
-  })
-
-  getLine = (hashParams: string) => {
-    if (!this.props.all[hashParams] || !this.props.all[hashParams].line) {
+  getLine = (lineData: Line[]) => {
+    if (!lineData) {
       return {
         data: [],
         times: []
       }
     }
 
-    const lineData = this.props.all[hashParams].line
     const responseData =
       lineData.length > 0 ? create2DArray(lineData[0].data.length) : []
 
@@ -125,12 +113,9 @@ class ReportDetail extends React.Component<Props, State> {
     if (obj.hasOwnProperty('child') && obj.child.length > 0) {
       index++
       obj.child.forEach((item) => {
-        const hostDetailData = item.detailColumn.map((item) =>
-          formatCurrency(item.value)
-        )
+        const hostDetailData = item.detailColumn.map((item) => formatCurrency(item.value))
         host.push([
           item.shopName,
-          // formatCurrency(item.total),
           ...hostDetailData,
           index
         ])
@@ -140,14 +125,13 @@ class ReportDetail extends React.Component<Props, State> {
     }
   }
 
-  getTable = (hashParams: string) => {
+  getTable = (tableDetail: Table[]) => {
+
     if (
-      !this.props.all[hashParams] ||
-      !this.props.all[hashParams].tableDetail
+      !tableDetail
     ) {
       return []
     }
-    const tableDetail = this.props.all[hashParams].tableDetail
 
     if (tableDetail.length <= 0) {
       return []
@@ -155,11 +139,14 @@ class ReportDetail extends React.Component<Props, State> {
     const response: any[][] = []
 
     tableDetail.forEach((item) => {
+      // console.log(item)
       const index = 0
-      const hostDetailData = item.detailColumn.map((item) => formatCurrency(item.value))
+      const hostDetailData = item.detailColumn.map((item) => {
+        // console.log(item.value)
+        return formatCurrency(item.value)
+      })
       response.push([
         item.shopName,
-        // formatCurrency(item.total),
         ...hostDetailData,
         index
       ])
@@ -167,17 +154,6 @@ class ReportDetail extends React.Component<Props, State> {
     })
 
     return response
-  }
-
-  getTableHeader = (hashParams: string) => {
-    if (
-      !this.props.all[hashParams] ||
-      !this.props.all[hashParams].labellistCodeColumn
-    ) {
-      return []
-    }
-
-    return this.props.all[hashParams].labellistCodeColumn
   }
 
   render() {
@@ -191,35 +167,40 @@ class ReportDetail extends React.Component<Props, State> {
       params.timeType,
       this.state.selectedTab
     )
+    const { all } = this.props
 
     return (
       <View style={styles.container}>
         <FilterTab
-          data={this.props.companyTab.map((item: keyof IFilter, index) => Filter[item])}
+          data={this.tab.map((item: keyof IFilter, index) => Filter[item])}
           onItemSelected={(index) =>
-            this.setState({ selectedTab: this.props.companyTab[index - 1] }, () =>
+            this.setState({ selectedTab: this.tab[index - 1] }, () =>
               this.getData()
             )
           } // Start from 1
         />
-        <ScrollView>
-          <DonutReport
+        {all[hashParams] ? <ScrollView>
+          { all[hashParams].donutParts.map((item, index) => <DonutReport
+            key={index}
+            title={item.title}
             color={params.colors}
-            legend={this.getLegend(hashParams)}
-            data={this.getDonuts(hashParams).left}
-            data2={this.getDonuts(hashParams).right}
-          />
-          <LineReport
+            legend={item.legend}
+            data={item.pie}
+            data2={item.percent}
+          />) }
+          { all[hashParams].lineParts.map((item, index) =>  <LineReport
+            key={index}
+            title={item.title}
             color={params.colors}
-            data={this.getLine(hashParams).data}
-            times={this.getLine(hashParams).times}
-            legend={this.getLegend(hashParams)}
-          />
+            data={this.getLine(item.line).data}
+            times={this.getLine(item.line).times}
+            legend={all[hashParams].donutParts[index].legend}
+          />)}
           <TableReport
-            dynamicHeader={this.getTableHeader(hashParams)}
-            data={this.getTable(hashParams)}
+            dynamicHeader={all[hashParams].labellistCodeColumn}
+            data={this.getTable(all[hashParams].tableDetail)}
           />
-        </ScrollView>
+        </ScrollView> : null}
       </View>
     )
   }

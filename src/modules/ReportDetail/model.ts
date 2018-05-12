@@ -5,24 +5,36 @@ export interface PercentChart {
   using: number
   percent: number
 }
-export interface ReportDetailResponse {
-  donutLeft: Donut[]
-  donutRight: Donut[]
+
+export interface DonutPart {
+    title: string
+    donut: Donut[]
+    percentChart: PercentChart
+}
+
+export interface LinePart {
+  title: string
   line: Line[]
-  tableDetail: Table[]
-  label: string
+}
+
+export interface DonutPartClient {
+  title: string
+  legend: string[]
+  pie: number[]
+  percent: PercentChart
+}
+export interface ReportDetailResponse {
+  donutParts: DonutPart[]
+  lineParts: LinePart[]
   listCodeColumn: string[]
   labellistCodeColumn: string[]
-  percentChart: PercentChart
+  tableDetail: Table[]
 }
 
 export interface ReportDetailClient {
-  legend: string[]
-  donutLeft: number[]
-  donutRight: PercentChart
-  line: Line[]
+  donutParts: DonutPartClient[]
+  lineParts: LinePart[]
   tableDetail: Table[]
-  label: string
   listCodeColumn: string[]
   labellistCodeColumn: string[]
 }
