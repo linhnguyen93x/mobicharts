@@ -1,19 +1,20 @@
-import { Dictionary } from 'lodash'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import * as React from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import { appEpic$ } from 'src/+state/epics'
 import { FilterTab } from 'src/components'
+import { TabInfo } from 'src/modules/Account/+model'
 import { getCompanyTab } from 'src/modules/Account/+state/reducers'
 import { SummaryChartParams } from 'src/modules/ChartTab/components'
-import { create2DArray, formatCurrency, hashJoin } from 'src/shared'
+import { create2DArray, formatCurrency, textColor } from 'src/shared'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 
 import { getReportDetailAction } from '../actions'
 import { reportDetail$ } from '../epic'
-import { Line, ReportDetailClient, ReportDetailState, Table } from '../model'
-import { getAll } from '../reducer'
+import { DetailColumn, DonutPartClient, Line, LinePart, ReportDetailState, Table } from '../model'
+import { getDonuts, getLines, getTables } from '../reducer'
 import DonutReport from './donut-report'
 import LineReport from './line-report'
 import TableReport from './table-report'
@@ -33,12 +34,18 @@ const Filter: IFilter = {
 }
 
 interface Props extends ConnectedReduxProps<ReportDetailState> {
-  all: Dictionary<ReportDetailClient>
-  companyTab: string[]
+  donuts: DonutPartClient[]
+  lines: LinePart[]
+  companyTab: TabInfo[]
+  tableInfo: {
+    tables: Table[],
+    tableCodes: string[]
+  } | null
 }
 
 interface State {
-  selectedTab: string
+  selectedTab: string,
+  refreshing: boolean
 }
 
 class ReportDetail extends React.Component<Props, State> {
@@ -50,22 +57,27 @@ class ReportDetail extends React.Component<Props, State> {
     }
   }
 
-  tab = ['CT', 'CN', 'LQ', 'Q']
+  tab = this.props.companyTab.map((item) => item.code)
 
   state: State = {
-    selectedTab: this.tab[0]
+    selectedTab: this.tab[0],
+    refreshing: false
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const currentEpic = appEpic$.value
 
     if (currentEpic !== reportDetail$) {
       appEpic$.next(reportDetail$)
     }
+
+    this.getData()
   }
 
-  componentDidMount() {
-    this.getData()
+  componentDidUpdate(notUsed: any, prevState: State) {
+    if (prevState.selectedTab !== this.state.selectedTab) {
+      this.getData()
+    }
   }
 
   changeHeaderTitle = (titleText: string) => {
@@ -101,29 +113,13 @@ class ReportDetail extends React.Component<Props, State> {
 
     responseData.forEach((item, index) => {
       lineData.forEach((i, indexChild) => {
-        responseData[index][indexChild] = { y: i.data[index], x: indexChild }
+        responseData[index][indexChild] = { y: i.data[index] ? i.data[index] : 0, x: indexChild }
       })
     })
 
     return {
       data: responseData,
       times: lineData.map((item) => Number(item.time))
-    }
-  }
-
-  mapToTable = (host: any[][], obj: Table, index: number) => {
-    if (obj.hasOwnProperty('child') && obj.child.length > 0) {
-      index++
-      obj.child.forEach((item) => {
-        const hostDetailData = item.detailColumn.map((item) => formatCurrency(item.value))
-        host.push([
-          item.shopName,
-          ...hostDetailData,
-          index
-        ])
-
-        this.mapToTable(host, item, index)
-      })
     }
   }
 
@@ -141,12 +137,8 @@ class ReportDetail extends React.Component<Props, State> {
     const response: any[][] = []
 
     tableDetail.forEach((item) => {
-      // console.log(item)
       const index = 0
-      const hostDetailData = item.detailColumn.map((item) => {
-        // console.log(item.value)
-        return formatCurrency(item.value)
-      })
+      const hostDetailData = item.detailColumn.map((item) => this.mapToDetailData(item))
       response.push([
         item.shopName,
         ...hostDetailData,
@@ -158,31 +150,52 @@ class ReportDetail extends React.Component<Props, State> {
     return response
   }
 
-  render() {
+  mapToTable = (host: any[][], obj: Table, index: number) => {
+    if (obj.hasOwnProperty('child') && obj.child.length > 0) {
+      index++
+      obj.child.forEach((item) => {
+        const hostDetailData = item.detailColumn.map((item) => this.mapToDetailData(item))
+        host.push([
+          item.shopName,
+          ...hostDetailData,
+          index
+        ])
 
+        this.mapToTable(host, item, index)
+      })
+    }
+  }
+
+  mapToDetailData = (item: DetailColumn) => {
+    if (item.showPercent) {
+      const color = item.value > 0 ? textColor.increase : item.value < 0 ? textColor.decrease : textColor.equal
+      const iconName = item.value > 0 ? 'arrow-up' : item.value < 0 ? 'arrow-down' : null
+
+      return <Text style={[styles.cellNumber, { color }]}>
+        {formatCurrency(Math.abs(item.value))}
+        {iconName && <MaterialCommunityIcons name={iconName} size={14} color={color} />}
+      </Text>
+    }
+
+    return formatCurrency(item.value)
+  }
+
+  render() {
     const {
       params
     }: { params: SummaryChartParams } = this.props.navigation.state
-    const hashParams = hashJoin(
-      params.codeReport,
-      params.selectedTime,
-      params.timeType,
-      this.state.selectedTab
-    )
-    const { all } = this.props
+    const { donuts, lines, tableInfo } = this.props
 
     return (
       <View style={styles.container}>
         <FilterTab
-          data={this.tab.map((item: keyof IFilter, index) => Filter[item])}
-          onItemSelected={(index) =>
-            this.setState({ selectedTab: this.tab[index - 1] }, () =>
-              this.getData()
-            )
+          data={this.tab.map((item, index) => Filter[item])}
+          onItemSelected={(index) => {
+            this.setState({ selectedTab: this.tab[index - 1], refreshing: true })}
           } // Start from 1
         />
-        {all[hashParams] ? <ScrollView>
-          { all[hashParams].donutParts.map((item, index) => <DonutReport
+        <ScrollView>
+          { donuts.map((item, index) => <DonutReport
             key={index}
             title={item.title}
             color={params.colors}
@@ -190,19 +203,19 @@ class ReportDetail extends React.Component<Props, State> {
             data={item.pie}
             data2={item.percent}
           />) }
-          { all[hashParams].lineParts.map((item, index) =>  <LineReport
+          { lines.map((item, index) => <LineReport
             key={index}
             title={item.title}
             color={params.colors}
             data={this.getLine(item.line).data}
             times={this.getLine(item.line).times}
-            legend={all[hashParams].donutParts[index].legend}
+            legend={donuts[index].legend}
           />)}
-          <TableReport
-            dynamicHeader={all[hashParams].labellistCodeColumn}
-            data={this.getTable(all[hashParams].tableDetail)}
-          />
-        </ScrollView> : null}
+          {tableInfo ? <TableReport
+            dynamicHeader={tableInfo.tableCodes}
+            data={this.getTable(tableInfo.tables)}
+          /> : null }
+        </ScrollView>
       </View>
     )
   }
@@ -225,12 +238,18 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '500',
     color: '#555555'
+  },
+  cellNumber: {
+    textAlign: 'right',
+    paddingHorizontal: 8,
   }
 })
 
 export default connect(
   createStructuredSelector({
-    all: getAll,
+    donuts: getDonuts,
+    lines: getLines,
+    tableInfo: getTables,
     companyTab: getCompanyTab
   })
 )(ReportDetail)

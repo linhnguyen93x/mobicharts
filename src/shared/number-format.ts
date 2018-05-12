@@ -1,5 +1,5 @@
-export const formatCurrency = (raw : number | null) => {
-  if (raw === null) {
+export const formatCurrency = (raw: number | null) => {
+  if (raw == null) {
     return null
   }
 

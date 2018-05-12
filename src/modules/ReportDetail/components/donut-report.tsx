@@ -5,7 +5,7 @@ import { StyleSheet, Text as RText, View } from 'react-native'
 import { Card } from 'react-native-elements'
 import { PieChart, ProgressCircle } from 'react-native-svg-charts'
 import Legend from 'src/components/legend'
-import { scale } from 'src/shared'
+import { formatCurrency, scale } from 'src/shared'
 
 import { PercentChart } from '../model'
 
@@ -44,7 +44,7 @@ class DonutReport extends React.PureComponent<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    const maxValue: any = _.sum(this.props.data)
+    const maxValue: any = _.sum(nextProps.data)
 
     this.setState({
       pieData: this.mapDataToChart(nextProps.data.map((value) => _.round((value / maxValue) * 100), 2))
@@ -84,7 +84,7 @@ class DonutReport extends React.PureComponent<Props, State> {
       return (
         <Text
           x={0}
-          y={-10}
+          y={0}
           fontSize={20}
           stroke={'black'}
           fill={'black'}
@@ -138,7 +138,7 @@ class DonutReport extends React.PureComponent<Props, State> {
             fill={'none'}
             textAnchor="middle"
           >
-            {data.value}
+            {data.value}%
           </Text>
       )
     })
@@ -154,17 +154,17 @@ class DonutReport extends React.PureComponent<Props, State> {
       >
         <View style={styles.rowContainer}>
           <PieChart
-            style={styles.chart}
+            style={[styles.chart, { flex: .55, padding: 10 }]}
             data={this.state.pieData}
             innerRadius={55}
             outerRadius={'70%'}
-            labelRadius={85}
+            labelRadius={80}
             animate={true}
           >
             <this.Labels />
           </PieChart>
           {this.props.data2 ? <ProgressCircle
-            style={[styles.chart, { height: 130, marginTop: 5 }]}
+            style={[styles.chart, { height: 130, marginTop: 5, flex: .45 }]}
             progress={this.props.data2.percent ? this.props.data2.percent : 1}
             progressColor={this.props.color[0]}
             strokeWidth={10}
@@ -178,13 +178,13 @@ class DonutReport extends React.PureComponent<Props, State> {
             { justifyContent: 'space-between', marginHorizontal: 16 }
           ]}
         >
-          <RText style={{ flex: .5 }}>Chú thích:</RText>
-          <RText style={{ flex: .5, fontSize: 12, alignSelf: 'center', textAlign: 'center' }}>
-            {this.props.data2 ? this.props.data2.using : ''}
+          <RText style={{ flex: .6 }}>Chú thích:</RText>
+          <RText style={{ flex: .35, fontSize: 12, alignSelf: 'center', textAlign: 'center' }}>
+            {this.props.data2 ? formatCurrency(this.props.data2.using) : ''}
           </RText>
         </View>
         <Legend
-          data={this.props.legend}
+          data={this.props.legend.map(((item, index) => `${item}: ${formatCurrency(this.props.data[index])}`))}
           color={this.props.color}
           onPress={(index) => this.triggerEvent(index)}
           selectedIndex={this.state.selectedIndex}

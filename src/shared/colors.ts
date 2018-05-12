@@ -1,4 +1,4 @@
-export const colors = [
+export const lineColors = [
   '#ff7f50',
   '#87cefa',
   '#32cd32',
@@ -29,3 +29,9 @@ export const groupColors = [
   ['#2775F5', '#185CCB', '#164EA8', '#11408B'],
   ['#2EE778', '#25BD62', '#1D904B', '#146E38']
 ]
+
+export const textColor = {
+  increase: 'green',
+  equal: 'orange',
+  decrease: 'red'
+}

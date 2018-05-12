@@ -73,6 +73,7 @@ export interface DetailType {
 }
 
 export interface DetailColumn {
+  showPercent: boolean
   value: number
   code: string
 }
@@ -84,4 +85,8 @@ export interface ActionParams {
   viewtab: string
 }
 
-export type ReportDetailState = Dictionary<ReportDetailClient>
+export interface ReportDetailState {
+  isFetching: boolean
+  selectedTab: string | null
+  dictionary: Dictionary<ReportDetailClient>
+}

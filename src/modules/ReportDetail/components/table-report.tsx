@@ -57,7 +57,7 @@ class TableReport extends React.PureComponent<
   }
 
   componentWillReceiveProps(nextProps: TableReportProps) {
-    const cols0 = _.map(this.props.data, (item, index) => {
+    const cols0 = _.map(nextProps.data, (item, index) => {
       return item[0]
     })
     const maxLength = Math.max(...(cols0.map((item) => item.length)))
@@ -119,7 +119,6 @@ class TableReport extends React.PureComponent<
                               style={{ width: state.widthArr[cellIndex] }}
                               textStyle={[
                                 styles.text,
-                                textStyle[rowData[rowData.length - 1]],
                                 cellIndex !== 0 ? { textAlign: 'right' } : {}
                               ]}
                             />

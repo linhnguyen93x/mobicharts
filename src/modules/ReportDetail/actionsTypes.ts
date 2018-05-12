@@ -10,3 +10,7 @@ export interface TReportDetailSuccess extends Action {
   action: ActionParams
   payload: ReportDetailClient
 }
+
+export interface TReportDetailCache extends Action {
+  action: ActionParams
+}

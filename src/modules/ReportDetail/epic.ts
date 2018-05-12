@@ -6,11 +6,11 @@ import { SUBMIT_LOADER } from 'src/+state/constants'
 import { endLoading } from 'src/+state/loadingActions'
 import { hashJoin } from 'src/shared'
 
-import { getReportDetailSuccessAction } from './actions'
+import { getReportDetailCacheAction, getReportDetailSuccessAction } from './actions'
 import { TReportDetail } from './actionsTypes'
 import { GET_DETAIL_REPORT } from './constants'
 import { DonutPartClient, ReportDetailClient, ReportDetailRequest, ReportDetailResponse } from './model'
-import { getAll } from './reducer'
+import { checkExist } from './reducer'
 
 interface IReportDetail {
   getReportDetail: (
@@ -26,18 +26,16 @@ export const reportDetail$: any = (
 ) =>
   action$.pipe(
     ofType(GET_DETAIL_REPORT),
-    exhaustMap((a) => {
-      const cacheData = getAll(store.getState())[
-        hashJoin(
-          a.payload.reporttype,
-          a.payload.datereport,
-          a.payload.tab,
-          a.payload.viewtab
-        )
-      ]
+    exhaustMap((a): any => {
+      const cacheData = checkExist(store.getState(), hashJoin(
+        a.payload.reporttype,
+        a.payload.datereport,
+        a.payload.tab,
+        a.payload.viewtab
+      ))
 
       if (cacheData) {
-        return of(getReportDetailSuccessAction(a.payload, cacheData))
+        return of(getReportDetailCacheAction(a.payload))
       }
 
       return startLoader(

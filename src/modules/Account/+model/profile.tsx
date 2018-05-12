@@ -15,5 +15,16 @@ export interface UserProfile {
   announcement: string
   jwt: string
   levelReport: string
-  showTabReport: string[]
+  showTabReport: TabInfo[]
+}
+
+export interface IFilter {
+  CT: string
+  CN: string
+  LQ: string
+  Q: string
+}
+export interface TabInfo {
+  showAll: boolean
+  code: keyof IFilter
 }

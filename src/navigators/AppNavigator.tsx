@@ -131,10 +131,6 @@ class ReduxNavigation extends React.Component<any, {}> {
     const jwt = await LocalStorage.getItem('jwt')
 
     if (jwt) {
-      // const currentEpic = appEpic$.value
-      // if (currentEpic !== checkAuth$) {
-      //   appEpic$.next(checkAuth$)
-      // }
       dispatch(checkAuthAction(jwt))
     } else {
       dispatch({ type: 'Logout' })

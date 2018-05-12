@@ -4,7 +4,7 @@ import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import { MultiLineChart } from 'react-native-d3multiline-chart'
 import { Card } from 'react-native-elements'
 import Legend from 'src/components/legend'
-import { colors } from 'src/shared'
+import { lineColors } from 'src/shared'
 
 const deviceWidth = Dimensions.get('window').width
 
@@ -18,7 +18,7 @@ interface Props {
 
 class LineReport extends React.PureComponent<Props, any> {
   render() {
-    const color = colors.slice(0, 3)
+    const color = lineColors.slice(0, 3)
     const dataFlattern = _.flatten(this.props.data)
 
     const bottomAxisData = _.range(0, this.props.times.length , 1)
