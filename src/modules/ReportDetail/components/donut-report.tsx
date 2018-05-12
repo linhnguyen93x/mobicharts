@@ -16,6 +16,7 @@ export interface Props {
   legend: string[]
   data: number[]
   data2: PercentChart | null
+  unit: string
 }
 
 interface PieChartProperty {
@@ -148,23 +149,23 @@ class DonutReport extends React.PureComponent<Props, State> {
     return (
       <Card
         title={`Biểu đồ ${this.props.title}:`}
-        titleStyle={{ textAlign: 'left' }}
-        containerStyle={{ marginHorizontal: 0 }}
+        titleStyle={{ textAlign: 'left', marginBottom: 0 }}
+        containerStyle={{ marginHorizontal: 0, paddingBottom: 0, paddingTop: 4 }}
         dividerStyle={{ display: 'none' }}
       >
         <View style={styles.rowContainer}>
           <PieChart
-            style={[styles.chart, { flex: .55, padding: 10 }]}
+            style={[styles.chart, { flex: .5, height: 165 }]}
             data={this.state.pieData}
-            innerRadius={55}
+            innerRadius={45}
             outerRadius={'70%'}
-            labelRadius={80}
+            labelRadius={30}
             animate={true}
           >
             <this.Labels />
           </PieChart>
           {this.props.data2 ? <ProgressCircle
-            style={[styles.chart, { height: 130, marginTop: 5, flex: .45 }]}
+            style={[styles.chart, { height: 115, flex: .5 }]}
             progress={this.props.data2.percent ? this.props.data2.percent : 1}
             progressColor={this.props.color[0]}
             strokeWidth={10}
@@ -175,11 +176,11 @@ class DonutReport extends React.PureComponent<Props, State> {
         <View
           style={[
             styles.rowContainer,
-            { justifyContent: 'space-between', marginHorizontal: 16 }
+            { justifyContent: 'space-between', marginHorizontal: 16, marginTop: 8 }
           ]}
         >
-          <RText style={{ flex: .6 }}>Chú thích:</RText>
-          <RText style={{ flex: .35, fontSize: 12, alignSelf: 'center', textAlign: 'center' }}>
+          <RText style={{ flex: .5 }}>Chú thích: ({this.props.unit.toLowerCase()})</RText>
+          <RText style={{ flex: .45, fontSize: 12, alignSelf: 'center', textAlign: 'center' }}>
             {this.props.data2 ? formatCurrency(this.props.data2.using) : ''}
           </RText>
         </View>

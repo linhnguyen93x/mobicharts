@@ -168,7 +168,7 @@ class TableReport extends React.PureComponent<
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { height: 50, backgroundColor: '#CBCED3' },
-  text: { padding: 8 },
+  text: { padding: 8, fontSize: 12 },
   dataWrapper: { marginTop: -1 },
   row: { flexDirection: 'row' }
 })

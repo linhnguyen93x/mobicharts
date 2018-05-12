@@ -38,6 +38,7 @@ export interface SummaryChartParams {
   timeType: number
   colors: string[]
   selectedTime: string
+  unit: string
 }
 
 enum Filter {
@@ -154,7 +155,8 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
           codeReport: item.codeReport,
           timeType: this.state.timeType,
           colors: groupColor,
-          selectedTime: this.state.reportDate
+          selectedTime: this.state.reportDate,
+          unit: item.valueUnit ? `${item.valueUnit} ${item.unit}` : item.unit
         }
         const title = `${params.codeReport} ${DateMap[
           params.timeType - 1
@@ -183,7 +185,10 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
             style={{
               flex: 1,
               flexDirection: 'row',
-              marginBottom: 16,
+              marginBottom: 0,
+              paddingHorizontal: 8,
+              paddingBottom: 4,
+              paddingTop: 6,
               alignItems: 'center'
             }}
           >
@@ -193,6 +198,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
             <Divider style={{ flex: 1 }} />
           </View>
         }
+        containerStyle={{ padding: 0, paddingBottom: 4 }}
         subtitle={
           <View
             style={{
@@ -299,7 +305,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
               />
             )}
             {barOption.length > 0 ? (
-              <View style={{ flex: 0.3, alignSelf: 'flex-start' }}>
+              <View style={{ flex: barOption.length <= 8 ? 0.3 : 0.4, alignSelf: 'flex-start' }}>
                 <BarChart
                   style={{ height: 85 }}
                   data={barOption}
@@ -329,7 +335,7 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
                 />
               </View>
             ) : (
-              <View style={{ flex: 0.3 }} />
+              <View style={{ flex: barOption.length <= 8 ? 0.3 : 0.4 }} />
             )}
           </View>
         }

@@ -14,6 +14,7 @@ interface Props {
   data: number[][]
   times: number[]
   legend: string[]
+  unit: string
 }
 
 class LineReport extends React.PureComponent<Props, any> {
@@ -33,7 +34,7 @@ class LineReport extends React.PureComponent<Props, any> {
       <Card
         title={`Biểu đồ ${this.props.title}:`}
         titleStyle={{ textAlign: 'left' }}
-        containerStyle={{ marginHorizontal: 0 }}
+        containerStyle={{ marginHorizontal: 0, paddingBottom: 0, paddingTop: 4 }}
         dividerStyle={{ display: 'none' }}
       >
         <MultiLineChart
@@ -79,7 +80,7 @@ class LineReport extends React.PureComponent<Props, any> {
         >
           <Text>Chú thích:</Text>
           <Text style={{ fontSize: 12, alignSelf: 'center' }}>
-            Đơn vị: Tỷ VND
+            Đơn vị: {this.props.unit.toLowerCase()}
           </Text>
         </View>
         <Legend data={this.props.legend} color={color}/>

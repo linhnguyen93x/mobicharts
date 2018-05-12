@@ -202,6 +202,7 @@ class ReportDetail extends React.Component<Props, State> {
             legend={item.legend}
             data={item.pie}
             data2={item.percent}
+            unit={params.unit}
           />) }
           { lines.map((item, index) => <LineReport
             key={index}
@@ -210,6 +211,7 @@ class ReportDetail extends React.Component<Props, State> {
             data={this.getLine(item.line).data}
             times={this.getLine(item.line).times}
             legend={donuts[index].legend}
+            unit={params.unit}
           />)}
           {tableInfo ? <TableReport
             dynamicHeader={tableInfo.tableCodes}
@@ -242,6 +244,7 @@ const styles = StyleSheet.create({
   cellNumber: {
     textAlign: 'right',
     paddingHorizontal: 8,
+    fontSize: 12
   }
 })
 
