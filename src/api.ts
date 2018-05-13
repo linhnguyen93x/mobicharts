@@ -7,6 +7,7 @@ import { ReportDetailApi } from 'src/modules/ReportDetail/api'
 
 import { AccountApi } from './modules/Account/account.api'
 import { SummaryChartApi } from './modules/ChartTab/api'
+import { MapApi } from './modules/MapTab/api'
 
 interface IHeaders {
   [x: string]: any
@@ -54,5 +55,6 @@ export const api = new ApiService()
 export default {
   ...AccountApi,
   ...SummaryChartApi,
-  ...ReportDetailApi
+  ...ReportDetailApi,
+  ...MapApi
 }

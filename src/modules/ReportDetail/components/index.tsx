@@ -172,12 +172,14 @@ class ReportDetail extends React.Component<Props, State> {
       const iconName = item.value > 0 ? 'arrow-up' : item.value < 0 ? 'arrow-down' : null
 
       return <Text style={[styles.cellNumber, { color }]}>
-        {formatCurrency(Math.abs(item.value))}
+        {formatCurrency(Math.abs(item.percent))}
         {iconName && <MaterialCommunityIcons name={iconName} size={14} color={color} />}
       </Text>
     }
 
-    return formatCurrency(item.value)
+    return <Text style={[styles.cellNumber]}>
+      {formatCurrency(Math.abs(item.value))}
+    </Text>
   }
 
   render() {

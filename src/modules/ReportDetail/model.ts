@@ -74,6 +74,7 @@ export interface DetailType {
 
 export interface DetailColumn {
   showPercent: boolean
+  percent: number
   value: number
   code: string
 }

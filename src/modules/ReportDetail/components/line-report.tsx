@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import * as React from 'react'
-import { Dimensions, StyleSheet, Text, View } from 'react-native'
+import { Dimensions } from 'react-native'
 import { MultiLineChart } from 'react-native-d3multiline-chart'
 import { Card } from 'react-native-elements'
 import Legend from 'src/components/legend'
@@ -32,7 +32,7 @@ class LineReport extends React.PureComponent<Props, any> {
 
     return (
       <Card
-        title={`Biểu đồ ${this.props.title}:`}
+        title={`${this.props.title} (ĐVT: ${this.props.unit.toLowerCase()})`}
         titleStyle={{ textAlign: 'left' }}
         containerStyle={{ marginHorizontal: 0, paddingBottom: 0, paddingTop: 4 }}
         dividerStyle={{ display: 'none' }}
@@ -61,7 +61,7 @@ class LineReport extends React.PureComponent<Props, any> {
           animation={false}
           duration={1500}
           delay={1000}
-          GraphHeight={250}
+          GraphHeight={200}
           chartHeight={200}
           GraphWidth={deviceWidth}
           chartWidth={deviceWidth - 48}
@@ -72,7 +72,7 @@ class LineReport extends React.PureComponent<Props, any> {
           tickColorXAxis={'transparent'}
           axisColor={'rgba(192,192,192,0.3)'}
         />
-        <View
+        {/* <View
           style={[
             styles.rowContainer,
             { justifyContent: 'space-between', marginHorizontal: 16 }
@@ -82,24 +82,11 @@ class LineReport extends React.PureComponent<Props, any> {
           <Text style={{ fontSize: 12, alignSelf: 'center' }}>
             Đơn vị: {this.props.unit.toLowerCase()}
           </Text>
-        </View>
+        </View> */}
         <Legend data={this.props.legend} color={color}/>
       </Card>
     )
   }
 }
-
-const styles = StyleSheet.create({
-  rowContainer: {
-    flex: 1,
-    flexDirection: 'row'
-  },
-  legendContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginRight: 8
-  }
-})
 
 export default LineReport

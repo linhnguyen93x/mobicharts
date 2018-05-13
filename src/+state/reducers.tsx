@@ -5,6 +5,8 @@ import { UserProfile } from 'src/modules/Account/+model'
 import profile from 'src/modules/Account/+state/reducers'
 import SummaryChart from 'src/modules/ChartTab'
 import { SummaryChartState } from 'src/modules/ChartTab/model'
+import MapTab from 'src/modules/MapTab'
+import { MapState } from 'src/modules/MapTab/model'
 import ReportDetail from 'src/modules/ReportDetail'
 import { ReportDetailState } from 'src/modules/ReportDetail/model'
 
@@ -75,6 +77,7 @@ export interface IApplicationState {
   profile: UserProfile | null
   [SummaryChart.constants.NAME]: SummaryChartState
   [ReportDetail.constants.NAME]: ReportDetailState
+  [MapTab.constants.NAME]: MapState
 }
 
 const AppReducer: Reducer<IApplicationState> = combineReducers<IApplicationState>({
@@ -83,7 +86,8 @@ const AppReducer: Reducer<IApplicationState> = combineReducers<IApplicationState
   profile,
   loading: loadingReducer,
   [SummaryChart.constants.NAME]: SummaryChart.reducer,
-  [ReportDetail.constants.NAME]: ReportDetail.reducer
+  [ReportDetail.constants.NAME]: ReportDetail.reducer,
+  [MapTab.constants.NAME]: MapTab.reducer
 })
 
 export default AppReducer

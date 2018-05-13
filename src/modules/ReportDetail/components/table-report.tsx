@@ -2,7 +2,7 @@ import _ from 'lodash'
 import * as React from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import { Card } from 'react-native-elements'
-import { Cell, Row, Table, TableWrapper } from 'react-native-table-component'
+import { Row, Table } from 'react-native-table-component'
 
 export interface TableReportState {
   tableHead: string[]
@@ -14,25 +14,18 @@ export interface TableReportProps {
   data: any[][]
 }
 
-const tableStyle = [
-  { backgroundColor: '#F1F1F1' },
-  { backgroundColor: '#F1F1F1' },
-  { backgroundColor: 'white' },
-  { backgroundColor: 'white' }
-]
-
 const textStyle = [
-  { color: 'red', fontWeight: 'bold', textAlign: 'left' },
-  { color: 'blue', fontWeight: 'bold', textAlign: 'left' },
-  { paddingLeft: 16, fontWeight: 'bold', textAlign: 'left' },
-  { paddingLeft: 16, textAlign: 'left' }
+  { paddingLeft: 4, color: 'red', fontWeight: 'bold', textAlign: 'left' },
+  { paddingLeft: 4, color: 'blue', fontWeight: 'bold', textAlign: 'left' },
+  { paddingLeft: 8, fontWeight: 'bold', textAlign: 'left' },
+  { paddingLeft: 8, textAlign: 'left' }
 ]
 
 class TableReport extends React.PureComponent<
   TableReportProps,
   TableReportState
 > {
-  TABLE_HEAD = ['Địa bàn']
+  TABLE_HEAD = ['Đơn vị']
   WIDTH_ARR = []
 
   state = {
@@ -50,8 +43,8 @@ class TableReport extends React.PureComponent<
       ...this.state,
       tableHead: [...this.TABLE_HEAD, ...this.props.dynamicHeader],
       widthArr: [
-        maxLength * 11,
-        ...this.props.dynamicHeader.map((item) => 120)
+        maxLength * 15,
+        ...this.props.dynamicHeader.map((item) => 80)
       ]
     })
   }
@@ -66,8 +59,8 @@ class TableReport extends React.PureComponent<
       ...this.state,
       tableHead: [...this.TABLE_HEAD, ...nextProps.dynamicHeader],
       widthArr: [
-        maxLength * 11,
-        ...nextProps.dynamicHeader.map((item) => 120)
+        maxLength * 15,
+        ...nextProps.dynamicHeader.map((item) => 80)
       ]
     })
   }
@@ -101,30 +94,36 @@ class TableReport extends React.PureComponent<
                 borderStyle={{ borderColor: '#C1C0B9' }}
               >
                 {this.props.data.map((rowData, index) => (
-                  <TableWrapper
-                    key={index}
-                    style={[
-                      styles.row,
-                      tableStyle[rowData[rowData.length - 1]]
-                    ]}
-                  >
-                    {rowData
-                      .slice(0, rowData.length - 1)
-                      .map(
-                        (cellData, cellIndex) =>
-                          cellIndex !== rowData.length - 1 && (
-                            <Cell
-                              key={cellIndex}
-                              data={cellData}
-                              style={{ width: state.widthArr[cellIndex] }}
-                              textStyle={[
-                                styles.text,
-                                cellIndex !== 0 ? { textAlign: 'right' } : {}
-                              ]}
-                            />
-                          )
-                      )}
-                  </TableWrapper>
+                  // <TableWrapper
+                  //   key={index}
+                  //   style={[
+                  //     styles.row,
+                  //     tableStyle[rowData[rowData.length - 1]]
+                  //   ]}
+                  // >
+                  //   {rowData
+                  //     .slice(0, rowData.length - 1)
+                  //     .map(
+                  //       (cellData, cellIndex) =>
+                  //         cellIndex !== rowData.length - 1 && (
+                  //           <Cell
+                  //             key={cellIndex}
+                  //             data={cellData}
+                  //             style={{ width: state.widthArr[cellIndex] }}
+                              // textStyle={[
+                              //   styles.text,
+                              //   cellIndex !== 0 ? { textAlign: 'right' } : {}
+                              // ]}
+                  //           />
+                  //         )
+                  //     )}
+                  // </TableWrapper>
+                  <Row
+                      key={index}
+                      data={rowData}
+                      widthArr={state.widthArr}
+                      style={[styles.row]}
+                    />
                 ))}
               </Table>
             </View>
@@ -150,7 +149,7 @@ class TableReport extends React.PureComponent<
                   key={index}
                   data={[rowData[0]]}
                   widthArr={[state.widthArr[0]]}
-                  style={[tableStyle[rowData[rowData.length - 1]]]}
+                  style={[styles.row, { backgroundColor: 'white' }]}
                   textStyle={[
                     styles.text,
                     textStyle[rowData[rowData.length - 1]]
@@ -168,9 +167,10 @@ class TableReport extends React.PureComponent<
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { height: 50, backgroundColor: '#CBCED3' },
-  text: { padding: 8, fontSize: 12 },
+  text: { fontSize: 12 },
   dataWrapper: { marginTop: -1 },
-  row: { flexDirection: 'row' }
+  rowCell: { flexDirection: 'row' },
+  row: { height: 40 }
 })
 
 export default TableReport

@@ -148,7 +148,7 @@ class DonutReport extends React.PureComponent<Props, State> {
   render() {
     return (
       <Card
-        title={`Biểu đồ ${this.props.title}:`}
+        title={`${this.props.title} (ĐVT: ${this.props.unit.toLowerCase()})`}
         titleStyle={{ textAlign: 'left', marginBottom: 0 }}
         containerStyle={{ marginHorizontal: 0, paddingBottom: 0, paddingTop: 4 }}
         dividerStyle={{ display: 'none' }}
@@ -176,10 +176,10 @@ class DonutReport extends React.PureComponent<Props, State> {
         <View
           style={[
             styles.rowContainer,
-            { justifyContent: 'space-between', marginHorizontal: 16, marginTop: 8 }
+            { justifyContent: 'space-between', marginHorizontal: 16 }
           ]}
         >
-          <RText style={{ flex: .5 }}>Chú thích: ({this.props.unit.toLowerCase()})</RText>
+          <RText style={{ flex: .5 }}></RText>
           <RText style={{ flex: .45, fontSize: 12, alignSelf: 'center', textAlign: 'center' }}>
             {this.props.data2 ? formatCurrency(this.props.data2.using) : ''}
           </RText>
