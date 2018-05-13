@@ -11,17 +11,6 @@ import { mapInfo$ } from '../epic'
 import { MapClient, MapState } from '../model'
 import { getLoading, getMarkers } from '../reducer'
 
-const styles = StyleSheet.create({
-  container: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  map: {
-    ...StyleSheet.absoluteFillObject,
-  }
-})
-
 interface Props extends ConnectedReduxProps<MapState> {
   isLoading: boolean
   markers: MapClient[]
@@ -55,7 +44,6 @@ class MapTab extends React.Component<Props, State> {
     if (currentEpic !== mapInfo$) {
       appEpic$.next(mapInfo$)
     }
-    this.props.dispatch(getMapInfoAction('2MFHCM2'))
 
     if (Platform.OS === 'android' && !Constants.isDevice) {
       this.setState({
@@ -78,13 +66,43 @@ class MapTab extends React.Component<Props, State> {
     const location = await Location.getCurrentPositionAsync({})
     const { latitude, longitude } = location.coords
     this.setState({
-      location: {
-        latitude,
-        longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421
-      }
+      location: this.regionFrom(latitude, longitude, 200)
     })
+  }
+
+  regionFrom(lat: number, lon: number, distance: number) {
+    distance = distance / 2
+    const circumference = 40075
+    const oneDegreeOfLatitudeInMeters = 111.32 * 1000
+    const angularDistance = distance / circumference
+
+    const latitudeDelta = distance / oneDegreeOfLatitudeInMeters
+    const longitudeDelta = Math.abs(Math.atan2(
+            Math.sin(angularDistance) * Math.cos(lat),
+            Math.cos(angularDistance) - Math.sin(lat) * Math.sin(lat)))
+
+    return {
+        latitude: lat,
+        longitude: lon,
+        latitudeDelta,
+        longitudeDelta,
+    }
+  }
+
+  renderMarkerImage = (type: string) => {
+    switch (type) {
+      case '1':
+        return require('assets/images/type1.png')
+      case '2':
+        return require('assets/images/type2.png')
+      case '3':
+        return require('assets/images/type3.png')
+      case '4':
+        return require('assets/images/type4.png')
+      default:
+        return require('assets/images/type1.png')
+    }
+
   }
 
   render() {
@@ -93,7 +111,6 @@ class MapTab extends React.Component<Props, State> {
     }
 
     const { isLoading, markers } = this.props
-    console.log(markers.length)
 
     return (
       <View style={styles.container}>
@@ -101,21 +118,44 @@ class MapTab extends React.Component<Props, State> {
         style={styles.map}
         showsUserLocation={true}
         initialRegion={this.state.location}
+        onMapReady={() => this.props.dispatch(getMapInfoAction('2MFHCM2'))}
         >
-          {/* {markers.map((marker, index) => (
+          {markers.map((marker, index) => (
             <MapView.Marker
               key={index}
               coordinate={marker.coordinate}
               title={marker.title}
               description={marker.description}
+              image={this.renderMarkerImage(marker.cellType)}
             />
-          ))} */}
+          ))}
         </MapView>
-        { isLoading ? <Text>Loading...</Text> : null }
+        <View style={styles.infoContainer} pointerEvents="none">
+          { isLoading ? <Text style={styles.loading}>Đang lấy thông tin trạm...</Text> : null }
+        </View>
       </View>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  infoContainer: {
+    flex: 1,
+    marginVertical: 20,
+    backgroundColor: 'transparent',
+  },
+  loading: {
+    alignSelf: 'flex-end',
+  }
+})
 
 export default connect(
   createStructuredSelector({

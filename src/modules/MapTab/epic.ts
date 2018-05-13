@@ -21,8 +21,7 @@ export const mapInfo$: any = (
   exhaustMap((a): any => getMapInfo(a.payload.shopCode).pipe(
       map((res) => {
         const mapToClient: MapClient[] = _.map(res, (item) => {
-          const descriptionNew = item.description.replace(/\&nbsp/g, '').replace(/<(?:.|\n)*?>/gm, '')
-          console.log(descriptionNew)
+          const descriptionNew = item.description.replace(/\&nbsp/g, ' ').replace(/<(?:.|\n)*?>/gm, '')
 
           return ({
           coordinate: {
