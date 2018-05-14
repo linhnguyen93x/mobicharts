@@ -34,7 +34,7 @@ class LineReport extends React.PureComponent<Props, any> {
       <Card
         title={`${this.props.title} (ĐVT: ${this.props.unit.toLowerCase()})`}
         titleStyle={{ textAlign: 'left' }}
-        containerStyle={{ marginHorizontal: 0, paddingBottom: 0, paddingTop: 4 }}
+        containerStyle={{ marginHorizontal: 0, marginBottom: 0, marginTop: 8, paddingBottom: 0, paddingTop: 4 }}
         dividerStyle={{ display: 'none' }}
       >
         <MultiLineChart

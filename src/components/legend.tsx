@@ -16,7 +16,7 @@ class Legend extends React.PureComponent<LegendProps, {}> {
       <TouchableOpacity
         key={index}
         style={{
-          width: '33%'
+          width: '50%'
         }}
         onPress={() => this.props.onPress ? this.props.onPress(index) : {}}
       >
@@ -24,6 +24,7 @@ class Legend extends React.PureComponent<LegendProps, {}> {
           style={{
             flexDirection: 'row',
             alignItems: 'center',
+            justifyContent: 'center',
             opacity:
               this.props.selectedIndex == null
                 ? 1
@@ -36,16 +37,18 @@ class Legend extends React.PureComponent<LegendProps, {}> {
             style={{
               alignSelf: 'flex-start'
             }}
-            name="dot-single"
-            size={40}
+            name="controller-record"
+            size={16}
             color={this.props.color[index]}
           />
           <Text
-            style={{
-              textAlign: 'center'
+             style={{
+              fontSize: 12,
+              alignSelf: 'center',
+              marginBottom: 2
             }}
           >
-            {item}
+            {' ' + item}
           </Text>
         </View>
       </TouchableOpacity>
@@ -67,7 +70,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginRight: 8
+    marginBottom: 4
   }
 })
 

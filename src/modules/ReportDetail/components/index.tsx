@@ -168,12 +168,12 @@ class ReportDetail extends React.Component<Props, State> {
 
   mapToDetailData = (item: DetailColumn) => {
     if (item.showPercent) {
-      const color = item.value > 0 ? textColor.increase : item.value < 0 ? textColor.decrease : textColor.equal
-      const iconName = item.value > 0 ? 'arrow-up' : item.value < 0 ? 'arrow-down' : null
+      const color = item.percent > 0 ? textColor.increase : item.percent < 0 ? textColor.decrease : textColor.equal
+      const iconName = item.percent > 0 ? 'arrow-up' : item.percent < 0 ? 'arrow-down' : 'arrow-right'
 
       return <Text style={[styles.cellNumber, { color }]}>
         {formatCurrency(Math.abs(item.percent))}
-        {iconName && <MaterialCommunityIcons name={iconName} size={14} color={color} />}
+        <MaterialCommunityIcons name={iconName} size={14} color={color} />
       </Text>
     }
 

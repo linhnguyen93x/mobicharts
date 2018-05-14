@@ -10,6 +10,7 @@
     },
     "slug": "mobicharts",
     "name": "mobicharts",
-    "orientation": "portrait"
+    "orientation": "portrait",
+    "privacy": "public"
   }
 }

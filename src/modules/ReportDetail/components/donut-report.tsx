@@ -1,7 +1,7 @@
 import { Svg } from 'expo'
 import _ from 'lodash'
 import * as React from 'react'
-import { StyleSheet, Text as RText, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { Card } from 'react-native-elements'
 import { PieChart, ProgressCircle } from 'react-native-svg-charts'
 import Legend from 'src/components/legend'
@@ -103,22 +103,23 @@ class DonutReport extends React.PureComponent<Props, State> {
     return (
       <Text
         x={0}
-        y={-15}
-        fontSize={12}
+        y={0}
         stroke={'black'}
-        fill={'none'}
+        fill={'black'}
         textAnchor="middle"
       >
         <TSpan
           x="0"
-          dx={title.length >= subTitle.length ? '0' : distanceLength}
+          dx="0"
+          fontSize={24}
         >
           {title}
         </TSpan>
         <TSpan
           x="0"
           dx={subTitle.length < title.length ? distanceLength : '0'}
-          dy={scale(34).toString()}
+          dy={scale(16, 2).toString()}
+          fontSize={12}
         >
           {subTitle}
         </TSpan>
@@ -150,7 +151,7 @@ class DonutReport extends React.PureComponent<Props, State> {
       <Card
         title={`${this.props.title} (ĐVT: ${this.props.unit.toLowerCase()})`}
         titleStyle={{ textAlign: 'left', marginBottom: 0 }}
-        containerStyle={{ marginHorizontal: 0, paddingBottom: 0, paddingTop: 4 }}
+        containerStyle={{ marginHorizontal: 0, marginBottom: 0, marginTop: 8, paddingBottom: 0, paddingTop: 4 }}
         dividerStyle={{ display: 'none' }}
       >
         <View style={styles.rowContainer}>
@@ -170,7 +171,7 @@ class DonutReport extends React.PureComponent<Props, State> {
             progressColor={this.props.color[0]}
             strokeWidth={10}
           >
-            <this.CenterText title={`${this.props.data2.percent ? this.props.data2.percent * 100 : 100}%`} />
+            <this.CenterText title={`${this.props.data2.percent ? this.props.data2.percent * 100 : 100}%`} subTitle={this.props.data2 ? `(${formatCurrency(this.props.data2.using)})` : ''} />
           </ProgressCircle> : null}
         </View>
         <View
@@ -179,10 +180,6 @@ class DonutReport extends React.PureComponent<Props, State> {
             { justifyContent: 'space-between', marginHorizontal: 16 }
           ]}
         >
-          <RText style={{ flex: .5 }}></RText>
-          <RText style={{ flex: .45, fontSize: 12, alignSelf: 'center', textAlign: 'center' }}>
-            {this.props.data2 ? formatCurrency(this.props.data2.using) : ''}
-          </RText>
         </View>
         <Legend
           data={this.props.legend.map(((item, index) => `${item}: ${formatCurrency(this.props.data[index])}`))}

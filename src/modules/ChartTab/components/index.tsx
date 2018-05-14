@@ -75,7 +75,9 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     timeType: 1
   }
 
+  colorIndex = 0
   lastImagePress: number | undefined
+
   componentWillMount() {
     const currentEpic = appEpic$.value
 
