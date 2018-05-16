@@ -29,6 +29,7 @@ export interface ReportDetailResponse {
   listCodeColumn: string[]
   labellistCodeColumn: string[]
   tableDetail: Table[]
+  lineLabel: string[]
 }
 
 export interface ReportDetailClient {
@@ -37,6 +38,7 @@ export interface ReportDetailClient {
   tableDetail: Table[]
   listCodeColumn: string[]
   labellistCodeColumn: string[]
+  lineLabel: string[]
 }
 
 export interface ReportDetailRequest {

@@ -140,7 +140,7 @@ class DonutReport extends React.PureComponent<Props, State> {
             fill={'none'}
             textAnchor="middle"
           >
-            {data.value}%
+              {slices.length > 4 ? (this.state.selectedIndex === index ? data.value + '%' : '') : data.value + '%'}
           </Text>
       )
     })
@@ -182,10 +182,17 @@ class DonutReport extends React.PureComponent<Props, State> {
         >
         </View>
         <Legend
-          data={this.props.legend.map(((item, index) => `${item}: ${formatCurrency(this.props.data[index])}`))}
+          data={this.props.legend.map((
+            (item, index) => `${item}: ${formatCurrency(this.props.data[index])}`))}
           color={this.props.color}
           onPress={(index) => this.triggerEvent(index)}
           selectedIndex={this.state.selectedIndex}
+        />
+        <Legend
+          style={{ alignSelf: 'center', paddingLeft: 0 }}
+          data={[`Tổng: ${formatCurrency(_.sum(this.props.data))}`]}
+          color={['red']}
+          iconType={'sum'}
         />
       </Card>
     )

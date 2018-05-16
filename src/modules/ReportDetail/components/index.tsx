@@ -35,7 +35,10 @@ const Filter: IFilter = {
 
 interface Props extends ConnectedReduxProps<ReportDetailState> {
   donuts: DonutPartClient[]
-  lines: LinePart[]
+  lines: {
+    legends: string[]
+    data: LinePart[]
+  }
   companyTab: TabInfo[]
   tableInfo: {
     tables: Table[],
@@ -172,7 +175,7 @@ class ReportDetail extends React.Component<Props, State> {
       const iconName = item.percent > 0 ? 'arrow-up' : item.percent < 0 ? 'arrow-down' : 'arrow-right'
 
       return <Text style={[styles.cellNumber, { color }]}>
-        {formatCurrency(Math.abs(item.percent))}
+        {formatCurrency(Math.abs(item.percent))}%
         <MaterialCommunityIcons name={iconName} size={14} color={color} />
       </Text>
     }
@@ -206,13 +209,13 @@ class ReportDetail extends React.Component<Props, State> {
             data2={item.percent}
             unit={params.unit}
           />) }
-          { lines.map((item, index) => <LineReport
+          { lines.data.map((item, index) => <LineReport
             key={index}
             title={item.title}
             color={params.colors}
             data={this.getLine(item.line).data}
             times={this.getLine(item.line).times}
-            legend={donuts[index].legend}
+            legend={lines.legends}
             unit={params.unit}
           />)}
           {tableInfo ? <TableReport

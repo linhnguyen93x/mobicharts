@@ -82,7 +82,10 @@ export const getLines  = createSelector(
   getAll,
   selectedTab,
   (all, hashParams) => {
-    return all[hashParams] ? all[hashParams].lineParts : []
+    return {
+      legends: all[hashParams] ? all[hashParams].lineLabel : [],
+      data: all[hashParams] ? all[hashParams].lineParts : []
+    }
   }
 )
 

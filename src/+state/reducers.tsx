@@ -9,6 +9,7 @@ import MapTab from 'src/modules/MapTab'
 import { MapState } from 'src/modules/MapTab/model'
 import ReportDetail from 'src/modules/ReportDetail'
 import { ReportDetailState } from 'src/modules/ReportDetail/model'
+import { LocalStorage } from 'src/shared/async-storage'
 
 import { AppNavigator } from '../navigators/AppNavigator'
 
@@ -80,7 +81,7 @@ export interface IApplicationState {
   [MapTab.constants.NAME]: MapState
 }
 
-const AppReducer: Reducer<IApplicationState> = combineReducers<IApplicationState>({
+const appReducer: Reducer<IApplicationState> = combineReducers<IApplicationState>({
   nav,
   auth,
   profile,
@@ -90,4 +91,13 @@ const AppReducer: Reducer<IApplicationState> = combineReducers<IApplicationState
   [MapTab.constants.NAME]: MapTab.reducer
 })
 
-export default AppReducer
+const rootReducer = (state: any, action: any) => {
+  if (action.type === 'Logout') {
+    LocalStorage.removeJwt()
+    state = undefined
+  }
+
+  return appReducer(state, action)
+}
+
+export default rootReducer

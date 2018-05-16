@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import * as React from 'react'
-import { Dimensions } from 'react-native'
+import { Dimensions, View } from 'react-native'
 import { MultiLineChart } from 'react-native-d3multiline-chart'
 import { Card } from 'react-native-elements'
 import Legend from 'src/components/legend'
@@ -19,11 +19,11 @@ interface Props {
 
 class LineReport extends React.PureComponent<Props, any> {
   render() {
-    const color = lineColors.slice(0, 3)
+    const color = lineColors
     const dataFlattern = _.flatten(this.props.data)
 
     const bottomAxisData = _.range(0, this.props.times.length , 1)
-    const bottomAxisDataToShow = this.props.times.map((item) => item < 10 ? '0' + item : item)
+    const bottomAxisDataToShow = this.props.times.map((item) => item < 10 ? '0' + item : item.toString())
     const minX = Math.floor(_.min(dataFlattern.map((rec: any) => rec.x)))
     const maxX = Math.ceil(_.max(dataFlattern.map((rec: any) => rec.x)))
     const minY = 0
@@ -57,32 +57,26 @@ class LineReport extends React.PureComponent<Props, any> {
           hideXAxis={true}
           hideYAxis={true}
           inclindTick={false}
-          pointDataToShowOnGraph="Y"
+          pointDataToShowOnGraph={this.props.data.length <= 4 ? 'Y' : ''}
           animation={false}
-          duration={1500}
-          delay={1000}
-          GraphHeight={200}
+          GraphHeight={210}
           chartHeight={200}
           GraphWidth={deviceWidth}
           chartWidth={deviceWidth - 48}
-          staggerLength={220}
+          staggerLength={0}
           speed={50}
           showTicks={true}
           tickColorYAxis={'rgba(192,192,192,0.3)'}
           tickColorXAxis={'transparent'}
+          tickWidthXAxis={0}
           axisColor={'rgba(192,192,192,0.3)'}
+          circleRadius={4}
+          circleRadiusWidth={0}
+          legendText={this.props.legend}
+          legendColor={color}
+          showLegends={false}
         />
-        {/* <View
-          style={[
-            styles.rowContainer,
-            { justifyContent: 'space-between', marginHorizontal: 16 }
-          ]}
-        >
-          <Text>Chú thích:</Text>
-          <Text style={{ fontSize: 12, alignSelf: 'center' }}>
-            Đơn vị: {this.props.unit.toLowerCase()}
-          </Text>
-        </View> */}
+        <View style={{ marginBottom: 8 }} />
         <Legend data={this.props.legend} color={color}/>
       </Card>
     )

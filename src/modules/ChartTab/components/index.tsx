@@ -12,7 +12,7 @@ import { createStructuredSelector } from 'reselect'
 import { appEpic$ } from 'src/+state/epics'
 import { FilterTab } from 'src/components'
 import { TimePicker } from 'src/components/time-picker'
-import { DateMap, formatCurrency, groupColors } from 'src/shared'
+import { DateMap, formatCurrency, groupColors, specialBarColor, specialGroupColor } from 'src/shared'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 
 import { globalStyle } from '../../../style'
@@ -136,9 +136,10 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     const barLegend = item.bieuDoCot
       ? item.bieuDoCot.map((item) => item.label)
       : []
-    const groupColor = groupColors[index % groupColors.length]
 
     const pieData = item.bieuDoCoCau ? item.bieuDoCoCau : []
+    const groupColor = pieData.length <= 4 ? groupColors[index % groupColors.length] : specialGroupColor
+    const barGradientColor = pieData.length <= 4 ? [groupColor[0], groupColor[1]] : specialBarColor
     const pieOption = pieData.map((item, index) => ({
       value: item.value,
       svg: { fill: groupColor[index % groupColor.length] },
@@ -157,7 +158,8 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
           codeReport: item.codeReport,
           timeType: this.state.timeType,
           colors: groupColor,
-          selectedTime: this.state.reportDate,
+          // selectedTime: this.state.reportDate,
+          selectedTime: moment(item.issueDate).format('DD/MM/YYYY'),
           unit: item.valueUnit ? `${item.valueUnit} ${item.unit}` : item.unit
         }
         const title = `${params.codeReport} ${DateMap[
@@ -320,8 +322,8 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
                   }}
                 >
                   <this.Gradient
-                    startColor={groupColor[0]}
-                    stopColor={groupColor[1]}
+                    startColor={barGradientColor[0]}
+                    stopColor={barGradientColor[1]}
                   />
                 </BarChart>
                 <XAxis

@@ -49,6 +49,8 @@ export const reportDetail$: any = (
                 return i.total
               })
 
+              // legend.push('Tổng')
+
               donutParts.push({ title: item.title, legend, pie, percent: item.percentChart })
             })
 
@@ -58,6 +60,7 @@ export const reportDetail$: any = (
               tableDetail: res.tableDetail,
               listCodeColumn: res.listCodeColumn ? res.listCodeColumn : [],
               labellistCodeColumn: res.labellistCodeColumn ? res.labellistCodeColumn : [],
+              lineLabel: res.lineLabel
             }
 
             return mapToClient

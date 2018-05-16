@@ -11,6 +11,7 @@ export interface Chart {
 }
 
 export interface SummaryChartResponse {
+  issueDate: number
   label: string
   tongCong: number | null
   unit: string

@@ -7,45 +7,58 @@ interface LegendProps {
   color: string[]
   selectedIndex?: number | null
   onPress?: (index: number) => void
+  iconType?: keyof typeof IconType
+  style?: object
+}
+
+enum IconType {
+  circle = 'controller-record',
+  sum = 'plus'
 }
 
 class Legend extends React.PureComponent<LegendProps, {}> {
+  public static defaultProps: Partial<LegendProps> = {
+    iconType: 'circle'
+}
+
   render() {
+    const width = 100 / (this.props.data.length % 4)
+    const { iconType, style } = this.props
+
     return <View style={styles.legendContainer}>
     {this.props.data.map((item, index) => (
       <TouchableOpacity
         key={index}
         style={{
-          width: '50%'
+          width: `${width}%`
         }}
         onPress={() => this.props.onPress ? this.props.onPress(index) : {}}
       >
         <View
-          style={{
+          style={[{
             flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
+            paddingLeft: '25%',
             opacity:
               this.props.selectedIndex == null
                 ? 1
                 : this.props.selectedIndex === index
                   ? 1
                   : 0.3
-          }}
+          }, style]}
         >
-          <Entypo
+          {iconType ? <Entypo
             style={{
               alignSelf: 'flex-start'
             }}
-            name="controller-record"
+            name={IconType[iconType]}
             size={16}
             color={this.props.color[index]}
-          />
+          /> : null}
           <Text
              style={{
               fontSize: 12,
-              alignSelf: 'center',
-              marginBottom: 2
+              marginBottom: 2,
+              textAlign: 'center'
             }}
           >
             {' ' + item}

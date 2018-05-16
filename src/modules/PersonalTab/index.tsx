@@ -1,5 +1,7 @@
 import * as React from 'react'
 import { Animated, Platform, StyleSheet, Text, View } from 'react-native'
+import { Button } from 'react-native-elements'
+import { connect } from 'react-redux'
 
 const HEADER_MAX_HEIGHT = 300
 const HEADER_MIN_HEIGHT = Platform.OS === 'ios' ? 60 : 73
@@ -119,7 +121,14 @@ class PersonalTab extends React.Component<any, any> {
             { useNativeDriver: true }
           )}
         >
-          {this.renderScrollViewContent()}
+          {/* {this.renderScrollViewContent()} */}
+          <View style={styles.scrollViewContent}>
+          <Button
+            onPress={() => this.props.dispatch({ type: 'Logout' })}
+            style={styles.row}
+            title="Đăng xuất"
+          />
+          </View>
         </Animated.ScrollView>
         <Animated.View
           style={[
@@ -156,4 +165,4 @@ class PersonalTab extends React.Component<any, any> {
   }
 }
 
-export default PersonalTab
+export default connect()(PersonalTab)
