@@ -22,7 +22,8 @@ class Legend extends React.PureComponent<LegendProps, {}> {
 }
 
   render() {
-    const width = 100 / (this.props.data.length % 4)
+    const divideCal = this.props.data.length !== 4 ? this.props.data.length % 4 : this.props.data.length
+    const width = 100 / divideCal
     const { iconType, style } = this.props
 
     return <View style={styles.legendContainer}>

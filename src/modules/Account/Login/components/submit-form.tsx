@@ -6,7 +6,6 @@ import { connect } from 'react-redux'
 import { SUBMIT_LOADER } from 'src/+state/constants'
 import { appEpic$ } from 'src/+state/epics'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
-import { globalStyle } from 'src/style'
 
 import { loginAction } from '../actions'
 import { accountEpic } from '../epics'
@@ -93,11 +92,10 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
       <View style={styles.container}>
         <Text
           style={[
-            globalStyle.styles.fontWeightBold,
-            { fontSize: 18, marginBottom: 4 }
+            { fontSize: 18, marginBottom: 4, color: '#0064B0', fontWeight: '500' }
           ]}
         >
-          Đăng nhập
+          One<Text style={{ color: 'red' }}>Report</Text>
         </Text>
         <View style={{ alignSelf: 'stretch' }}>
           <FormInput
@@ -155,7 +153,7 @@ class SubmitForm extends React.PureComponent<FormProps, FormState> {
           onPress={this.signup}
           disabled={isLoading}
         />
-        <Text style={{ marginTop: 16, marginBottom: 4 }}>Quên mật khẩu</Text>
+        <Text style={{ marginTop: 16, marginBottom: 4 }}>Bạn <Text style={{ color: '#0064B0' }}>quên mật khẩu?</Text></Text>
       </View>
     )
   }

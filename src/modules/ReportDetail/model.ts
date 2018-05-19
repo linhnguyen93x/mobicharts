@@ -76,9 +76,10 @@ export interface DetailType {
 
 export interface DetailColumn {
   showPercent: boolean
-  percent: number
+  percent?: number
   value: number
   code: string
+  replaceBy?: string | null
 }
 
 export interface ActionParams {

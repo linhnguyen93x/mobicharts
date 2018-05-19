@@ -30,6 +30,8 @@ class LineReport extends React.PureComponent<Props, any> {
     const maxY = Math.ceil(_.max(dataFlattern.map((rec: any) => rec.y)))
     const leftAxisData = _.range(minY, maxY + Math.ceil((minY + maxY) / 5), Math.ceil((minY + maxY) / 5))
 
+    // console.log(this.props.legend)
+
     return (
       <Card
         title={`${this.props.title} (ĐVT: ${this.props.unit.toLowerCase()})`}
@@ -59,7 +61,7 @@ class LineReport extends React.PureComponent<Props, any> {
           inclindTick={false}
           pointDataToShowOnGraph={this.props.data.length <= 4 ? 'Y' : ''}
           animation={false}
-          GraphHeight={210}
+          GraphHeight={220}
           chartHeight={200}
           GraphWidth={deviceWidth}
           chartWidth={deviceWidth - 48}

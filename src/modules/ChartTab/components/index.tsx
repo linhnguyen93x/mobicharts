@@ -30,6 +30,7 @@ interface SummaryChartProps extends ConnectedReduxProps<SummaryChartState> {
 interface SummaryChartState {
   reportDate: string
   timeType: number
+  isRemovingView: boolean
 }
 
 const DOUBLE_PRESS_DELAY = 300
@@ -72,7 +73,8 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     reportDate: moment()
       .subtract(1, 'days')
       .format('DD/MM/YYYY'),
-    timeType: 1
+    timeType: 1,
+    isRemovingView: false
   }
 
   colorIndex = 0
@@ -191,7 +193,6 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
               flexDirection: 'row',
               marginBottom: 0,
               paddingHorizontal: 8,
-              paddingBottom: 4,
               paddingTop: 6,
               alignItems: 'center'
             }}
@@ -356,19 +357,27 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
         <FilterTab
           data={[Filter.DAY, Filter.WEEK, Filter.MONTH, Filter.YEAR]}
           onItemSelected={(item) =>
-            this.setState({ timeType: item }, () => this.getData())
+            this.setState({ isRemovingView: true }, () => {
+              setTimeout(() => {
+               this.setState({ isRemovingView: false, timeType: item }, () => this.getData())
+              }, 0)
+            })
           }
         />
         <TimePicker
           defaultValue={this.state.reportDate}
           onDateChange={(reportDate) => {
-            this.setState({ reportDate }, () => this.getData())
+            this.setState({ isRemovingView: true }, () => {
+              setTimeout(() => {
+               this.setState({ isRemovingView: false, reportDate }, () => this.getData())
+              }, 0)
+            })
           }}
         />
         <FlatList
           style={{ marginTop: 8 }}
           keyExtractor={this.keyExtractor}
-          data={renderData}
+          data={this.state.isRemovingView ? [] : renderData}
           renderItem={this.renderItem}
         />
       </View>

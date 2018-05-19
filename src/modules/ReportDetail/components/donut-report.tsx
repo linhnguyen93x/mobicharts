@@ -40,7 +40,7 @@ class DonutReport extends React.PureComponent<Props, State> {
     const maxValue: any = _.sum(this.props.data)
 
     this.setState({
-      pieData: this.mapDataToChart(this.props.data.map((value) => _.round((value / maxValue) * 100), 2))
+      pieData: this.mapDataToChart(this.props.data.map((value) => _.round((value / maxValue) * 100, 1)))
     })
   }
 
@@ -48,12 +48,12 @@ class DonutReport extends React.PureComponent<Props, State> {
     const maxValue: any = _.sum(nextProps.data)
 
     this.setState({
-      pieData: this.mapDataToChart(nextProps.data.map((value) => _.round((value / maxValue) * 100), 2))
+      pieData: this.mapDataToChart(nextProps.data.map((value) => _.round((value / maxValue) * 100, 1)))
     })
   }
 
   mapDataToChart = (data: any[]) => {
-    return data.filter((value) => value > 0).map((value, index) => ({
+    return data.map((value, index) => ({
       value,
       svg: {
         fill: this.props.color[index],
@@ -147,6 +147,7 @@ class DonutReport extends React.PureComponent<Props, State> {
   }
 
   render() {
+
     return (
       <Card
         title={`${this.props.title} (ĐVT: ${this.props.unit.toLowerCase()})`}

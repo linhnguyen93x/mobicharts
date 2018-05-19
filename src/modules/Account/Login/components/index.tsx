@@ -9,8 +9,8 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  View,
 } from 'react-native'
-import { globalStyle } from 'src/style'
 
 import SubmitForm from './submit-form'
 
@@ -19,7 +19,7 @@ interface LoginState {
   containerHeight: number
 }
 
-const { width, height } = Dimensions.get('window')
+const { height } = Dimensions.get('window')
 
 class LoginScreen extends React.Component<any, LoginState> {
   static navigationOptions = {
@@ -35,7 +35,7 @@ class LoginScreen extends React.Component<any, LoginState> {
   async _cacheResourcesAsync() {
     const images = [
       require('assets/images/login.png'),
-      require('assets/images/logo.png')
+      require('assets/images/app_logo.png')
     ]
 
     const cacheImages = images.map((image) => {
@@ -50,7 +50,7 @@ class LoginScreen extends React.Component<any, LoginState> {
         <AppLoading
           startAsync={this._cacheResourcesAsync}
           onFinish={() => this.setState({ isReady: true })}
-          onError={console.warn}
+          onError={() => {}}
         />
       )
     }
@@ -67,16 +67,19 @@ class LoginScreen extends React.Component<any, LoginState> {
             style={[styles.imageContainer, { height: this.state.containerHeight }]}
             source={require('assets/images/login.png')}
           >
-            <Image
-              style={{ width: width / 4 }}
-              source={require('assets/images/logo.png')}
-              resizeMode="contain"
-            />
-            <SubmitForm />
-            <Text style={[globalStyle.styles.textAlignCenter, styles.title]}>
-              {'Chào mừng bạn đến với ứng dụng\nxem báo cáo của '}
-              <Text style={globalStyle.styles.fontWeightBold}>Mobifone</Text>
-            </Text>
+            <View style={{ flex: .8, justifyContent: 'space-around', width: '100%', alignItems: 'center', }}>
+              <Image
+                style={{ width: 150, height: 150 }}
+                source={require('assets/images/app_logo.png')}
+                resizeMode="cover"
+              />
+              <SubmitForm />
+            </View>
+            <View style={{ flex: .2 }} />
+            <View style={{ flexDirection: 'row', marginHorizontal: 16, marginBottom: 8, alignItems: 'flex-end', justifyContent: 'space-between', alignSelf: 'stretch' }}>
+              <Text style={{ color: 'white', fontSize: 12 }}>Version 1.0</Text>
+              <Text style={{ color: 'white', fontSize: 12 }}>© 2018 Bản quyền của Mobifone</Text>
+            </View>
           </ImageBackground>
         </KeyboardAvoidingView>
       </ScrollView>

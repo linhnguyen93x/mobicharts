@@ -22,7 +22,7 @@ export interface IFilter {
   CT: string
   CN: string
   LQ: string
-  Q: string
+  QH: string
 }
 export interface TabInfo {
   showAll: boolean

@@ -1,6 +1,8 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import _ from 'lodash'
 import * as React from 'react'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
+import { LazyloadScrollView, LazyloadView } from 'react-native-lazyload-deux'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import { appEpic$ } from 'src/+state/epics'
@@ -23,14 +25,14 @@ export interface IFilter {
   CT: string
   CN: string
   LQ: string
-  Q: string
+  QH: string
 }
 
 const Filter: IFilter = {
   CT: 'CÔNG TY',
   CN: 'CHI NHÁNH',
   LQ: 'LIÊN QUẬN',
-  Q: 'QUẬN'
+  QH: 'QUẬN'
 }
 
 interface Props extends ConnectedReduxProps<ReportDetailState> {
@@ -48,7 +50,7 @@ interface Props extends ConnectedReduxProps<ReportDetailState> {
 
 interface State {
   selectedTab: string,
-  refreshing: boolean
+  isRemovingView: boolean
 }
 
 class ReportDetail extends React.Component<Props, State> {
@@ -64,7 +66,7 @@ class ReportDetail extends React.Component<Props, State> {
 
   state: State = {
     selectedTab: this.tab[0],
-    refreshing: false
+    isRemovingView: false
   }
 
   componentDidMount() {
@@ -88,7 +90,7 @@ class ReportDetail extends React.Component<Props, State> {
     setParams({ title: titleText })
   }
 
-  getData = () => {
+  getData = async () => {
     const {
       params
     }: { params: SummaryChartParams } = this.props.navigation.state
@@ -170,14 +172,21 @@ class ReportDetail extends React.Component<Props, State> {
   }
 
   mapToDetailData = (item: DetailColumn) => {
-    if (item.showPercent) {
-      const color = item.percent > 0 ? textColor.increase : item.percent < 0 ? textColor.decrease : textColor.equal
-      const iconName = item.percent > 0 ? 'arrow-up' : item.percent < 0 ? 'arrow-down' : 'arrow-right'
-
-      return <Text style={[styles.cellNumber, { color }]}>
-        {formatCurrency(Math.abs(item.percent))}%
-        <MaterialCommunityIcons name={iconName} size={14} color={color} />
+    if (item.replaceBy != null) {
+      return <Text style={[styles.cellNumber]}>
+        {item.replaceBy}
       </Text>
+    }
+    if (item.showPercent) {
+      if (item.percent !== undefined) {
+        const color = item.percent > 0 ? textColor.increase : item.percent < 0 ? textColor.decrease : textColor.equal
+        const iconName = item.percent > 0 ? 'arrow-up' : item.percent < 0 ? 'arrow-down' : 'arrow-right'
+
+        return <Text style={[styles.cellNumber, { color }]}>
+          {formatCurrency(Math.abs(item.percent))}%
+          <MaterialCommunityIcons name={iconName} size={14} color={color} />
+        </Text>
+      }
     }
 
     return <Text style={[styles.cellNumber]}>
@@ -196,11 +205,15 @@ class ReportDetail extends React.Component<Props, State> {
         <FilterTab
           data={this.tab.map((item, index) => Filter[item])}
           onItemSelected={(index) => {
-            this.setState({ selectedTab: this.tab[index - 1], refreshing: true })}
+            this.setState({ isRemovingView: true }, () => {
+              setTimeout(() => {
+               this.setState({ selectedTab: this.tab[index - 1], isRemovingView: false })
+              }, 0)
+            })}
           } // Start from 1
         />
-        <ScrollView>
-          { donuts.map((item, index) => <DonutReport
+        { !this.state.isRemovingView ? <LazyloadScrollView name="lazy-load" renderDistance={500}>
+          { donuts.map ? _.map(donuts, (item, index) => <DonutReport
             key={index}
             title={item.title}
             color={params.colors}
@@ -208,8 +221,8 @@ class ReportDetail extends React.Component<Props, State> {
             data={item.pie}
             data2={item.percent}
             unit={params.unit}
-          />) }
-          { lines.data.map((item, index) => <LineReport
+          />) : null }
+          { lines.data ? _.map(lines.data, (item, index) => <LineReport
             key={index}
             title={item.title}
             color={params.colors}
@@ -217,12 +230,13 @@ class ReportDetail extends React.Component<Props, State> {
             times={this.getLine(item.line).times}
             legend={lines.legends}
             unit={params.unit}
-          />)}
-          {tableInfo ? <TableReport
+          />) : null}
+          {tableInfo ? <LazyloadView host="lazy-load"><TableReport
             dynamicHeader={tableInfo.tableCodes}
             data={this.getTable(tableInfo.tables)}
-          /> : null }
-        </ScrollView>
+          />
+          </LazyloadView> : null }
+        </LazyloadScrollView> : <View style={{ backgroundColor: 'blue' }}><Text>Hello</Text></View>}
       </View>
     )
   }
