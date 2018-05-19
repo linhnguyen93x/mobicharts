@@ -3,9 +3,11 @@ import { ajax } from 'rxjs/observable/dom/ajax'
 import { of } from 'rxjs/observable/of'
 import { _throw } from 'rxjs/observable/throw'
 import { catchError, exhaustMap } from 'rxjs/operators'
+import { ReportDetailApi } from 'src/modules/ReportDetail/api'
 
 import { AccountApi } from './modules/Account/account.api'
 import { SummaryChartApi } from './modules/ChartTab/api'
+import { MapApi } from './modules/MapTab/api'
 
 interface IHeaders {
   [x: string]: any
@@ -26,7 +28,6 @@ class ApiService {
       headers: this.getHeaders()
     }).pipe(
       exhaustMap((res) => {
-        console.log(res.status)
         if (res.response && res.response.formDataJson) {
           return of(res.response.formDataJson)
         }
@@ -53,5 +54,7 @@ export const api = new ApiService()
 
 export default {
   ...AccountApi,
-  ...SummaryChartApi
+  ...SummaryChartApi,
+  ...ReportDetailApi,
+  ...MapApi
 }

@@ -1,19 +1,20 @@
 import { Reducer } from 'redux'
 
 import { TSummaryChartSuccess } from './actionTypes'
-import { GET_SUMMARY_CHART_REQUEST, GET_SUMMARY_CHART_SUCCESS } from './constants'
+import { GET_SUMMARY_CHART_SUCCESS } from './constants'
 import { SummaryChartState } from './model'
 
-const initialState: SummaryChartState = []
+const initialState: SummaryChartState = {}
 
-const reducer: Reducer<SummaryChartState> = (state: SummaryChartState = initialState, action: TSummaryChartSuccess) => {
-  switch (action.type) {
-    case GET_SUMMARY_CHART_REQUEST:
-      return initialState
+const reducer: Reducer<SummaryChartState> = (s: SummaryChartState = initialState, a: TSummaryChartSuccess) => {
+  switch (a.type) {
     case GET_SUMMARY_CHART_SUCCESS:
-      return action.payload
+      return {
+        ...s,
+        [`${a.action.date}_${a.action.type}`]: a.payload
+      }
     default:
-      return state
+      return s
   }
 }
 

@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import { checkAuthAction } from 'src/modules/Account/+state/actions'
 import Login from 'src/modules/Account/Login/components'
 import ChartTab from 'src/modules/ChartTab'
-import MapTab from 'src/modules/MapTab'
+import MapTab from 'src/modules/MapTab/components'
 import NotificationTab from 'src/modules/NotificationTab'
 import ReportDetail from 'src/modules/ReportDetail'
 import { LocalStorage } from 'src/shared/async-storage'
@@ -17,10 +17,7 @@ import { addListener } from '../shared/redux'
 const TabBar = TabNavigator(
   {
     Chart: {
-      screen: ChartTab.components.default,
-      navigationOptions: {
-        title: 'Báo cáo tổng hợp'
-      }
+      screen: ChartTab.components.default
     },
     Notification: { screen: NotificationTab },
     Map: { screen: MapTab },
@@ -134,10 +131,6 @@ class ReduxNavigation extends React.Component<any, {}> {
     const jwt = await LocalStorage.getItem('jwt')
 
     if (jwt) {
-      // const currentEpic = appEpic$.value
-      // if (currentEpic !== checkAuth$) {
-      //   appEpic$.next(checkAuth$)
-      // }
       dispatch(checkAuthAction(jwt))
     } else {
       dispatch({ type: 'Logout' })

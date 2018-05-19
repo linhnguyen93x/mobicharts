@@ -1,75 +1,85 @@
-import Echarts from 'native-echarts'
+import _ from 'lodash'
 import * as React from 'react'
+import { Dimensions, View } from 'react-native'
+import { MultiLineChart } from 'react-native-d3multiline-chart'
 import { Card } from 'react-native-elements'
+import Legend from 'src/components/legend'
+import { lineColors } from 'src/shared'
 
-const option = {
-  tooltip: {
-    trigger: 'axis'
-  },
-  legend: {
-    orient: 'horizontal',
-    y: 'bottom',
-    data: ['A', 'B', 'C', 'D', 'E']
-  },
-  grid: {
-    top: '10%',
-    left: '0',
-    right: '5%',
-    bottom: '10%',
-    containLabel: true
-  },
-  xAxis: {
-    type: 'category',
-    boundaryGap: false,
-    data: ['1/4', '2/4', '3/4', '4/4', '5/5', '6/4', '7/4']
-  },
-  yAxis: {
-    type: 'value'
-  },
-  series: [
-    {
-      name: 'A',
-      type: 'line',
-      data: [120, 132, 101, 134, 90, 230, 210],
-      symbolSize: 8
-    },
-    {
-      name: 'B',
-      type: 'line',
-      data: [220, 182, 191, 234, 290, 330, 310],
-      symbolSize: 8
-    },
-    {
-      name: 'C',
-      type: 'line',
-      data: [150, 232, 201, 154, 190, 330, 410],
-      symbolSize: 8
-    },
-    {
-      name: 'D',
-      type: 'line',
-      data: [320, 332, 301, 334, 390, 330, 320],
-      symbolSize: 8
-    },
-    {
-      name: 'E',
-      type: 'line',
-      data: [820, 932, 901, 934, 1290, 1330, 1320],
-      symbolSize: 8
-    }
-  ]
+const deviceWidth = Dimensions.get('window').width
+
+interface Props {
+  title: string
+  color: string[]
+  data: number[][]
+  times: number[]
+  legend: string[]
+  unit: string
 }
 
-class LineReport extends React.PureComponent<any, any> {
+class LineReport extends React.PureComponent<Props, any> {
   render() {
+    const color = lineColors
+    const dataFlattern = _.flatten(this.props.data)
+
+    const bottomAxisData = _.range(0, this.props.times.length , 1)
+    const bottomAxisDataToShow = this.props.times.map((item) => item < 10 ? '0' + item : item.toString())
+    const minX = Math.floor(_.min(dataFlattern.map((rec: any) => rec.x)))
+    const maxX = Math.ceil(_.max(dataFlattern.map((rec: any) => rec.x)))
+    const minY = 0
+    const maxY = Math.ceil(_.max(dataFlattern.map((rec: any) => rec.y)))
+    const leftAxisData = _.range(minY, maxY + Math.ceil((minY + maxY) / 5), Math.ceil((minY + maxY) / 5))
+
+    // console.log(this.props.legend)
+
     return (
       <Card
-        title="Biểu đồ đường DTTT theo cấu thành trong 7 ngày gần đây:"
+        title={`${this.props.title} (ĐVT: ${this.props.unit.toLowerCase()})`}
         titleStyle={{ textAlign: 'left' }}
-        containerStyle={{ marginHorizontal: 0 }}
+        containerStyle={{ marginHorizontal: 0, marginBottom: 0, marginTop: 8, paddingBottom: 0, paddingTop: 4 }}
         dividerStyle={{ display: 'none' }}
       >
-        <Echarts option={option} height={300} />
+        <MultiLineChart
+          data={this.props.data}
+          leftAxisData={leftAxisData}
+          leftAxisDataToShow={leftAxisData}
+          bottomAxisData={bottomAxisData}
+          minX={minX}
+          maxX={maxX}
+          minY={minY}
+          maxY={maxY}
+          scatterPlotEnable={false}
+          dataPointsVisible={true}
+          Color={color}
+          bottomAxisDataToShow={bottomAxisDataToShow}
+          circleLegendType={true}
+          fillArea={false}
+          yAxisGrid={true}
+          xAxisGrid={false}
+          hideXAxis={true}
+          hideYAxis={true}
+          inclindTick={false}
+          pointDataToShowOnGraph={this.props.data.length <= 4 ? 'Y' : ''}
+          animation={false}
+          GraphHeight={220}
+          chartHeight={200}
+          GraphWidth={deviceWidth}
+          chartWidth={deviceWidth - 48}
+          staggerLength={0}
+          speed={50}
+          showTicks={true}
+          tickColorYAxis={'rgba(192,192,192,0.3)'}
+          tickColorXAxis={'transparent'}
+          tickWidthXAxis={0}
+          axisColor={'rgba(192,192,192,0.3)'}
+          circleRadius={4}
+          circleRadiusWidth={0}
+          legendText={this.props.legend}
+          legendColor={color}
+          showLegends={false}
+        />
+        <View style={{ marginBottom: 8 }} />
+        <Legend data={this.props.legend} color={color}/>
       </Card>
     )
   }

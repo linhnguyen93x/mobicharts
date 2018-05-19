@@ -14,4 +14,17 @@ export interface UserProfile {
   newCycleId: number
   announcement: string
   jwt: string
+  levelReport: string
+  showTabReport: TabInfo[]
+}
+
+export interface IFilter {
+  CT: string
+  CN: string
+  LQ: string
+  QH: string
+}
+export interface TabInfo {
+  showAll: boolean
+  code: keyof IFilter
 }

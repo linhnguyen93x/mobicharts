@@ -7,5 +7,9 @@ export interface TSummaryChart extends Action {
 }
 
 export interface TSummaryChartSuccess extends Action {
+  action: {
+    date: string
+    type: string | number
+  }
   payload: SummaryChartResponse[]
 }

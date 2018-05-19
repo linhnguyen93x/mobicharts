@@ -1,6 +1,6 @@
 {
   "expo": {
-    "sdkVersion": "25.0.0",
+    "sdkVersion": "27.0.0",
     "packagerOpts": {
       "sourceExts": [
         "ts",
@@ -8,7 +8,27 @@
       ],
       "transformer": "node_modules/react-native-typescript-transformer/index.js"
     },
-    "slug": "mobicharts",
-    "name": "mobicharts"
+    "slug": "onereport",
+    "name": "onereport",
+    "description": "report",
+    "orientation": "portrait",
+    "privacy": "public",
+    "ios": {
+      "bundleIdentifier": "vn.mobifone.onereport",
+      "supportsTablet": true,
+      "config": {
+        "googleMapsApiKey": "AIzaSyArS_H3cU1k5qB2BbZOA4PTBMuIKs6INc4"
+      }
+    },
+    "android": {
+      "package": "vn.mobifone.onereport",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyArS_H3cU1k5qB2BbZOA4PTBMuIKs6INc4"
+        }        
+      }
+    },
+    "version": "0.0.4",
+    "icon": "./assets/images/app_logo.png"
   }
 }

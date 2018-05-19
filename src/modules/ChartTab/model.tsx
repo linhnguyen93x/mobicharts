@@ -1,20 +1,25 @@
+import { Dictionary } from 'lodash'
+
 export interface SummaryChartRequest {
-  p_issue_date: string
-  p_time_type: number
-  p_report_type: string
+  datereport: string
+  tab: number
 }
 
 export interface Chart {
   label: string
-  value: string
+  value: number
 }
 
 export interface SummaryChartResponse {
+  issueDate: number
   label: string
   tongCong: number | null
-  bieuDoCot: Chart[] | null,
+  unit: string
+  valueUnit: string | null
+  codeReport: string
+  bieuDoCot: Chart[] | null
   bieuDoCoCau: Chart[] | null
 }
 
 // This is the model of our module state (e.g. return type of the reducer)
-export type SummaryChartState = SummaryChartResponse[]
+export type SummaryChartState = Dictionary<SummaryChartResponse[]>

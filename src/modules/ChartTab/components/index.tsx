@@ -1,29 +1,45 @@
 import { Entypo } from '@expo/vector-icons'
+import * as scale from 'd3-scale'
+import { Svg } from 'expo'
+import _, { Dictionary } from 'lodash'
 import moment from 'moment'
-import Echarts from 'native-echarts'
 import * as React from 'react'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
-import { ListItem } from 'react-native-elements'
-import PieChart from 'react-native-pie-chart'
+import { Divider, ListItem, normalize } from 'react-native-elements'
+import { BarChart, PieChart, XAxis } from 'react-native-svg-charts'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import { appEpic$ } from 'src/+state/epics'
 import { FilterTab } from 'src/components'
 import { TimePicker } from 'src/components/time-picker'
+import { DateMap, formatCurrency, groupColors, specialBarColor, specialGroupColor } from 'src/shared'
 import { ConnectedReduxProps } from 'src/shared/redux/connected-redux'
 
 import { globalStyle } from '../../../style'
 import { getSummaryChartAction } from '../actions'
 import { summaryChartEpic } from '../epics'
-import { Chart, SummaryChartResponse } from '../model'
+import { SummaryChartResponse } from '../model'
 import { getAll } from '../selectors'
 
+const { LinearGradient, Stop, Defs } = Svg
+
 interface SummaryChartProps extends ConnectedReduxProps<SummaryChartState> {
-  data: SummaryChartResponse[]
+  data: Dictionary<SummaryChartResponse[]>
 }
 
 interface SummaryChartState {
   reportDate: string
+  timeType: number
+  isRemovingView: boolean
+}
+
+const DOUBLE_PRESS_DELAY = 300
+export interface SummaryChartParams {
+  codeReport: string
+  timeType: number
+  colors: string[]
+  selectedTime: string
+  unit: string
 }
 
 enum Filter {
@@ -33,33 +49,36 @@ enum Filter {
   YEAR = 'NĂM'
 }
 
-const pieColor = [
-  '#ff7f50',
-  '#87cefa',
-  '#32cd32',
-  '#da70d6',
-  '#6495ed',
-  '#ff69b4',
-  '#ba55d3',
-  '#cd5c5c',
-  '#ffa500',
-  '#40e0d0',
-  '#1e90ff',
-  '#ff6347',
-  '#7b68ee',
-  '#00fa9a',
-  '#ffd700',
-  '#6b8e23',
-  '#ff00ff',
-  '#3cb371',
-  '#b8860b',
-  '#30e0e0'
-]
-
 class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
-  state = {
-    reportDate: moment().format('DD/MM/YYYY')
+  static navigationOptions = {
+    // headerTitle instead of title
+    headerTitle: (
+      <View style={{ flex: 1 }}>
+        <Text
+          style={{
+            color: 'white',
+            textAlign: 'center',
+            marginLeft: 16,
+            fontSize: 20,
+            fontWeight: 'bold'
+          }}
+        >
+          ONE<Text style={{ color: 'red', fontSize: 20 }}>REPORT</Text>
+        </Text>
+      </View>
+    )
   }
+
+  state = {
+    reportDate: moment()
+      .subtract(1, 'days')
+      .format('DD/MM/YYYY'),
+    timeType: 1,
+    isRemovingView: false
+  }
+
+  colorIndex = 0
+  lastImagePress: number | undefined
 
   componentWillMount() {
     const currentEpic = appEpic$.value
@@ -67,16 +86,17 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     if (currentEpic !== summaryChartEpic) {
       appEpic$.next(summaryChartEpic)
     }
+  }
 
+  componentDidMount() {
     this.getData()
   }
 
   getData = () => {
     this.props.dispatch(
       getSummaryChartAction({
-        p_issue_date: '19/03/2018',
-        p_time_type: 1,
-        p_report_type: 'PTM'
+        datereport: this.state.reportDate,
+        tab: this.state.timeType
       })
     )
   }
@@ -85,79 +105,21 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     return item.label
   }
 
-  getBarOption = (item: Chart[], color?: string) => {
-    const data = item.map((item) => item.value)
-
-    return {
-      grid: {
-        borderWidth: 0,
-        y: 0,
-        y2: 0,
-        x: 0,
-        x2: 0
-      },
-      xAxis: [
-        {
-          type: 'category',
-          show: false,
-          data: []
-        }
-      ],
-      yAxis: [
-        {
-          type: 'value',
-          show: false
-        }
-      ],
-      series: [
-        {
-          name: '',
-          type: 'bar',
-          itemStyle: {
-            normal: {
-              color: color ? color : '#26C0C0'
-            }
-          },
-          data
-        }
-      ]
-    }
-  }
-
-  getPieOption = (item: Chart[]) => {
-    const data = item.map((i) => {
-      return { name: i.label, value: i.value }
-    })
-
-    return {
-      color: pieColor,
-      series: [
-        {
-          label: {
-            normal: {
-              show: false,
-              position: 'center'
-            },
-            emphasis: {
-              show: false,
-              textStyle: {
-                fontSize: '30',
-                fontWeight: 'bold'
-              }
-            }
-          },
-          labelLine: {
-            normal: {
-              show: false
-            }
-          },
-          name: 'Reference Page',
-          type: 'pie',
-          radius: ['30%', '50%'],
-          data
-        }
-      ]
-    }
+  Gradient = (props: any) => {
+    return (
+      <Defs key={'gradient'}>
+        <LinearGradient
+          id={'gradient'}
+          x1={'0%'}
+          y1={'0%'}
+          x2={'0%'}
+          y2={'100%'}
+        >
+          <Stop offset={'0%'} stopColor={props.startColor} />
+          <Stop offset={'100%'} stopColor={props.stopColor} />
+        </LinearGradient>
+      </Defs>
+    )
   }
 
   renderItem = ({
@@ -167,12 +129,54 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
     item: SummaryChartResponse
     index: number
   }) => {
-    const barOption = this.getBarOption(
-      item.bieuDoCot ? item.bieuDoCot : [],
-      index % 2 === 0 ? '#B7D243' : '#D3684F'
-    )
+    const maxBarValue: any = item.bieuDoCot
+      ? _.max(item.bieuDoCot.map((rec) => rec.value))
+      : 0
+    const barOption = item.bieuDoCot
+      ? item.bieuDoCot.map((item) => Math.floor(item.value / maxBarValue * 100))
+      : []
+    const barLegend = item.bieuDoCot
+      ? item.bieuDoCot.map((item) => item.label)
+      : []
+
     const pieData = item.bieuDoCoCau ? item.bieuDoCoCau : []
-    const pieOption = pieData.map((item) => item.value)
+    const groupColor = pieData.length <= 4 ? groupColors[index % groupColors.length] : specialGroupColor
+    const barGradientColor = pieData.length <= 4 ? [groupColor[0], groupColor[1]] : specialBarColor
+    const pieOption = pieData.map((item, index) => ({
+      value: item.value,
+      svg: { fill: groupColor[index % groupColor.length] },
+      key: `pie-${index}`
+    }))
+
+    const itemDoublePress = (e: any) => {
+      const now = new Date().getTime()
+
+      if (
+        this.lastImagePress &&
+        now - this.lastImagePress < DOUBLE_PRESS_DELAY
+      ) {
+        delete this.lastImagePress
+        const params: SummaryChartParams = {
+          codeReport: item.codeReport,
+          timeType: this.state.timeType,
+          colors: groupColor,
+          // selectedTime: this.state.reportDate,
+          selectedTime: moment(item.issueDate).format('DD/MM/YYYY'),
+          unit: item.valueUnit ? `${item.valueUnit} ${item.unit}` : item.unit
+        }
+        const title = `${params.codeReport} ${DateMap[
+          params.timeType - 1
+        ].toUpperCase()} ${params.selectedTime}`
+
+        return this.props.navigation.navigate({
+          routeName: 'ChartDetail',
+          params: { ...params, title },
+          key: params.codeReport
+        })
+      } else {
+        this.lastImagePress = now
+      }
+    }
 
     return (
       <ListItem
@@ -181,90 +185,163 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
           tension: 100,
           activeScale: 0.95
         }}
-        onPress={() => this.props.navigation.navigate('ChartDetail')}
-        containerStyle={{ marginBottom: 10 }}
-        title={item.label}
-        titleStyle={{ fontSize: 16 }}
+        onPress={itemDoublePress.bind(this)}
+        title={
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              marginBottom: 0,
+              paddingHorizontal: 8,
+              paddingTop: 6,
+              alignItems: 'center'
+            }}
+          >
+            <Text style={{ fontSize: 13, marginRight: 4, fontWeight: '500' }}>
+              {item.label}
+            </Text>
+            <Divider style={{ flex: 1 }} />
+          </View>
+        }
+        containerStyle={{ padding: 0, paddingBottom: 4 }}
         subtitle={
-          <View>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-around'
+            }}
+          >
             <View
               style={{
-                flex: 1,
-                flexDirection: 'row',
+                flex: 0.2,
+                justifyContent: 'center',
                 alignItems: 'center',
-                justifyContent: 'space-around'
+                marginBottom: 24
               }}
             >
-              <View
-                style={{
-                  flex: 0.2,
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
+              <Text
+                style={[
+                  globalStyle.styles.fontWeightBold,
+                  { textAlign: 'center', fontSize: 18 }
+                ]}
               >
-                <Text
-                  style={[
-                    globalStyle.styles.fontWeightBold,
-                    { textAlign: 'center', fontSize: 22 }
-                  ]}
-                >
-                  {item.tongCong}
-                </Text>
-                <Text style={globalStyle.styles.fontWeightBold}>Tỷ đồng</Text>
-              </View>
-              <View style={{ flex: 0.3, alignItems: 'center' }}>
-                <PieChart
-                  chart_wh={90}
-                  series={pieOption}
-                  sliceColor={pieColor}
-                  doughnut={true}
-                  coverRadius={0.6}
-                  coverFill={'#FFF'}
-                />
-              </View>
-              <View style={{ flex: 0.3 }}>
-                <Echarts option={barOption} height={95} />
-              </View>
+                {item.tongCong ? formatCurrency(item.tongCong) : '-'}
+              </Text>
+              {item.valueUnit ? <Text
+                style={[
+                  globalStyle.styles.fontWeightBold,
+                  globalStyle.styles.textAlignCenter,
+                  { fontSize: 12 }
+                ]}
+              >
+                {item.valueUnit}
+              </Text> : null}
+              <Text
+                style={[
+                  globalStyle.styles.fontWeightBold,
+                  globalStyle.styles.textAlignCenter,
+                  { fontSize: 12 }
+                ]}
+              >
+                ({item.unit.toLowerCase()})
+              </Text>
             </View>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
-              <View style={{ flex: 0.2 }} />
+            {pieOption.length > 0 ? (
               <View
                 style={{
-                  flex: 0.5,
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  padding: 'auto'
+                  flex: 0.3,
+                  alignItems: 'center',
+                  alignSelf: 'flex-start'
                 }}
               >
-                {pieData.map((item, index) => {
-                  return (
-                    <View
-                      key={index}
-                      style={{
-                        marginHorizontal: 6,
-                        flexDirection: 'row',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <Entypo
-                        style={{ alignSelf: 'flex-start' }}
-                        name="dot-single"
-                        size={40}
-                        color={pieColor[index]}
-                      />
-                      <Text
+                <PieChart
+                  style={{ height: 89, width: '100%' }}
+                  data={pieOption}
+                  spacing={0}
+                  outerRadius={'90%'}
+                  padAngle={0}
+                />
+                <View
+                  style={{
+                    flex: 0.5,
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    marginTop: 5
+                  }}
+                >
+                  {pieData.map((item, index) => {
+                    return (
+                      <View
+                        key={index}
                         style={{
-                          textAlign: 'center'
+                          flexDirection: 'row',
+                          width: '50%',
+                          paddingHorizontal: 4
                         }}
                       >
-                        {item.label}
-                      </Text>
-                    </View>
-                  )
-                })}
+                        <Entypo
+                          style={{
+                            alignSelf: 'flex-start'
+                          }}
+                          name="controller-record"
+                          size={16}
+                          color={groupColor[index % groupColor.length]}
+                        />
+                        <Text
+                          style={{
+                            fontSize: 10,
+                            alignSelf: 'flex-start'
+                          }}
+                        >
+                          {' ' + item.label}
+                        </Text>
+                      </View>
+                    )
+                  })}
+                </View>
               </View>
-              <View style={{ flex: 0.2 }} />
-            </View>
+            ) : (
+              <View
+                style={{
+                  flex: 0.3
+                }}
+              />
+            )}
+            {barOption.length > 0 ? (
+              <View style={{ flex: barOption.length <= 8 ? 0.3 : 0.4, alignSelf: 'flex-start' }}>
+                <BarChart
+                  style={{ height: 85 }}
+                  data={barOption}
+                  contentInset={{ top: 10, bottom: 0 }}
+                  spacingInner={0.25}
+                  gridMin={0}
+                  svg={{
+                    strokeWidth: 2,
+                    fill: 'url(#gradient)'
+                  }}
+                >
+                  <this.Gradient
+                    startColor={barGradientColor[0]}
+                    stopColor={barGradientColor[1]}
+                  />
+                </BarChart>
+                <XAxis
+                  style={{ marginTop: 11 }}
+                  data={barOption}
+                  scale={scale.scaleBand}
+                  spacingInner={0.25}
+                  formatLabel={(value: any, index: number) => barLegend[index]}
+                  labelStyle={{ color: 'black' }}
+                  svg={{
+                    fontSize: normalize(8)
+                  }}
+                />
+              </View>
+            ) : (
+              <View style={{ flex: barOption.length <= 8 ? 0.3 : 0.4 }} />
+            )}
           </View>
         }
       />
@@ -273,29 +350,36 @@ class ChartTab extends React.Component<SummaryChartProps, SummaryChartState> {
 
   render() {
     const { data } = this.props
+    const renderData = data[`${this.state.reportDate}_${this.state.timeType}`]
 
     return (
       <View style={styles.container}>
-        <Text style={styles.header}>
-          {`Báo cáo ngày ${this.state.reportDate}`.toUpperCase()}
-        </Text>
         <FilterTab
           data={[Filter.DAY, Filter.WEEK, Filter.MONTH, Filter.YEAR]}
-          onItemSelected={(item) => console.log(item)}
+          onItemSelected={(item) =>
+            this.setState({ isRemovingView: true }, () => {
+              setTimeout(() => {
+               this.setState({ isRemovingView: false, timeType: item }, () => this.getData())
+              }, 0)
+            })
+          }
         />
         <TimePicker
+          defaultValue={this.state.reportDate}
           onDateChange={(reportDate) => {
-            this.setState({ reportDate }, () => this.getData())
+            this.setState({ isRemovingView: true }, () => {
+              setTimeout(() => {
+               this.setState({ isRemovingView: false, reportDate }, () => this.getData())
+              }, 0)
+            })
           }}
         />
         <FlatList
           style={{ marginTop: 8 }}
           keyExtractor={this.keyExtractor}
-          data={data}
+          data={this.state.isRemovingView ? [] : renderData}
           renderItem={this.renderItem}
         />
-        {/* <Button title="Add" onPress={() => { dispatch(addTodo('Hello Bi')) }} />
-        {todos.map((t) => <Text key={t.id}>{t.text}</Text>)} */}
       </View>
     )
   }

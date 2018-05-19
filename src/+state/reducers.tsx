@@ -1,9 +1,15 @@
 import { NavigationActions } from 'react-navigation'
 import { Action, combineReducers, Reducer } from 'redux'
 import { loadingReducer } from 'src/+state/loadingReducer'
+import { UserProfile } from 'src/modules/Account/+model'
 import profile from 'src/modules/Account/+state/reducers'
 import SummaryChart from 'src/modules/ChartTab'
 import { SummaryChartState } from 'src/modules/ChartTab/model'
+import MapTab from 'src/modules/MapTab'
+import { MapState } from 'src/modules/MapTab/model'
+import ReportDetail from 'src/modules/ReportDetail'
+import { ReportDetailState } from 'src/modules/ReportDetail/model'
+import { LocalStorage } from 'src/shared/async-storage'
 
 import { AppNavigator } from '../navigators/AppNavigator'
 
@@ -69,15 +75,29 @@ function auth(state = initialAuthState, action: Action) {
 
 // tslint:disable-next-line:no-empty-interface
 export interface IApplicationState {
+  profile: UserProfile | null
   [SummaryChart.constants.NAME]: SummaryChartState
+  [ReportDetail.constants.NAME]: ReportDetailState
+  [MapTab.constants.NAME]: MapState
 }
 
-const AppReducer: Reducer<IApplicationState> = combineReducers<IApplicationState>({
+const appReducer: Reducer<IApplicationState> = combineReducers<IApplicationState>({
   nav,
   auth,
   profile,
   loading: loadingReducer,
-  [SummaryChart.constants.NAME]: SummaryChart.reducer
+  [SummaryChart.constants.NAME]: SummaryChart.reducer,
+  [ReportDetail.constants.NAME]: ReportDetail.reducer,
+  [MapTab.constants.NAME]: MapTab.reducer
 })
 
-export default AppReducer
+const rootReducer = (state: any, action: any) => {
+  if (action.type === 'Logout') {
+    LocalStorage.removeJwt()
+    state = undefined
+  }
+
+  return appReducer(state, action)
+}
+
+export default rootReducer

@@ -1,139 +1,220 @@
-import Echarts from 'native-echarts'
+import { Svg } from 'expo'
+import _ from 'lodash'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Card } from 'react-native-elements'
+import { PieChart, ProgressCircle } from 'react-native-svg-charts'
+import Legend from 'src/components/legend'
+import { formatCurrency, scale } from 'src/shared'
 
+import { PercentChart } from '../model'
+
+const { Text, TSpan } = Svg
 export interface Props {
-  data: any[]
+  title: string
+  color: string[]
+  legend: string[]
+  data: number[]
+  data2: PercentChart | null
+  unit: string
 }
 
-const options = {
-  title: {
-    text: '7 ngày gần đây',
-    left: 'center'
-  },
-  legend: {
-    formatter: '{name}',
-    orient: 'horizontal',
-    y: 'bottom',
-    data: ['A', 'B', 'C', 'D', 'E']
-  },
-  tooltip: {
-    trigger: 'item',
-    formatter: '{b} : {c} ({d}%)'
-  },
-  calculable: true,
-  series: [
-    {
-      name: 'Pie chart',
-      type: 'pie',
-      radius: ['30%', '50%'],
-      avoidLabelOverlap: false,
-      // label: {
-      //   normal: {
-      //     show: false,
-      //     position: 'center'
-      //   },
-      //   emphasis: {
-      //     show: false,
-      //     textStyle: {
-      //       fontSize: '30',
-      //       fontWeight: 'bold'
-      //     }
-      //   }
-      // },
-      // labelLine: {
-      //   normal: {
-      //     show: false
-      //   }
-      // },
-      data: [
-        { value: 335, name: 'A' },
-        { value: 310, name: 'B' },
-        { value: 234, name: 'C' },
-        { value: 135, name: 'D' },
-        { value: 1548, name: 'E' }
-      ]
+interface PieChartProperty {
+  svg: object
+  key: any
+  value: string | number
+  arc?: object
+}
+interface State {
+  pieData: PieChartProperty[]
+  selectedIndex: number | null
+}
+
+class DonutReport extends React.PureComponent<Props, State> {
+  state: State = {
+    pieData: [],
+    selectedIndex: null
+  }
+
+  componentWillMount() {
+    const maxValue: any = _.sum(this.props.data)
+
+    this.setState({
+      pieData: this.mapDataToChart(this.props.data.map((value) => _.round((value / maxValue) * 100, 1)))
+    })
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    const maxValue: any = _.sum(nextProps.data)
+
+    this.setState({
+      pieData: this.mapDataToChart(nextProps.data.map((value) => _.round((value / maxValue) * 100, 1)))
+    })
+  }
+
+  mapDataToChart = (data: any[]) => {
+    return data.map((value, index) => ({
+      value,
+      svg: {
+        fill: this.props.color[index],
+        onPress: () => this.triggerEvent(index)
+      },
+      key: `pie-${index}`
+    }))
+  }
+
+  triggerEvent = (index: number) => {
+    const mapToSelected = (data: PieChartProperty[]) =>
+      data.map(
+        (item, pieIndex) =>
+          pieIndex === index && this.state.selectedIndex !== index
+            ? { ...item, arc: { outerRadius: '120%', cornerRadius: 5 } }
+            : { ...item, arc: {} }
+      )
+
+    const newPieState = mapToSelected(this.state.pieData)
+
+    this.setState({
+      pieData: newPieState,
+      selectedIndex: this.state.selectedIndex === index ? null : index
+    })
+  }
+
+  CenterText = ({ height, width, title, subTitle }: any) => {
+    if (!subTitle) {
+      return (
+        <Text
+          x={0}
+          y={0}
+          fontSize={20}
+          stroke={'black'}
+          fill={'black'}
+          textAnchor="middle"
+        >
+          {title}
+        </Text>
+      )
     }
-  ]
-}
 
-const options2 = {
-  title: {
-    text: 'Kế hoạch tháng',
-    left: 'center'
-  },
-  legend: {
-    formatter: '{name}',
-    orient: 'horizontal',
-    y: 'bottom',
-    data: ['A', 'B', 'C', 'D', 'E']
-  },
-  tooltip: {
-    trigger: 'item',
-    formatter: '{b} : {c} ({d}%)'
-  },
-  calculable: true,
-  series: [
-    {
-      name: 'Pie chart',
-      type: 'pie',
-      radius: ['30%', '50%'],
-      avoidLabelOverlap: false,
-      // label: {
-      //   normal: {
-      //     show: false,
-      //     position: 'center'
-      //   },
-      //   emphasis: {
-      //     show: false,
-      //     textStyle: {
-      //       fontSize: '30',
-      //       fontWeight: 'bold'
-      //     }
-      //   }
-      // },
-      // labelLine: {
-      //   normal: {
-      //     show: false
-      //   }
-      // },
-      data: [
-        { value: 335, name: 'A' },
-        { value: 310, name: 'B' },
-        { value: 234, name: 'C' },
-        { value: 135, name: 'D' },
-        { value: 1548, name: 'E' }
-      ]
-    }
-  ]
-}
+    const distanceLength = scale(
+      Math.abs(title.length - subTitle.length) * 10
+    ).toString()
 
-class DonutReport extends React.PureComponent<Props> {
+    return (
+      <Text
+        x={0}
+        y={0}
+        stroke={'black'}
+        fill={'black'}
+        textAnchor="middle"
+      >
+        <TSpan
+          x="0"
+          dx="0"
+          fontSize={24}
+        >
+          {title}
+        </TSpan>
+        <TSpan
+          x="0"
+          dx={subTitle.length < title.length ? distanceLength : '0'}
+          dy={scale(16, 2).toString()}
+          fontSize={12}
+        >
+          {subTitle}
+        </TSpan>
+      </Text>
+    )
+  }
+
+  Labels = ({ slices }: any) => {
+    return slices.map((slice: any, index: number) => {
+      const { labelCentroid, data } = slice
+      return (
+            <Text
+            key={index}
+            x={labelCentroid[0]}
+            y={labelCentroid[1]}
+            fontSize={12}
+            stroke={'black'}
+            fill={'none'}
+            textAnchor="middle"
+          >
+              {slices.length > 4 ? (this.state.selectedIndex === index ? data.value + '%' : '') : data.value + '%'}
+          </Text>
+      )
+    })
+  }
+
   render() {
+
     return (
       <Card
-        title="Biểu đồ tỉ lệ DTTT theo cấu thành"
-        titleStyle={{ textAlign: 'left' }}
-        containerStyle={{ marginHorizontal: 0 }}
+        title={`${this.props.title} (ĐVT: ${this.props.unit.toLowerCase()})`}
+        titleStyle={{ textAlign: 'left', marginBottom: 0 }}
+        containerStyle={{ marginHorizontal: 0, marginBottom: 0, marginTop: 8, paddingBottom: 0, paddingTop: 4 }}
         dividerStyle={{ display: 'none' }}
       >
-        <View style={styles.chartContainer}>
-          <View>
-            <Echarts option={options} height={200} />
-          </View>
-          <View style={{ marginTop: 16 }}>
-            <Echarts option={options2} height={200} />
-          </View>
+        <View style={styles.rowContainer}>
+          <PieChart
+            style={[styles.chart, { flex: .5, height: 165 }]}
+            data={this.state.pieData}
+            innerRadius={45}
+            outerRadius={'70%'}
+            labelRadius={30}
+            animate={true}
+          >
+            <this.Labels />
+          </PieChart>
+          {this.props.data2 ? <ProgressCircle
+            style={[styles.chart, { height: 115, flex: .5 }]}
+            progress={this.props.data2.percent ? this.props.data2.percent : 1}
+            progressColor={this.props.color[0]}
+            strokeWidth={10}
+          >
+            <this.CenterText title={`${this.props.data2.percent ? this.props.data2.percent * 100 : 100}%`} subTitle={this.props.data2 ? `(${formatCurrency(this.props.data2.using)})` : ''} />
+          </ProgressCircle> : null}
         </View>
+        <View
+          style={[
+            styles.rowContainer,
+            { justifyContent: 'space-between', marginHorizontal: 16 }
+          ]}
+        >
+        </View>
+        <Legend
+          data={this.props.legend.map((
+            (item, index) => `${item}: ${formatCurrency(this.props.data[index])}`))}
+          color={this.props.color}
+          onPress={(index) => this.triggerEvent(index)}
+          selectedIndex={this.state.selectedIndex}
+        />
+        <Legend
+          style={{ alignSelf: 'center', paddingLeft: 0 }}
+          data={[`Tổng: ${formatCurrency(_.sum(this.props.data))}`]}
+          color={['red']}
+          iconType={'sum'}
+        />
       </Card>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  chartContainer: {
-    flex: 1
+  rowContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  chart: {
+    flex: 0.5,
+    height: 200
+  },
+  legendContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginRight: 8
   }
 })
 
